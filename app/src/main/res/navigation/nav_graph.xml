@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.ize.edgehue.FirstFragment"
+        android:name="com.ize.edgehue.WelcomeFragment"
         android:label="@string/fragment_welcome_label"
         tools:layout="@layout/fragment_welcome">
 
@@ -17,12 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="com.ize.edgehue.SecondFragment"
+        android:name="com.ize.edgehue.FinalFragment"
         android:label="@string/fragment_search_label"
-        tools:layout="@layout/fragment_search">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_final"/>
 </navigation>

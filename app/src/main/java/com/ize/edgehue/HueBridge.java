@@ -9,29 +9,25 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-//import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+//import com.android.volley.toolbox.JsonObjectRequest;
+
 public class HueBridge {
+    private static final String TAG = HueBridge.class.getSimpleName();
+    private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
+    private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
     private static HueBridge instance;
     private static Context ctx;
     private static String url = "http://192.168.69.166/api/aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD/";
-
     private static String urlHeader = "http://";
     private static String ip;
     private static String user;
-
     private static JSONObject state;
-
     private static String username = "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD";
-
-    private static final String TAG = HueBridge.class.getSimpleName();
-
-    private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
-    private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
 
     private HueBridge(Context context, String ipAddress, String userName) {
         ctx = context;
@@ -39,32 +35,12 @@ public class HueBridge {
         user = userName;
     }
 
-    private PendingIntent getStateIntent(Context context, int id, int key) {
-        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
-        stateIntent.setAction(ACTION_RECEIVE_HUE_STATE);
-        stateIntent.putExtra("id", id);
-        stateIntent.putExtra("key", key);
-        PendingIntent pStateIntent = PendingIntent.getBroadcast(context, 1, stateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        return pStateIntent;
-    }
-
-    private PendingIntent getReplyIntent(Context context, int id, int key) {
-        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
-        replyIntent.setAction(ACTION_RECEIVE_HUE_REPLY);
-        replyIntent.putExtra("id", id);
-        replyIntent.putExtra("key", key);
-        PendingIntent pReplyIntent = PendingIntent.getBroadcast(context, 1, replyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        return pReplyIntent;
-    }
-
     private static synchronized void deleteInstance() {
         instance = null;
     }
 
-    public static synchronized HueBridge getInstance(){
-        if (instance == null){
+    public static synchronized HueBridge getInstance() {
+        if (instance == null) {
             return null;
         }
         return instance;
@@ -94,15 +70,7 @@ public class HueBridge {
         HueBridge.user = username;
     }
 
-    public JSONObject getState() {
-        return state;
-    }
-
-    private static void setState(JSONObject hueState) {
-        HueBridge.state = hueState;
-    }
-
-    public static void changeHueState (final int lightId, final boolean state){
+    public static void changeHueState(final int lightId, final boolean state) {
         Log.d(TAG, "changeHueState entered");
         JSONObject jsonObject = new JSONObject();
         try {
@@ -119,21 +87,20 @@ public class HueBridge {
                         boolean success = false;
                         try {
                             success =
-                                response.getJSONObject(0)
-                                    .getJSONObject("success")
-                                    .getBoolean("/lights/" + lightId + "/state/on") == state;
+                                    response.getJSONObject(0)
+                                            .getJSONObject("success")
+                                            .getBoolean("/lights/" + lightId + "/state/on") == state;
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if(success) {
+                        if (success) {
                             Log.d(TAG, "changeHueState successful");
                             try {
                                 HueBridge.getInstance().getReplyIntent(ctx, lightId, 0).send();
                             } catch (PendingIntent.CanceledException e) {
                                 e.printStackTrace();
                             }
-                        }
-                        else{
+                        } else {
                             Log.d(TAG, "changeHueState unsuccessful");
                         }
                     }
@@ -166,8 +133,7 @@ public class HueBridge {
                         }
                     }
                 },
-                new Response.ErrorListener()
-                {
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, error.toString());
@@ -179,11 +145,33 @@ public class HueBridge {
         Log.d(TAG, "request sent to queue");
     }
 
+    private PendingIntent getStateIntent(Context context, int id, int key) {
+        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
+        stateIntent.setAction(ACTION_RECEIVE_HUE_STATE);
+        stateIntent.putExtra("id", id);
+        stateIntent.putExtra("key", key);
+        PendingIntent pStateIntent = PendingIntent.getBroadcast(context, 1, stateIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        return pStateIntent;
+    }
 
+    private PendingIntent getReplyIntent(Context context, int id, int key) {
+        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
+        replyIntent.setAction(ACTION_RECEIVE_HUE_REPLY);
+        replyIntent.putExtra("id", id);
+        replyIntent.putExtra("key", key);
+        PendingIntent pReplyIntent = PendingIntent.getBroadcast(context, 1, replyIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        return pReplyIntent;
+    }
 
+    public JSONObject getState() {
+        return state;
+    }
 
-
-
+    private static void setState(JSONObject hueState) {
+        HueBridge.state = hueState;
+    }
 
 
 }

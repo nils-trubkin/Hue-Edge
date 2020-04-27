@@ -1,8 +1,8 @@
 package com.ize.edgehue;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.samsung.android.sdk.look.Slook;
 

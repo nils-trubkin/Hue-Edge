@@ -26,12 +26,15 @@ import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonRequest;
 
-import java.io.UnsupportedEncodingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** A request for retrieving a {@link JSONArray} response body at a given URL. */
+import java.io.UnsupportedEncodingException;
+
+/**
+ * A request for retrieving a {@link JSONArray} response body at a given URL.
+ */
 public class JsonCustomRequest extends JsonRequest<JSONArray> {
 
     private Listener<JSONArray> listener;

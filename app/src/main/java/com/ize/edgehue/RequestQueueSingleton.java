@@ -8,17 +8,17 @@ import com.android.volley.toolbox.Volley;
 
 public class RequestQueueSingleton {
     private static RequestQueueSingleton instance;
-    private RequestQueue requestQueue;
     private static Context ctx;
-    private static String url ="http://192.168.69.166/api/aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD/lights/10/state";
-
-    public static String getUrl() {
-        return url;
-    }
+    private static String url = "http://192.168.69.166/api/aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD/lights/10/state";
+    private RequestQueue requestQueue;
 
     private RequestQueueSingleton(Context context) {
         ctx = context;
         requestQueue = getRequestQueue();
+    }
+
+    public static String getUrl() {
+        return url;
     }
 
     public static synchronized RequestQueueSingleton getInstance(Context context) {

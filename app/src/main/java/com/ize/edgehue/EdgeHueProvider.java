@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -29,27 +28,33 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     private static PendingIntent jsonInt;
 
+    private static void panelUpdate(Context context) {
+        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(context);
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
+        cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if(contentView == null) {
+        if (contentView == null) {
             contentView = createContentView(context);
         }
-        if(helpView == null) {
+        if (helpView == null) {
             helpView = createHelpView(context);
         }
 
-        if (HueBridge.getInstance() == null){
+        if (HueBridge.getInstance() == null) {
             HueBridge.getInstance(context,
                     "192.168.69.166",
                     "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD");
-            HueBridge.getInstance().requestHueState();
+            HueBridge.requestHueState();
         }
 
         super.onReceive(context, intent);
         String action = intent.getAction();
         Log.d(TAG, "onReceive: " + action);
-        switch(action) {
+        switch (action) {
             case ACTION_REMOTE_LONG_CLICK:
                 performRemoteLongClick(context, intent);
                 break;
@@ -70,7 +75,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 break;
             case ACTION_RECEIVE_HUE_REPLY:
                 //handleHueReply(context, intent);
-                HueBridge.getInstance().requestHueState();
+                HueBridge.requestHueState();
                 break;
             default:
                 break;
@@ -87,20 +92,20 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     public void onEnabled(Context context) {
         // TODO Auto-generated method stub
         super.onEnabled(context);
-        if (HueBridge.getInstance() == null){
+        if (HueBridge.getInstance() == null) {
             HueBridge.getInstance(context,
                     "192.168.69.166",
                     "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD");
-            HueBridge.getInstance().requestHueState();
+            HueBridge.requestHueState();
         }
     }
 
     @Override
     public void onUpdate(Context context, SlookCocktailManager cocktailManager, int[] cocktailIds) {
-        if(contentView == null) {
+        if (contentView == null) {
             contentView = createContentView(context);
         }
-        if(helpView == null) {
+        if (helpView == null) {
             helpView = createHelpView(context);
         }
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
@@ -181,7 +186,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 HueBridge.changeHueState(10, false);
                 break;
             case R.id.btn4:
-                HueBridge.getInstance().requestHueState();
+                HueBridge.requestHueState();
                 contentView.setTextViewText(R.id.btn4, "Req");
                 break;
             case R.id.btn5:
@@ -235,39 +240,39 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     private void btnHandler(final Context context, int id) {
-        if(contentView == null) {
+        if (contentView == null) {
             contentView = createContentView(context);
         }
-        if(helpView == null) {
+        if (helpView == null) {
             helpView = createHelpView(context);
         }
 
-        if(id == 1) {
-                HueBridge.changeHueState(10, true);
+        if (id == 1) {
+            HueBridge.changeHueState(10, true);
         }
-        if(id == 2) {
-                HueBridge.changeHueState(10, false);
+        if (id == 2) {
+            HueBridge.changeHueState(10, false);
         }
-        if(id == 3) {
-        }
-
-        if(id == 4) {
-
+        if (id == 3) {
         }
 
-        if(id == 5) {
+        if (id == 4) {
 
         }
-        if (id == 11){
+
+        if (id == 5) {
 
         }
-        if (id == 22){
+        if (id == 11) {
+
+        }
+        if (id == 22) {
 
         }
         panelUpdate(context);
     }
 
-    private void handleHueReply(Context context, Intent intent){
+    private void handleHueReply(Context context, Intent intent) {
         StringBuffer debugString = new StringBuffer("ACTION_REMOTE_LONGCLICK");
         int id = intent.getIntExtra("id", -1);
         debugString.append("id=").append(intent.getIntExtra("id", -1));
@@ -279,12 +284,6 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             default:
                 break;
         }
-    }
-
-    private static void panelUpdate(Context context) {
-        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(context);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
-        cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
 
     /*public static void panelUpdate(Context context, SlookCocktailManager manager, int[] cocktailIds, String data) {
