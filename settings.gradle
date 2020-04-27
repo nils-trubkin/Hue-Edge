@@ -1,0 +1,2 @@
+rootProject.name='EdgeHue'
+include ':app'
