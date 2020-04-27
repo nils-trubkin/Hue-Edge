@@ -2,7 +2,7 @@
 <cocktail-provider xmlns:android="http://schemas.android.com/apk/res/android"
     label="@string/edge_hue_name"
     description="@string/edge_hue_description"
-    previewImage="@drawable/apps_edge_bg"
+    previewImage="@drawable/panel_preview_image"
     permitVisibilityChanged="true"
     configure="com.ize.edgehue.EdgeConfigure"
     cocktailWidth="550">

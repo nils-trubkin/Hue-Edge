@@ -1,5 +1,6 @@
 package com.ize.edgehue;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,10 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View view) {
                 NavHostFragment.findNavController(WelcomeFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                HueBridge.getInstance(getActivity(),
+                        "192.168.69.166",
+                        "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD");
+                HueBridge.requestHueState();
             }
         });
     }

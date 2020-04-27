@@ -45,10 +45,15 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         }
 
         if (HueBridge.getInstance() == null) {
-            HueBridge.getInstance(context,
+
+            contentView.setTextViewText(R.id.btn5, "NO CONF");
+            panelUpdate(context);
+            return;
+
+            /*HueBridge.getInstance(context,
                     "192.168.69.166",
                     "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD");
-            HueBridge.requestHueState();
+            HueBridge.requestHueState();*/
         }
 
         super.onReceive(context, intent);
