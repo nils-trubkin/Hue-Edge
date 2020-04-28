@@ -70,6 +70,14 @@ public class HueBridge {
         HueBridge.user = username;
     }
 
+    public static void toggleHueState(final int lightId) throws JSONException {
+        Log.d(TAG, "toggleHueState entered");
+        boolean lastState = state.getJSONObject("lights").
+                getJSONObject(String.valueOf(lightId)).
+                getJSONObject("state").getBoolean("on");
+        changeHueState(lightId, !lastState);
+    }
+
     public static void changeHueState(final int lightId, final boolean state) {
         Log.d(TAG, "changeHueState entered");
         JSONObject jsonObject = new JSONObject();

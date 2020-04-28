@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import org.json.JSONException;
+
 public class FinalFragment extends Fragment {
 
     @Override
@@ -21,12 +23,17 @@ public class FinalFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_final, container, false);
     }
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.button_finish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    EdgeHueProvider.quickSetup(getActivity());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Intent homeIntent = new Intent(Intent.ACTION_MAIN);
                 homeIntent.addCategory( Intent.CATEGORY_HOME );
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
