@@ -257,28 +257,15 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     private void panelUpdate(Context context) throws JSONException {
-        Log.d(TAG, "currentCategory is " + currentCategory);
-        if (HueBridge.getInstance() == null) {
-            currentCategory = menuCategory.NO_BRIDGE;
-            Log.d(TAG, "currentCategory changed to " + currentCategory);
-        }
-        if (HueBridge.getInstance() != null) {
-            currentCategory = menuCategory.QUICK_ACCESS;
-            Log.d(TAG, "currentCategory changed to " + currentCategory);
-        }
-        if(contentView == null) {
-            contentView = createContentView(context);
-        }
-        if(helpView == null) {
-            helpView = createHelpView(context);
-        }
-
+        Log.d(TAG, "panelUpdate(): currentCategory is " + currentCategory);
+        contentView = createContentView(context);
+        helpView = createHelpView(context);
         if(currentCategory == menuCategory.QUICK_ACCESS) {
             Log.d(TAG, "currentCategory is " + currentCategory + ". Filling in buttons now");
             for (int i = 0; i < 10; i++) {
                 if (quickAccessContent.containsKey(i)) {
                     contentView.setTextViewText(btnTextArr[i], quickAccessContent.get(i).getName());
-                    //contentView.setTextViewText(btnArr[i], (quickAccessContent.get(i).getState() ? "0" : "1"));
+                    contentView.setTextViewText(btnArr[i], (quickAccessContent.get(i).getState() ? "on" : "off"));
                 }
             }
         }
