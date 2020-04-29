@@ -48,7 +48,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn1text"
@@ -74,7 +74,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn2text"
@@ -110,7 +110,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn3text"
@@ -136,7 +136,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn4text"
@@ -172,7 +172,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="100dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn5text"
@@ -198,7 +198,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn6text"
@@ -234,7 +234,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn7text"
@@ -260,7 +260,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn8text"
@@ -296,7 +296,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn9text"
@@ -322,7 +322,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/button_background" />
+                    android:background="@drawable/on_button_background" />
 
                 <TextView
                     android:id="@+id/btn10text"

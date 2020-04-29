@@ -4,9 +4,27 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.Icon;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RemoteViews;
+
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.ize.edgehue.bridge_resource.LightResource;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
@@ -264,12 +282,23 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             Log.d(TAG, "currentCategory is " + currentCategory + ". Filling in buttons now");
             for (int i = 0; i < 10; i++) {
                 if (quickAccessContent.containsKey(i)) {
+                    boolean state = quickAccessContent.get(i).getState();
                     contentView.setTextViewText(btnTextArr[i], quickAccessContent.get(i).getName());
-                    contentView.setTextViewText(btnArr[i], (quickAccessContent.get(i).getState() ? "on" : "off"));
+                    contentView.setTextViewText(btnArr[i], (state ? "◯" : "|"));
+                    contentView.setTextColor(btnArr[i], (state ?
+                            ContextCompat.getColor(context, R.color.black) : ContextCompat.getColor(context, R.color.white)));
+                    contentView.setInt(btnArr[i], "setBackgroundResource",
+                            (state ? R.drawable.on_button_background : R.drawable.off_button_background));
+                }
+                else{
+                    contentView.setTextViewText(btnTextArr[i], "");
+                    contentView.setTextViewText(btnArr[i], "+");
+                    contentView.setTextColor(btnArr[i], (ContextCompat.getColor(context, R.color.white)));
+                    contentView.setInt(btnArr[i], "setBackgroundResource",
+                            R.drawable.add_button_background);
                 }
             }
         }
-
         final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(context);
         final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
