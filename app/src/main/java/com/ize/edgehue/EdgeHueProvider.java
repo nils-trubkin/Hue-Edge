@@ -26,6 +26,7 @@ import android.widget.RemoteViews;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.ize.edgehue.bridge_resource.BridgeResource;
 import com.ize.edgehue.bridge_resource.LightResource;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
@@ -269,7 +270,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             JSONObject value = state.getJSONObject(key);
             Log.d(TAG, "quickSetup on id: " + Integer.valueOf(key));
             if (value instanceof JSONObject) {
-                quickAccessContent.put(buttonIndex++, new LightResource(Integer.valueOf(key)));
+                quickAccessContent.put(buttonIndex++, new LightResource(context, Integer.valueOf(key)));
             }
         }
     }
@@ -282,13 +283,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             Log.d(TAG, "currentCategory is " + currentCategory + ". Filling in buttons now");
             for (int i = 0; i < 10; i++) {
                 if (quickAccessContent.containsKey(i)) {
-                    boolean state = quickAccessContent.get(i).getState();
-                    contentView.setTextViewText(btnTextArr[i], quickAccessContent.get(i).getName());
-                    contentView.setTextViewText(btnArr[i], (state ? "◯" : "|"));
-                    contentView.setTextColor(btnArr[i], (state ?
-                            ContextCompat.getColor(context, R.color.black) : ContextCompat.getColor(context, R.color.white)));
+                    BridgeResource resource = quickAccessContent.get(i);
+                    contentView.setTextViewText(btnTextArr[i], resource.getName());
+                    contentView.setTextViewText(btnArr[i], resource.getBtnText());
+                    contentView.setTextColor(btnArr[i], resource.getBtnTextColor());
                     contentView.setInt(btnArr[i], "setBackgroundResource",
-                            (state ? R.drawable.on_button_background : R.drawable.off_button_background));
+                            resource.getBtnBackgroundResource());
                 }
                 else{
                     contentView.setTextViewText(btnTextArr[i], "");
