@@ -7,18 +7,13 @@ import androidx.core.content.ContextCompat;
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class RoomResource extends BridgeResource{
-    Context ctx;
-    private HueBridge bridge;
-    int id;
-    LightResource[] lights;
 
-    public RoomResource(Context context, int id){
-        ctx = context;
-        bridge = HueBridge.getInstance();
-        this.id = id;
+    public RoomResource(Context context, int id) {
+        super(context, id);
     }
 
     @Override
@@ -43,10 +38,10 @@ public class RoomResource extends BridgeResource{
     public String getBtnText() {
         try {
             return  (bridge.getState().
-                    getJSONObject("lights").
+                    getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
                     getJSONObject("state").
-                    getBoolean("on")) ?
+                    getBoolean("any_on")) ?
                     "◯" : "|";
         } catch (JSONException e) {
             e.printStackTrace();
@@ -58,10 +53,10 @@ public class RoomResource extends BridgeResource{
     public int getBtnTextColor() {
         try {
             return  (bridge.getState().
-                    getJSONObject("lights").
+                    getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
                     getJSONObject("state").
-                    getBoolean("on")) ?
+                    getBoolean("any_on")) ?
                     ContextCompat.getColor(ctx, R.color.black) : ContextCompat.getColor(ctx, R.color.white);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -73,10 +68,10 @@ public class RoomResource extends BridgeResource{
     public int getBtnBackgroundResource() {
         try {
             return  (bridge.getState().
-                    getJSONObject("lights").
+                    getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
                     getJSONObject("state").
-                    getBoolean("on")) ?
+                    getBoolean("any_on")) ?
                     R.drawable.on_button_background : R.drawable.off_button_background;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -86,6 +81,23 @@ public class RoomResource extends BridgeResource{
 
     @Override
     public void activateResource() {
-        bridge.toggleHueState(this);
+        JSONArray lights = null;
+        boolean any_on = false;
+        try {
+            any_on = HueBridge.getInstance().
+                    getState().
+                    getJSONObject("groups").
+                    getJSONObject(String.valueOf(id)).
+                    getJSONObject("state").
+                    getBoolean("any_on");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        bridge.setHueState(getStateUrl(), !any_on);
+    }
+
+    @Override
+    public String getStateUrl(){
+        return "/groups/" + getId() + "/action";
     }
 }

@@ -10,14 +10,9 @@ import com.ize.edgehue.R;
 import org.json.JSONException;
 
 public class LightResource extends BridgeResource{
-    Context ctx;
-    private HueBridge bridge;
-    private int id;
 
     public LightResource(Context context, int id){
-        ctx = context;
-        bridge = HueBridge.getInstance();
-        this.id = id;
+        super(context, id);
     }
 
     @Override
@@ -88,7 +83,8 @@ public class LightResource extends BridgeResource{
         bridge.toggleHueState(this);
     }
 
+    @Override
     public String getStateUrl(){
-        return "/lights/" + getId() + "/state/on";
+        return "/lights/" + getId() + "/state";
     }
 }

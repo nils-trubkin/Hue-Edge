@@ -95,16 +95,16 @@ public class HueBridge {
                 e.printStackTrace();
                 return;
             }
-            changeHueState(stateUrl, !lastState);
+            setHueState(stateUrl, !lastState);
         }
     }
 
-    public static void changeHueState(final String resourceUrl, final boolean state) {
-        Log.d(TAG, "changeHueState entered");
+    public static void setHueState(final String resourceUrl, final boolean state) {
+        Log.d(TAG, "setHueState entered");
         JSONObject jo = getJsonOnObject(state);
         JsonCustomRequest jcr = getJsonCustomRequest(jo, resourceUrl);
         Log.d(TAG, "changeHueState putRequest created");
-        Log.d(TAG, "url: " + url);
+        Log.d(TAG, "url: " + resourceUrl);
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jcr);
     }
@@ -171,13 +171,14 @@ public class HueBridge {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d(TAG, "changeHueState responds " + response.toString());
+                        Log.d(TAG, "setHueState url " + url+resourceUrl);
+                        Log.d(TAG, "setHueState responds " + response.toString());
                         boolean success = false;
                         try {
                             boolean requestedState = jo.getBoolean("on");
                             boolean responseState = response.getJSONObject(0).
                                     getJSONObject("success").
-                                    getBoolean(resourceUrl); //"/lights/" + id + "/state/on"
+                                    getBoolean(resourceUrl+"/on"); //"/lights/" + id + "/state/on"
                             success = requestedState == responseState;
                         } catch (JSONException e) {
                             e.printStackTrace();
