@@ -181,7 +181,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 int i = 0;
                 for ( int button : btnArr ){
                     contentView.setOnClickPendingIntent(button, getClickIntent(
-                            context, i++, currentCategory.ordinal()));
+                            context, i++, 0));
                 }
                 //SlookCocktailManager.getInstance(context).setOnLongClickPendingIntent(contentView, R.id.btn1, getLongClickIntent(context, R.id.btn1, 0));
                 break;
