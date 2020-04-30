@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -35,6 +36,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Array of references to buttons
     private static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10};
+    //Array of references to category buttons
+    private static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
+            R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
+    //Array of references to category buttons underlines
+    private static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
+            R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
     //Array of references to button texts (text under the button itself)
     private static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
@@ -125,11 +132,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     public void onEnabled(Context context) {
         // TODO Auto-generated method stub
         super.onEnabled(context);
-        contents.put(menuCategory.QUICK_ACCESS, quickAccessContent);
-        contents.put(menuCategory.LIGHTS, lightsContent);
-        contents.put(menuCategory.ROOMS, roomsContent);
-        contents.put(menuCategory.ZONES, zonesContent);
-        contents.put(menuCategory.SCENES, scenesContent);
+
     }
 
     //This method is called when the instance of
@@ -206,6 +209,19 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         helpView.setOnClickPendingIntent(R.id.btnCategory3, getClickIntent(context, R.id.btnCategory3, 1));
         helpView.setOnClickPendingIntent(R.id.btnCategory4, getClickIntent(context, R.id.btnCategory4, 1));
         helpView.setOnClickPendingIntent(R.id.btnCategory5, getClickIntent(context, R.id.btnCategory5, 1));
+        for( int button : btnCategoryArr){
+            helpView.setOnClickPendingIntent(button, getClickIntent(context, button, 1));
+            helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
+        }
+        for (int line : btnCategoryLineArr){
+            helpView.setInt(line, "setBackgroundResource", 0);
+        }
+        if(currentCategory != menuCategory.NO_BRIDGE){
+            int currentButton = btnCategoryArr[currentCategory.ordinal() - 1];
+            int currentLine = btnCategoryLineArr[currentCategory.ordinal() - 1];
+            helpView.setTextColor(currentButton, Color.parseColor("#2187F3"));
+            helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
+        }
         return helpView;
     }
 
@@ -235,7 +251,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private void performRemoteClick(Context context, Intent intent) throws JSONException {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
-        if(key == 1) {
+        if(key == 0) {
+            contents.get(currentCategory).get(id).activateResource();
+        }
+        else if(key == 1) {
             switch (id) {
                 case R.id.btnCategory1:
                     currentCategory = menuCategory.QUICK_ACCESS;
@@ -255,19 +274,6 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 default:
                     break;
             }
-        }
-        else{
-            contents.get(currentCategory).get(id).activateResource();
-            /*switch (currentCategory) {
-                case QUICK_ACCESS:
-                    Log.d(TAG, "Getting id: " + id);
-                    quickAccessContent.get(id).activateResource();
-                    break;
-                case ROOMS:
-                    Log.d(TAG, "Getting id: " + id);
-                    roomsContent.get(id).activateResource();
-                    break;
-            }*/
         }
         panelUpdate(context);
     }
@@ -305,6 +311,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         roomsContent.clear();
         zonesContent.clear();
         scenesContent.clear();
+        contents.clear();
+
+        contents.put(menuCategory.QUICK_ACCESS, quickAccessContent);
+        contents.put(menuCategory.LIGHTS, lightsContent);
+        contents.put(menuCategory.ROOMS, roomsContent);
+        contents.put(menuCategory.ZONES, zonesContent);
+        contents.put(menuCategory.SCENES, scenesContent);
 
         currentCategory = menuCategory.QUICK_ACCESS;
 
