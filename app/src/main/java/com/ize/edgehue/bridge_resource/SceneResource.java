@@ -28,8 +28,7 @@ public class SceneResource extends BridgeResource {
     }
 
     @Override
-    public void activateResource() {
-
+    public void activateResource(Context context) {
     }
 
     @Override

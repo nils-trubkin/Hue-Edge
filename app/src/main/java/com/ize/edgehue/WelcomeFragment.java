@@ -29,10 +29,10 @@ public class WelcomeFragment extends Fragment {
             public void onClick(View view) {
                 NavHostFragment.findNavController(WelcomeFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment);
-                HueBridge.getInstance(getActivity(),
+                HueBridge.getInstance(
                         "192.168.69.166",
-                        "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD");
-                HueBridge.requestHueState();
+                        "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD")
+                        .requestHueState(getActivity());
             }
         });
     }

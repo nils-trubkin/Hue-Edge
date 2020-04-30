@@ -1,12 +1,8 @@
 package com.ize.edgehue.bridge_resource;
 
 import android.content.Context;
-
 import androidx.core.content.ContextCompat;
-
-import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
-
 import org.json.JSONException;
 
 public class LightResource extends BridgeResource{
@@ -79,8 +75,8 @@ public class LightResource extends BridgeResource{
     }
 
     @Override
-    public void activateResource() {
-        bridge.toggleHueState(this);
+    public void activateResource(Context context) {
+        bridge.toggleHueState(context, this);
     }
 
     @Override

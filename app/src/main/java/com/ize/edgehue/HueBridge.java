@@ -16,14 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-//import com.android.volley.toolbox.JsonObjectRequest;
-
 public class HueBridge {
     private static final String TAG = HueBridge.class.getSimpleName();
     private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
     private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
     private static HueBridge instance;
-    private static Context ctx;
     private static String url = "http://192.168.69.166/api/aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD";
     private static String urlHeader = "http://";
     private static String ip;
@@ -31,8 +28,7 @@ public class HueBridge {
     private static JSONObject state;
     private static String username = "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD";
 
-    private HueBridge(Context context, String ipAddress, String userName) {
-        ctx = context;
+    private HueBridge(String ipAddress, String userName) {
         ip = ipAddress;
         user = userName;
     }
@@ -48,11 +44,11 @@ public class HueBridge {
         return instance;
     }
 
-    public static synchronized HueBridge getInstance(Context context, String ipAddress, String userName) {
+    public static synchronized HueBridge getInstance(String ipAddress, String userName) {
         if (ipAddress == null || userName == null) {
             return null;
         }
-        instance = new HueBridge(context, ipAddress, userName);
+        instance = new HueBridge(ipAddress, userName);
         return instance;
     }
 
@@ -81,7 +77,7 @@ public class HueBridge {
         HueBridge.user = username;
     }
 
-    public static void toggleHueState(BridgeResource br){
+    public void toggleHueState(Context context, BridgeResource br){
         if(br instanceof LightResource) {
             Log.d(TAG, "toggleHueState entered for id: "+ br.getId());
             int lightId = br.getId();
@@ -95,21 +91,21 @@ public class HueBridge {
                 e.printStackTrace();
                 return;
             }
-            setHueState(stateUrl, !lastState);
+            setHueState(context, stateUrl, !lastState);
         }
     }
 
-    public static void setHueState(final String resourceUrl, final boolean state) {
+    public void setHueState(Context context, final String resourceUrl, final boolean state) {
         Log.d(TAG, "setHueState entered");
         JSONObject jo = getJsonOnObject(state);
-        JsonCustomRequest jcr = getJsonCustomRequest(jo, resourceUrl);
+        JsonCustomRequest jcr = getJsonCustomRequest(context, jo, resourceUrl);
         Log.d(TAG, "changeHueState putRequest created");
         Log.d(TAG, "url: " + resourceUrl);
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jcr);
+        RequestQueueSingleton.getInstance(context).addToRequestQueue(jcr);
     }
 
-    public static void requestHueState() {
+    public void requestHueState(final Context context) {
         // Request a string response from the provided URL.
         String url = urlHeader + ip + "/api/" + user;
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
@@ -118,7 +114,7 @@ public class HueBridge {
                     public void onResponse(JSONObject response) {
                         state = response;
                         try {
-                            HueBridge.getInstance().getStateIntent(ctx, 0, 0).send();
+                            HueBridge.getInstance().getStateIntent(context, 0, 0).send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -132,7 +128,7 @@ public class HueBridge {
                 });
 
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jor);
+        RequestQueueSingleton.getInstance(context).addToRequestQueue(jor);
         Log.d(TAG, "request sent to queue");
     }
 
@@ -156,7 +152,7 @@ public class HueBridge {
         return pReplyIntent;
     }
 
-    private static JSONObject getJsonOnObject(boolean state) {
+    private JSONObject getJsonOnObject(boolean state) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("on", state);
@@ -166,7 +162,7 @@ public class HueBridge {
         return jsonObject;
     }
 
-    private static JsonCustomRequest getJsonCustomRequest(final JSONObject jo, final String resourceUrl){
+    private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jo, final String resourceUrl){
         JsonCustomRequest jcr = new JsonCustomRequest(Request.Method.PUT, url+resourceUrl, jo,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -186,7 +182,7 @@ public class HueBridge {
                         if (success) {
                             Log.d(TAG, "changeHueState successful");
                             try {
-                                HueBridge.getInstance().getReplyIntent(ctx, 0, 0).send();
+                                HueBridge.getInstance().getReplyIntent(context, 0, 0).send();
                             } catch (PendingIntent.CanceledException e) {
                                 e.printStackTrace();
                             }

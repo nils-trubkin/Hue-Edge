@@ -80,10 +80,10 @@ public class RoomResource extends BridgeResource{
     }
 
     @Override
-    public void activateResource() {
-        JSONArray lights = null;
+    public void activateResource(Context context) {
         boolean any_on = false;
         try {
+            assert HueBridge.getInstance() != null;
             any_on = HueBridge.getInstance().
                     getState().
                     getJSONObject("groups").
@@ -93,7 +93,7 @@ public class RoomResource extends BridgeResource{
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        bridge.setHueState(getStateUrl(), !any_on);
+        bridge.setHueState(context, getStateUrl(), !any_on);
     }
 
     @Override
