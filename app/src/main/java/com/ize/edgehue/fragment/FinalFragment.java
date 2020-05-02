@@ -41,7 +41,7 @@ public class FinalFragment extends Fragment {
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);*/
 
-                getActivity().finish();
+                requireActivity().finish();
 
             }
         });

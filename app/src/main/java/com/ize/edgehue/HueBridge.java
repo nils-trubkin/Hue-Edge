@@ -23,16 +23,16 @@ public class HueBridge {
     private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
     private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
     private static HueBridge instance;
-    private static String url = "http://192.168.69.166/api/aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD";
     private static String urlHeader = "http://";
     private static String ip;
-    private static String user;
+    private static String userName;
     private static JSONObject state;
-    private static String username = "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD";
 
-    private HueBridge(String ipAddress, String userName) {
-        ip = ipAddress;
-        user = userName;
+    private static String url;
+
+    private HueBridge(String ip, String userName) {
+        HueBridge.ip = ip;
+        HueBridge.userName = userName;
     }
 
     private static synchronized void deleteInstance() {
@@ -51,6 +51,7 @@ public class HueBridge {
             return null;
         }
         instance = new HueBridge(ipAddress, userName);
+        url = urlHeader + ip + "/api/" + userName;
         return instance;
     }
 
@@ -63,20 +64,12 @@ public class HueBridge {
         HueBridge.state = hueState;
     }
 
-    public static String getUrl() {
-        return url;
-    }
-
-    public static void setUrl(String url) {
-        HueBridge.url = url;
-    }
-
     public static String getUsername() {
-        return user;
+        return userName;
     }
 
     public static void setUsername(String username) {
-        HueBridge.user = username;
+        HueBridge.userName = username;
     }
 
     public void toggleHueState(Context context, BridgeResource br){
@@ -109,12 +102,15 @@ public class HueBridge {
 
     public void requestHueState(final Context context) {
         // Request a string response from the provided URL.
-        String url = urlHeader + ip + "/api/" + user;
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         state = response;
+                        if (HueBridge.getInstance() == null){
+                            Log.wtf(TAG, "HueBridge.getInstance() == null");
+                        }
+                        assert HueBridge.getInstance() != null;
                         try {
                             HueBridge.getInstance().getStateIntent(context, 0, 0).send();
                         } catch (PendingIntent.CanceledException e) {
@@ -163,11 +159,11 @@ public class HueBridge {
     }
 
     private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jo, final String resourceUrl){
-        return new JsonCustomRequest(Request.Method.PUT, url+resourceUrl, jo,
+        return new JsonCustomRequest(Request.Method.PUT, url + resourceUrl, jo,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d(TAG, "setHueState url " + url+resourceUrl);
+                        Log.d(TAG, "setHueState url " + url + resourceUrl);
                         Log.d(TAG, "setHueState responds " + response.toString());
                         boolean success = false;
                         try {
@@ -181,6 +177,10 @@ public class HueBridge {
                         }
                         if (success) {
                             Log.d(TAG, "changeHueState successful");
+                            if (HueBridge.getInstance() == null){
+                                Log.wtf(TAG, "HueBridge.getInstance() == null");
+                            }
+                            assert HueBridge.getInstance() != null;
                             try {
                                 HueBridge.getInstance().getReplyIntent(context, 0, 0).send();
                             } catch (PendingIntent.CanceledException e) {

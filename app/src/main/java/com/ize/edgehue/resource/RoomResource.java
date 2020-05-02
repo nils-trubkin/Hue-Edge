@@ -1,6 +1,7 @@
 package com.ize.edgehue.resource;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -10,6 +11,8 @@ import com.ize.edgehue.R;
 import org.json.JSONException;
 
 public class RoomResource extends BridgeResource{
+
+    private static final String TAG = RoomResource.class.getSimpleName();
 
     public RoomResource(Context context, int id) {
         super(context, id);
@@ -23,6 +26,10 @@ public class RoomResource extends BridgeResource{
     @Override
     public String getName() {
         try {
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
             return  bridge.getState().
                     getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
@@ -36,6 +43,10 @@ public class RoomResource extends BridgeResource{
     @Override
     public String getBtnText() {
         try {
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
             return  (bridge.getState().
                     getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
@@ -51,6 +62,10 @@ public class RoomResource extends BridgeResource{
     @Override
     public int getBtnTextColor() {
         try {
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
             return  (bridge.getState().
                     getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
@@ -66,6 +81,10 @@ public class RoomResource extends BridgeResource{
     @Override
     public int getBtnBackgroundResource() {
         try {
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
             return  (bridge.getState().
                     getJSONObject("groups").
                     getJSONObject(String.valueOf(id)).
@@ -81,6 +100,10 @@ public class RoomResource extends BridgeResource{
     @Override
     public void activateResource(Context context) {
         boolean any_on = false;
+        if(bridge == null){
+            Log.wtf(TAG, "bridge == null");
+        }
+        assert bridge != null;
         try {
             assert HueBridge.getInstance() != null;
             any_on = HueBridge.getInstance().

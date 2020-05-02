@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import androidx.core.content.ContextCompat;
@@ -48,7 +49,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
 
     //Categories available in the left pane (helpContent)
-    private enum menuCategory {
+    public enum menuCategory {
         NO_BRIDGE,
         QUICK_ACCESS,
         LIGHTS,
@@ -161,6 +162,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         super.onVisibilityChanged(context, cocktailId, visibility);
     }
 
+    public static menuCategory getCurrentCategory() {
+        return currentCategory;
+    }
+
     //Create the content view, right panel. Used for buttons
     private RemoteViews createContentView(Context context) {
         RemoteViews contentView = null;
@@ -190,6 +195,31 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 break;
             default:
                 break;
+        }
+
+        //Hide empty columns but at least show mainColumn if both are empty
+        if(contents.get(currentCategory) != null) {
+            boolean mainColumnEmpty = true;
+            boolean extraColumnEmpty = true;
+            contentView.setViewVisibility(R.id.mainColumn, View.GONE);
+            contentView.setViewVisibility(R.id.extraColumn, View.GONE);
+            for (int i = 0; i < 5; i++) {
+                if (contents.get(currentCategory).containsKey(i)) {
+                    mainColumnEmpty = false;
+                    break;
+                }
+            }
+            for (int i = 5; i < 10; i++) {
+                if (contents.get(currentCategory).containsKey(i)) {
+                    extraColumnEmpty = false;
+                    break;
+                }
+            }
+            if (mainColumnEmpty && extraColumnEmpty)
+                mainColumnEmpty = false;
+
+            contentView.setViewVisibility(R.id.mainColumn, mainColumnEmpty ? View.GONE : View.VISIBLE);
+            contentView.setViewVisibility(R.id.extraColumn, extraColumnEmpty ? View.GONE : View.VISIBLE);
         }
         return contentView;
     }
@@ -239,7 +269,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
         if(key == 0){
-            contents.get(currentCategory).get(id).activateResource(context);
+            Objects.requireNonNull(Objects.requireNonNull(contents.get(currentCategory)).get(id)).activateResource(context);
         }
         else if(key == 1) {
             switch (id) {
@@ -271,20 +301,14 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         panelUpdate(context);
     }
 
-    //TODO Button handler for long clicks
     private void performRemoteLongClick(Context context, Intent intent) {
         StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONG_CLICK");
-        int id = intent.getIntExtra("id", -1);
         debugString.append("id=").append(intent.getIntExtra("id", -1));
         Log.d(TAG, debugString.toString());
-        switch (id) {
-            case R.id.btn1:
-                break;
-            case R.id.btn2:
-                break;
-            default:
-                break;
-        }
+        Intent editIntent = new Intent(Intent.ACTION_EDIT);
+        editIntent.addCategory( Intent.CATEGORY_DEFAULT);
+        editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(editIntent);
     }
 
     //The initial setup of the buttons

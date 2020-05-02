@@ -63,10 +63,8 @@ public class JsonCustomRequest extends JsonRequest<JSONArray> {
                             HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
             return Response.success(
                     new JSONArray(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | JSONException e) {
             return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 }

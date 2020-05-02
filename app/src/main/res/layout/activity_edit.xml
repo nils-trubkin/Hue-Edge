@@ -31,14 +31,14 @@
             android:text="HUE State" />
     </LinearLayout>
 
-    <ListView
+    <GridView
+        android:id="@+id/gridView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="200dp"
         android:layout_marginRight="150dp"
-        tools:ignore="RtlHardcoded" >
-
-    </ListView>
+        android:numColumns="2"
+        tools:ignore="RtlHardcoded" />
 
     <LinearLayout
         android:layout_width="150dp"
