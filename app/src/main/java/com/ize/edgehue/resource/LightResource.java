@@ -1,4 +1,4 @@
-package com.ize.edgehue.bridge_resource;
+package com.ize.edgehue.resource;
 
 import android.content.Context;
 import androidx.core.content.ContextCompat;

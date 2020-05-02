@@ -1,12 +1,12 @@
-package com.ize.edgehue.bridge_resource;
+package com.ize.edgehue.resource;
 
 import android.content.Context;
 import com.ize.edgehue.HueBridge;
 
 public abstract class BridgeResource {
-    Context ctx;
-    HueBridge bridge;
-    int id;
+    final Context ctx;
+    final HueBridge bridge;
+    final int id;
 
     BridgeResource(Context context, int id){
         ctx = context;

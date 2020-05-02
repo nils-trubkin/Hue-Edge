@@ -1,4 +1,4 @@
-package com.ize.edgehue.bridge_resource;
+package com.ize.edgehue.resource;
 
 import android.content.Context;
 
@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 public class RoomResource extends BridgeResource{

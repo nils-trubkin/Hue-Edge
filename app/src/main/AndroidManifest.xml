@@ -14,24 +14,36 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".EdgeConfigure"
+            android:name=".activity.EdgeSetup"
             android:label="@string/title_activity_edge_configure"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".EdgeHueProvider">
+        <activity android:name=".activity.MainActivity">
+        </activity>
+
+        <activity
+            android:name=".activity.EditActivity"
+            android:label="TODO"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".EdgeHueProvider" >
             <intent-filter>
                 <action android:name="com.samsung.android.cocktail.v2.action.COCKTAIL_UPDATE" />
-                <action android:name="com.ize.edgehue.ACTION_REMOTE_LONGCLICK" />
-                <action android:name="com.ize.edgehue.ACTION_REMOTE_CLICK" />
-                <action android:name="com.ize.edgehue.ACTION_PULL_TO_REFRESH" />
-                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_STATE" />
-                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY" />
+<!--                <action android:name="com.ize.edgehue.ACTION_REMOTE_LONG_CLICK" />-->
+<!--                <action android:name="com.ize.edgehue.ACTION_REMOTE_CLICK" />-->
+<!--                <action android:name="com.ize.edgehue.ACTION_PULL_TO_REFRESH" />-->
+<!--                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_STATE" />-->
+<!--                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY" />-->
             </intent-filter>
 
             <meta-data
@@ -39,12 +51,6 @@
                 android:resource="@xml/edge_hue" />
         </receiver>
 
-        <service
-            android:name=".EdgeHueProvider"
-            android:permission="android.permission.INTERNET" />
-        <service
-            android:name=".MainActivity"
-            android:permission="android.permission.INTERNET" />
     </application>
 
 </manifest>

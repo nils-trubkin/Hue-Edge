@@ -9,8 +9,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.ize.edgehue.bridge_resource.BridgeResource;
-import com.ize.edgehue.bridge_resource.LightResource;
+import com.ize.edgehue.resource.BridgeResource;
+import com.ize.edgehue.resource.LightResource;
+import com.ize.edgehue.api.JsonCustomRequest;
+import com.ize.edgehue.api.RequestQueueSingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -81,7 +83,7 @@ public class HueBridge {
         if(br instanceof LightResource) {
             Log.d(TAG, "toggleHueState entered for id: "+ br.getId());
             int lightId = br.getId();
-            String stateUrl = ((LightResource) br).getStateUrl();
+            String stateUrl = br.getStateUrl();
             boolean lastState;
             try {
                 lastState = state.getJSONObject("lights").
@@ -137,9 +139,8 @@ public class HueBridge {
         stateIntent.setAction(ACTION_RECEIVE_HUE_STATE);
         stateIntent.putExtra("id", id);
         stateIntent.putExtra("key", key);
-        PendingIntent pStateIntent = PendingIntent.getBroadcast(context, 1, stateIntent,
+        return PendingIntent.getBroadcast(context, 1, stateIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return pStateIntent;
     }
 
     private PendingIntent getReplyIntent(Context context, int id, int key) {
@@ -147,9 +148,8 @@ public class HueBridge {
         replyIntent.setAction(ACTION_RECEIVE_HUE_REPLY);
         replyIntent.putExtra("id", id);
         replyIntent.putExtra("key", key);
-        PendingIntent pReplyIntent = PendingIntent.getBroadcast(context, 1, replyIntent,
+        return PendingIntent.getBroadcast(context, 1, replyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        return pReplyIntent;
     }
 
     private JSONObject getJsonOnObject(boolean state) {
@@ -163,7 +163,7 @@ public class HueBridge {
     }
 
     private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jo, final String resourceUrl){
-        JsonCustomRequest jcr = new JsonCustomRequest(Request.Method.PUT, url+resourceUrl, jo,
+        return new JsonCustomRequest(Request.Method.PUT, url+resourceUrl, jo,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -198,6 +198,5 @@ public class HueBridge {
                     }
                 }
         );
-        return jcr;
     }
 }

@@ -1,4 +1,4 @@
-package com.ize.edgehue;
+package com.ize.edgehue.api;
 
 import android.content.Context;
 
@@ -28,7 +28,7 @@ public class RequestQueueSingleton {
         return instance;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (requestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.

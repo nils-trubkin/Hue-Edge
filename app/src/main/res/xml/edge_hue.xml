@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cocktail-provider xmlns:android="http://schemas.android.com/apk/res/android"
+<cocktail-provider
     label="@string/edge_hue_name"
     description="@string/edge_hue_description"
     previewImage="@drawable/panel_preview_image"
     permitVisibilityChanged="true"
-    configure="com.ize.edgehue.EdgeConfigure"
+    configure="com.ize.edgehue.activity.EdgeSetup"
     cocktailWidth="550">
 </cocktail-provider>

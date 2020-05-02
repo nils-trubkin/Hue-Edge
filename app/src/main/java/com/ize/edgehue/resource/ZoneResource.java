@@ -1,9 +1,9 @@
-package com.ize.edgehue.bridge_resource;
+package com.ize.edgehue.resource;
 
 import android.content.Context;
 
-public class SceneResource extends BridgeResource {
-    public SceneResource(Context context, int id) {
+public class ZoneResource extends BridgeResource{
+    public ZoneResource(Context context, int id) {
         super(context, id);
     }
 

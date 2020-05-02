@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1E1E1E"
-    tools:context=".EdgeConfigure">
+    tools:context=".activity.EdgeSetup">
 
     <ImageView
         android:id="@+id/backgroundView"
@@ -18,7 +18,8 @@
         android:foreground="#7F666666"
         android:foregroundTintMode="multiply"
         android:scaleType="centerCrop"
-        android:src="@drawable/blurry_background" />
+        android:src="@drawable/blurry_background"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textView"

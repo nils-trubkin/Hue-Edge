@@ -1,6 +1,5 @@
-package com.ize.edgehue;
+package com.ize.edgehue.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
+
+import com.ize.edgehue.EdgeHueProvider;
+import com.ize.edgehue.R;
 
 import org.json.JSONException;
 
@@ -34,10 +35,14 @@ public class FinalFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+/*
                 Intent homeIntent = new Intent(Intent.ACTION_MAIN);
                 homeIntent.addCategory( Intent.CATEGORY_HOME );
                 homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);
+                startActivity(homeIntent);*/
+
+                getActivity().finish();
+
             }
         });
     }

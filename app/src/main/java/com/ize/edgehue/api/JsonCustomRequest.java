@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ize.edgehue;
+package com.ize.edgehue.api;
 
 import androidx.annotation.Nullable;
 

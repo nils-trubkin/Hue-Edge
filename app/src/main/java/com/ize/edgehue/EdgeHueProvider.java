@@ -10,10 +10,10 @@ import android.widget.RemoteViews;
 
 import androidx.core.content.ContextCompat;
 
-import com.ize.edgehue.bridge_resource.BridgeResource;
-import com.ize.edgehue.bridge_resource.LightResource;
-import com.ize.edgehue.bridge_resource.RoomResource;
-import com.ize.edgehue.bridge_resource.SceneResource;
+import com.ize.edgehue.resource.BridgeResource;
+import com.ize.edgehue.resource.LightResource;
+import com.ize.edgehue.resource.RoomResource;
+import com.ize.edgehue.resource.SceneResource;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -28,7 +28,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     private static final String TAG = EdgeHueProvider.class.getSimpleName();
 
-    private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.edgehue.ACTION_REMOTE_LONGCLICK";
+    private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.edgehue.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.ize.edgehue.ACTION_REMOTE_CLICK";
     private static final String ACTION_PULL_TO_REFRESH = "com.ize.edgehue.ACTION_PULL_TO_REFRESH";
     private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
@@ -181,8 +181,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 for ( int button : btnArr ){
                     contentView.setOnClickPendingIntent(button, getClickIntent(
                             context, i++, 0));
+                    SlookCocktailManager.getInstance(context).
+                            setOnLongClickPendingIntent(contentView, button,
+                                    getLongClickIntent(context, button, 0));
                 }
-                //SlookCocktailManager.getInstance(context).setOnLongClickPendingIntent(contentView, R.id.btn1, getLongClickIntent(context, R.id.btn1, 0));
+                contentView.setOnClickPendingIntent(R.id.btnEdit,
+                        getClickIntent(context, R.id.btnEdit, 1));
                 break;
             default:
                 break;
@@ -193,7 +197,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Create the help view, left panel. Used for categories.
     private RemoteViews createHelpView(Context context) {
         RemoteViews helpView = new RemoteViews(context.getPackageName(),
-                R.layout.help_view);
+                R.layout.view_help);
         for( int button : btnCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(context, button, 1));
             helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
@@ -254,6 +258,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 case R.id.btnCategory5:
                     currentCategory = menuCategory.SCENES;
                     break;
+                case R.id.btnEdit:
+                    Intent editIntent = new Intent(Intent.ACTION_EDIT);
+                    editIntent.addCategory( Intent.CATEGORY_DEFAULT);
+                    editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(editIntent);
+                    break;
                 default:
                     break;
             }
@@ -263,7 +273,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     //TODO Button handler for long clicks
     private void performRemoteLongClick(Context context, Intent intent) {
-        StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONGCLICK");
+        StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONG_CLICK");
         int id = intent.getIntExtra("id", -1);
         debugString.append("id=").append(intent.getIntExtra("id", -1));
         Log.d(TAG, debugString.toString());
