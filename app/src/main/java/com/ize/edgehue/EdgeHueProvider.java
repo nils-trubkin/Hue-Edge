@@ -12,17 +12,13 @@ import android.widget.RemoteViews;
 import androidx.core.content.ContextCompat;
 
 import com.ize.edgehue.resource.BridgeResource;
-import com.ize.edgehue.resource.LightResource;
-import com.ize.edgehue.resource.RoomResource;
-import com.ize.edgehue.resource.SceneResource;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 
 public class EdgeHueProvider extends SlookCocktailProvider {
@@ -32,8 +28,8 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.edgehue.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.ize.edgehue.ACTION_REMOTE_CLICK";
     private static final String ACTION_PULL_TO_REFRESH = "com.ize.edgehue.ACTION_PULL_TO_REFRESH";
-    private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
-    private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
+    protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
+    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
 
     //Array of references to buttons
     private static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
@@ -64,10 +60,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
     private static HashMap<Integer, BridgeResource> quickAccessContent = new HashMap<>();
-    private static HashMap<Integer, LightResource> lightsContent = new HashMap<>();
-    private static HashMap<Integer, RoomResource> roomsContent = new HashMap<>();
-    private static HashMap<Integer, RoomResource> zonesContent = new HashMap<>();
-    private static HashMap<Integer, SceneResource> scenesContent = new HashMap<>();
+    private static HashMap<Integer, BridgeResource> lightsContent = new HashMap<>();
+    private static HashMap<Integer, BridgeResource> roomsContent = new HashMap<>();
+    private static HashMap<Integer, BridgeResource> zonesContent = new HashMap<>();
+    private static HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
 
     //Mapping of category to contents
     private static HashMap<menuCategory, HashMap<Integer, ? extends BridgeResource>> contents =
@@ -264,12 +260,25 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    //Enter the edit activity to customize buttons
+    private void startEditActivity(Context context){
+        Intent editIntent = new Intent(Intent.ACTION_EDIT);
+        editIntent.addCategory( Intent.CATEGORY_DEFAULT);
+        editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(editIntent);
+    }
+
     //Button handler
     private void performRemoteClick(Context context, Intent intent) throws JSONException {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
         if(key == 0){
-            Objects.requireNonNull(Objects.requireNonNull(contents.get(currentCategory)).get(id)).activateResource(context);
+            if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
+                BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
+                HueBridge.getInstance().toggleHueState(context, br);
+            }
+            else
+                startEditActivity(context);
         }
         else if(key == 1) {
             switch (id) {
@@ -289,10 +298,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                     currentCategory = menuCategory.SCENES;
                     break;
                 case R.id.btnEdit:
-                    Intent editIntent = new Intent(Intent.ACTION_EDIT);
-                    editIntent.addCategory( Intent.CATEGORY_DEFAULT);
-                    editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(editIntent);
+                    startEditActivity(context);
                     break;
                 default:
                     break;
@@ -311,10 +317,8 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         context.startActivity(editIntent);
     }
 
-    //The initial setup of the buttons
-    public static void quickSetup(Context context) throws JSONException {
-        Log.d(TAG, "quickSetup entered");
-
+    public static void clearAllContents(){
+        Log.d(TAG, "clearAllContents entered");
         quickAccessContent.clear();
         lightsContent.clear();
         roomsContent.clear();
@@ -327,6 +331,14 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         contents.put(menuCategory.ROOMS, roomsContent);
         contents.put(menuCategory.ZONES, zonesContent);
         contents.put(menuCategory.SCENES, scenesContent);
+        Log.d(TAG, "clearAllContents done");
+    }
+
+    //The initial setup of the buttons
+    public static void quickSetup(Context context) throws JSONException {
+        Log.d(TAG, "quickSetup entered");
+
+        clearAllContents();
 
         currentCategory = menuCategory.QUICK_ACCESS;
 
@@ -336,62 +348,52 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             Log.e(TAG, "HueBridge.getInstance() == null. Probably missing config");
         }
         assert HueBridge.getInstance() != null;
-        JSONObject lights = HueBridge.getInstance().getState().getJSONObject("lights");
-        Iterator<String> keys = lights.keys();
         int buttonIndex = 0;
         int qaButtonIndex = 0;
-        while(keys.hasNext() && buttonIndex < 10) {
-            String key = keys.next();
-            Log.d(TAG, "quickSetup for lights on id: " + Integer.valueOf(key));
-            lightsContent.put(buttonIndex++, new LightResource(context, Integer.parseInt(key)));
+        HashMap<String, BridgeResource> map = null;
+
+        map = bridge.getLights();
+        Log.d(TAG, "quickSetup getLights() size: " + map.size());
+        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+            if(buttonIndex >= 10)
+                break;
+            Log.d(TAG, "quickSetup for lights on id: " + entry.getKey());
+            lightsContent.put(buttonIndex++, entry.getValue());
             if(qaButtonIndex < 2) {
-                quickAccessContent.put(qaButtonIndex++, new LightResource(context, Integer.parseInt(key)));
+                quickAccessContent.put(qaButtonIndex++, entry.getValue());
             }
         }
 
-        JSONObject groups = HueBridge.getInstance().getState().getJSONObject("groups");
-        keys = groups.keys();
         buttonIndex = 0;
-        while(keys.hasNext() && buttonIndex < 10) {
-            String key = keys.next();
-            Log.d(TAG, "quickSetup for rooms on id: " + Integer.valueOf(key));
-            if (groups.getJSONObject(key).getString("type").equals("Room")) {
-                roomsContent.put(buttonIndex++, new RoomResource(context, Integer.parseInt(key)));
-                if(qaButtonIndex < 4) {
-                    quickAccessContent.put(qaButtonIndex++, new RoomResource(context, Integer.parseInt(key)));
-                }
+
+        map = bridge.getRooms();
+        Log.d(TAG, "quickSetup getRooms() size: " + map.size());
+        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+            if(buttonIndex >= 10)
+                break;
+            Log.d(TAG, "quickSetup for rooms on id: " + entry.getKey());
+            roomsContent.put(buttonIndex++, entry.getValue());
+            if(qaButtonIndex < 4) {
+                quickAccessContent.put(qaButtonIndex++, entry.getValue());
             }
         }
 
-        keys = groups.keys();
         buttonIndex = 0;
-        while(keys.hasNext() && buttonIndex < 10) {
-            String key = keys.next();
-            Log.d(TAG, "quickSetup for zones on id: " + Integer.valueOf(key));
-            if (groups.getJSONObject(key).getString("type").equals("Zone")) {
-                zonesContent.put(buttonIndex++, new RoomResource(context, Integer.parseInt(key)));
-                if(qaButtonIndex < 6) {
-                    quickAccessContent.put(qaButtonIndex++, new RoomResource(context, Integer.parseInt(key)));
-                }
+
+        map = bridge.getZones();
+        Log.d(TAG, "quickSetup getZones() size: " + map.size());
+        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+            if(buttonIndex >= 10)
+                break;
+            Log.d(TAG, "quickSetup for zones on id: " + entry.getKey());
+            zonesContent.put(buttonIndex++, entry.getValue());
+            if(qaButtonIndex < 6) {
+                quickAccessContent.put(qaButtonIndex++, entry.getValue());
             }
         }
 
-        /*JSONObject scenes = HueBridge.getInstance().getState().getJSONObject("scenes");
-        keys = scenes.keys();
         buttonIndex = 0;
-        while(keys.hasNext() && buttonIndex < 10) {
-            String key = keys.next();
-            JSONObject value = scenes.getJSONObject(key);
-            Log.d(TAG, "quickSetup for scenes on id: " + Integer.valueOf(key));
-            if (value instanceof JSONObject) {
-                if (scenes.getJSONObject(key).getString("type").equals("GroupScene")) {
-                    roomsContent.put(buttonIndex++, new SceneResource(context, Integer.valueOf(key)));
-                    if(qaButtonIndex < 8) {
-                        quickAccessContent.put(qaButtonIndex++, new RoomResource(context, Integer.valueOf(key)));
-                    }
-                }
-            }
-        }*/
+    //TODO Scenes
     }
 
     //Refresh both panels

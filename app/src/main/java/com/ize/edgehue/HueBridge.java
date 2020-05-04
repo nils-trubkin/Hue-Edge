@@ -10,7 +10,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.ize.edgehue.resource.BridgeResource;
-import com.ize.edgehue.resource.LightResource;
 import com.ize.edgehue.api.JsonCustomRequest;
 import com.ize.edgehue.api.RequestQueueSingleton;
 
@@ -18,90 +17,187 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class HueBridge {
     private static final String TAG = HueBridge.class.getSimpleName();
-    private static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
-    private static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
+
     private static HueBridge instance;
-    private static String urlHeader = "http://";
+
     private static String ip;
     private static String userName;
+    private static String urlHeader;
+    private static String url;
     private static JSONObject state;
 
-    private static String url;
+    private static HashMap<String, BridgeResource> lights = new HashMap<>();
+    private static HashMap<String, BridgeResource> rooms = new HashMap<>();
+    private static HashMap<String, BridgeResource> zones = new HashMap<>();
+    private static HashMap<String, BridgeResource> scenes = new HashMap<>();
 
+
+
+    //Default constructor with http header
     private HueBridge(String ip, String userName) {
-        HueBridge.ip = ip;
-        HueBridge.userName = userName;
+        this(ip, userName, "http://");
     }
 
+    //Custom constructor for future use TODO HTTPS
+    private HueBridge(String ip, String userName, String urlHeader) {
+        HueBridge.ip = ip;
+        HueBridge.userName = userName;
+        HueBridge.urlHeader = urlHeader;
+        HueBridge.url = urlHeader + ip + "/api/" + userName;
+    }
+
+    //Delete the instance TODO App Reset
     private static synchronized void deleteInstance() {
         instance = null;
     }
 
+    //Get instance of instantiated HueBridge
     public static synchronized HueBridge getInstance() {
         if (instance == null) {
+            Log.w(TAG, "getInstance() null! Is this the first startup?");
             return null;
         }
         return instance;
     }
 
+    //Constructor for instance, first time setup
     public static synchronized HueBridge getInstance(String ipAddress, String userName) {
         if (ipAddress == null || userName == null) {
             return null;
         }
         instance = new HueBridge(ipAddress, userName);
-        url = urlHeader + ip + "/api/" + userName;
         return instance;
     }
 
-
+    //TODO do i really need this?
     public JSONObject getState() {
         return state;
     }
 
-    private static void setState(JSONObject hueState) {
-        HueBridge.state = hueState;
+    public static HashMap<String, BridgeResource> getLights() {
+        return lights;
     }
 
-    public static String getUsername() {
-        return userName;
+    public static HashMap<String, BridgeResource> getRooms() {
+        return rooms;
     }
 
-    public static void setUsername(String username) {
-        HueBridge.userName = username;
+    public static HashMap<String, BridgeResource> getZones() {
+        return zones;
     }
 
-    public void toggleHueState(Context context, BridgeResource br){
-        if(br instanceof LightResource) {
-            Log.d(TAG, "toggleHueState entered for id: "+ br.getId());
-            int lightId = br.getId();
-            String stateUrl = br.getStateUrl();
-            boolean lastState;
-            try {
-                lastState = state.getJSONObject("lights").
-                        getJSONObject(String.valueOf(lightId)).
-                        getJSONObject("state").getBoolean("on");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return;
+    public static HashMap<String, BridgeResource> getScenes() {
+        return scenes;
+    }
+
+    public void refreshAllHashMaps(Context context){
+        Iterator<String> keys = state.keys();
+        while(keys.hasNext()){ // iterate over categories
+            String key = keys.next();
+            if(key.equals("lights") || key.equals("groups") || key.equals("scenes")) {
+                try {
+                    JSONObject resources = state.getJSONObject(key); // get all res. in category
+                    Iterator<String> resourcesKeys = resources.keys();
+                    while (resourcesKeys.hasNext()) {    // iterate over one res. at a time
+                        String resourcesKey = resourcesKeys.next();
+                        JSONObject resource = resources.getJSONObject(resourcesKey);
+                        if (key.equals("lights")) {
+                            BridgeResource br = new BridgeResource(
+                                    context,
+                                    resourcesKey,
+                                    key,
+                                    "on",
+                                    "on");
+                            lights.put(resourcesKey, br);
+                        }
+                        else if (key.equals("groups")) {
+                            BridgeResource br = new BridgeResource(
+                                    context,
+                                    resourcesKey,
+                                    key,
+                                    "any_on",
+                                    "on");
+                            if(resource.getString("type").equals("Room"))
+                                rooms.put(resourcesKey, br);
+                            else if(resource.getString("type").equals("Zone"))
+                                zones.put(resourcesKey, br);
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.wtf(TAG, "Can't find lights in state!");
+                    e.printStackTrace();
+                }
             }
-            setHueState(context, stateUrl, !lastState);
         }
     }
 
-    public void setHueState(Context context, final String resourceUrl, final boolean state) {
+    public void toggleHueState(Context context, BridgeResource br){
+        String id = br.getId();
+        String category = br.getCategory();
+        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        String actionRead = br.getActionRead();
+        String actionWrite = br.getActionWrite();
+        Log.d(TAG, "toggleHueState entered for: " + category + " " + id);
+        boolean lastState;
+        try {
+            lastState = state.
+                    getJSONObject(category).
+                    getJSONObject(id).
+                    getJSONObject("state").
+                    getBoolean(actionRead);
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't get lastState");
+            e.printStackTrace();
+            return;
+        }
+        setHueState(context, actionUrl, actionWrite, !lastState);
+    }
+
+    //Set given pair to resourceUrl
+    private void setHueState(Context context, final String resourceUrl, final String key, final boolean value) {
         Log.d(TAG, "setHueState entered");
-        JSONObject jo = getJsonOnObject(state);
-        JsonCustomRequest jcr = getJsonCustomRequest(context, jo, resourceUrl);
-        Log.d(TAG, "changeHueState putRequest created");
-        Log.d(TAG, "url: " + resourceUrl);
+        JSONObject j = createJsonOnObject(key, value);
+        assert j != null;
+        JsonCustomRequest jcr = getJsonCustomRequest(context, j, resourceUrl);
+        Log.d(TAG, "changeHueState putRequest created for this url\n" + resourceUrl);
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(context).addToRequestQueue(jcr);
     }
 
+    //Construct intent for incoming state JsonObject
+    private PendingIntent getStateIntent(Context context) {
+        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
+        stateIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_STATE);
+        return PendingIntent.getBroadcast(context, 1, stateIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //Construct intent for incoming reply JsonArray
+    private PendingIntent getReplyIntent(Context context) {
+        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
+        replyIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_REPLY);
+        return PendingIntent.getBroadcast(context, 1, replyIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //Create a JsonObject to send to hue bridge
+    private JSONObject createJsonOnObject(String k, boolean v) {
+        try {
+            return new JSONObject().put(k, v);
+        } catch (JSONException e) {
+            Log.wtf(TAG, "Can not create JsonObject. Missing dep?");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //GET method
     public void requestHueState(final Context context) {
-        // Request a string response from the provided URL.
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -111,8 +207,10 @@ public class HueBridge {
                             Log.wtf(TAG, "HueBridge.getInstance() == null");
                         }
                         assert HueBridge.getInstance() != null;
+                        HueBridge bridge = HueBridge.getInstance();
+                        bridge.refreshAllHashMaps(context);
                         try {
-                            HueBridge.getInstance().getStateIntent(context, 0, 0).send();
+                            bridge.getStateIntent(context).send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -121,82 +219,81 @@ public class HueBridge {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
+                        Log.e(TAG, error.toString());
                     }
                 });
-
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(context).addToRequestQueue(jor);
         Log.d(TAG, "request sent to queue");
     }
 
-    private PendingIntent getStateIntent(Context context, int id, int key) {
-        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
-        stateIntent.setAction(ACTION_RECEIVE_HUE_STATE);
-        stateIntent.putExtra("id", id);
-        stateIntent.putExtra("key", key);
-        return PendingIntent.getBroadcast(context, 1, stateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private PendingIntent getReplyIntent(Context context, int id, int key) {
-        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
-        replyIntent.setAction(ACTION_RECEIVE_HUE_REPLY);
-        replyIntent.putExtra("id", id);
-        replyIntent.putExtra("key", key);
-        return PendingIntent.getBroadcast(context, 1, replyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private JSONObject getJsonOnObject(boolean state) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("on", state);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    //PUT method
+    private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jsonObject, final String resourceUrl){
+        if(!jsonObject.keys().hasNext()){
+            Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
+            return null;
         }
-        return jsonObject;
-    }
+        assert jsonObject.keys().hasNext();
+        Log.d(TAG, "setHueState url " + url + resourceUrl);
+        return new JsonCustomRequest(Request.Method.PUT, url + resourceUrl, jsonObject,
+            new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d(TAG, "setHueState responds " + response.toString());
+                    boolean success = false;
+                    Iterator<String> responseKeys;
+                    String responseKey = null;
+                    Iterator<String> requestKeys;
+                    String requestKey = null;
 
-    private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jo, final String resourceUrl){
-        return new JsonCustomRequest(Request.Method.PUT, url + resourceUrl, jo,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, "setHueState url " + url + resourceUrl);
-                        Log.d(TAG, "setHueState responds " + response.toString());
-                        boolean success = false;
+                    String responseState = null;
+                    String requestedState = null;
+
+                    try {
+                        JSONObject jsonResponse = response.getJSONObject(0);
+                        responseKeys = jsonResponse.keys();
+                        if(responseKeys.hasNext()) {
+                            responseKey = responseKeys.next();
+                            if(!responseKey.equals("success")){  //response key should be success
+                                Log.e(TAG, "Unsuccesfull! Check reply");
+                                return;
+                            }
+                            requestKeys = jsonObject.keys();    // this can be "on" or "all_on" for example
+                            if(requestKeys.hasNext()) {
+                                requestKey = requestKeys.next();
+                                requestedState = jsonObject.getString(requestKey);
+                                assert responseKey.equals("success");
+                                JSONObject responseValue = jsonResponse.getJSONObject(responseKey); // get key for success
+                                responseState = responseValue.getString(resourceUrl + "/" + requestKey); //get response for request
+                            }
+                        }
+                        success = requestedState.equals(responseState);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (success) {
+                        Log.d(TAG, "changeHueState successful");
+                        if (HueBridge.getInstance() == null){
+                            Log.wtf(TAG, "HueBridge.getInstance() == null");
+                        }
+                        assert HueBridge.getInstance() != null;
                         try {
-                            boolean requestedState = jo.getBoolean("on");
-                            boolean responseState = response.getJSONObject(0).
-                                    getJSONObject("success").
-                                    getBoolean(resourceUrl+"/on"); //"/lights/" + id + "/state/on"
-                            success = requestedState == responseState;
-                        } catch (JSONException e) {
+                            HueBridge.getInstance().getReplyIntent(context).send();
+                        } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
-                        if (success) {
-                            Log.d(TAG, "changeHueState successful");
-                            if (HueBridge.getInstance() == null){
-                                Log.wtf(TAG, "HueBridge.getInstance() == null");
-                            }
-                            assert HueBridge.getInstance() != null;
-                            try {
-                                HueBridge.getInstance().getReplyIntent(context, 0, 0).send();
-                            } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Log.d(TAG, "changeHueState unsuccessful");
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
+                    } else {
+                        Log.d(TAG, "changeHueState unsuccessful");
                     }
                 }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e(TAG, error.toString());
+                }
+            }
         );
     }
+
 }
