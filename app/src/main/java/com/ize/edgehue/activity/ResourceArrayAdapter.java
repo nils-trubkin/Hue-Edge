@@ -1,6 +1,7 @@
 package com.ize.edgehue.activity;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.ize.edgehue.EdgeHueProvider;
 import com.ize.edgehue.R;
 import com.ize.edgehue.resource.BridgeResource;
 
@@ -31,7 +33,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(final int position, View convertView, ViewGroup parent){
 
         LayoutInflater inflater = LayoutInflater.from(ctx);
         convertView = inflater.inflate(mResource, parent, false);
@@ -46,7 +48,17 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setText(btnText);
         gridBtn.setTextColor(btnColor);
         gridBtn.setBackgroundResource(btnResource);
+        if(Objects.requireNonNull(getItem(position)).getCategory().equals("scenes")){
+            gridBtn.setTextSize(10);
+        }
+        gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);
+        gridBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EdgeHueProvider.addToCurrentCategory(getItem(position));
+            }
+        });
 
         return convertView;
     }

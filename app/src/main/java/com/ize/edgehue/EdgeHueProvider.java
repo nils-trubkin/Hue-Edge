@@ -32,16 +32,16 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
 
     //Array of references to buttons
-    private static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
+    public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10};
     //Array of references to category buttons
-    private static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
+    public static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
             R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
     //Array of references to category buttons underlines
-    private static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
+    public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
             R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
     //Array of references to button texts (text under the button itself)
-    private static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
+    public static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
 
     //Categories available in the left pane (helpContent)
@@ -160,6 +160,22 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     public static menuCategory getCurrentCategory() {
         return currentCategory;
+    }
+
+    public static void addToCurrentCategory(BridgeResource br){
+        for (int i : btnArr){
+            HashMap<Integer, BridgeResource> cc =
+                    (HashMap<Integer, BridgeResource>) contents.get(getCurrentCategory());
+            if(!Objects.requireNonNull(cc.containsKey(i))){
+                cc.put(i, br);
+                return;
+            }
+        }
+
+    }
+
+    public static HashMap<menuCategory, HashMap<Integer, ? extends BridgeResource>> getContents() {
+        return contents;
     }
 
     //Create the content view, right panel. Used for buttons
@@ -393,7 +409,18 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         }
 
         buttonIndex = 0;
-    //TODO Scenes
+
+        map = bridge.getScenes();
+        Log.d(TAG, "quickSetup getScenes() size: " + map.size());
+        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+            if(buttonIndex >= 10)
+                break;
+            Log.d(TAG, "quickSetup for scenes on id: " + entry.getKey());
+            scenesContent.put(buttonIndex++, entry.getValue());
+            if(qaButtonIndex < 8) {
+                quickAccessContent.put(qaButtonIndex++, entry.getValue());
+            }
+        }
     }
 
     //Refresh both panels
@@ -414,6 +441,9 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                     contentView.setTextColor(btnArr[i], resource.getBtnTextColor());
                     contentView.setInt(btnArr[i], "setBackgroundResource",
                             resource.getBtnBackgroundResource());
+                    if(resource.getCategory().equals("scenes")){
+                        contentView.setFloat(btnArr[i], "setTextSize", 10);
+                    }
                 } else {
                     contentView.setTextViewText(btnTextArr[i], "");
                     contentView.setTextViewText(btnArr[i], "+");

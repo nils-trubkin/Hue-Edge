@@ -74,28 +74,40 @@ public class HueBridge {
         return instance;
     }
 
-    //TODO do i really need this?
     public JSONObject getState() {
         return state;
     }
 
-    public static HashMap<String, BridgeResource> getLights() {
+    public HashMap<String, BridgeResource> getLights() {
         return lights;
     }
 
-    public static HashMap<String, BridgeResource> getRooms() {
+    public HashMap<String, BridgeResource> getRooms() {
         return rooms;
     }
 
-    public static HashMap<String, BridgeResource> getZones() {
+    public HashMap<String, BridgeResource> getZones() {
         return zones;
     }
 
-    public static HashMap<String, BridgeResource> getScenes() {
+    public HashMap<String, BridgeResource> getScenes() {
         return scenes;
     }
 
-    public void refreshAllHashMaps(Context context){
+    public String getSceneGroup(BridgeResource br) {
+        try {
+            return  state.
+                    getJSONObject("scenes").
+                    getJSONObject(br.getId()).
+                    getString("group");
+        } catch (JSONException e) {
+            Log.e(TAG, "Can't getSceneGroup()");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void refreshAllHashMaps(Context context){
         Iterator<String> keys = state.keys();
         while(keys.hasNext()){ // iterate over categories
             String key = keys.next();
@@ -127,6 +139,20 @@ public class HueBridge {
                             else if(resource.getString("type").equals("Zone"))
                                 zones.put(resourcesKey, br);
                         }
+                        else if (key.equals("scenes")) {
+                            Iterator<String> sceneKeys = resource.keys();
+                            while (sceneKeys.hasNext()){
+                                if(sceneKeys.next().equals("group")){
+                                    BridgeResource br = new BridgeResource(
+                                            context,
+                                            resourcesKey,
+                                            key,
+                                            "scene",
+                                            "scene");
+                                    scenes.put(resourcesKey, br);
+                                }
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     Log.wtf(TAG, "Can't find lights in state!");
@@ -144,22 +170,27 @@ public class HueBridge {
         String actionWrite = br.getActionWrite();
         Log.d(TAG, "toggleHueState entered for: " + category + " " + id);
         boolean lastState;
-        try {
-            lastState = state.
-                    getJSONObject(category).
-                    getJSONObject(id).
-                    getJSONObject("state").
-                    getBoolean(actionRead);
-        } catch (JSONException e) {
-            Log.e(TAG, "Can't get lastState");
-            e.printStackTrace();
-            return;
+        if(category.equals("scenes")){
+            setHueState(context, actionUrl, actionWrite, id);
         }
-        setHueState(context, actionUrl, actionWrite, !lastState);
+        else {
+            try {
+                lastState = state.
+                        getJSONObject(category).
+                        getJSONObject(id).
+                        getJSONObject("state").
+                        getBoolean(actionRead);
+            } catch (JSONException e) {
+                Log.e(TAG, "Can't get lastState");
+                e.printStackTrace();
+                return;
+            }
+            setHueState(context, actionUrl, actionWrite, !lastState);
+        }
     }
 
     //Set given pair to resourceUrl
-    private void setHueState(Context context, final String resourceUrl, final String key, final boolean value) {
+    private void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
         Log.d(TAG, "setHueState entered");
         JSONObject j = createJsonOnObject(key, value);
         assert j != null;
@@ -186,7 +217,7 @@ public class HueBridge {
     }
 
     //Create a JsonObject to send to hue bridge
-    private JSONObject createJsonOnObject(String k, boolean v) {
+    private JSONObject createJsonOnObject(String k, Object v) {
         try {
             return new JSONObject().put(k, v);
         } catch (JSONException e) {
@@ -229,24 +260,24 @@ public class HueBridge {
 
     //PUT method
     private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jsonObject, final String resourceUrl){
-        if(!jsonObject.keys().hasNext()){
+        if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
         }
         assert jsonObject.keys().hasNext();
-        Log.d(TAG, "setHueState url " + url + resourceUrl);
+        Log.d(TAG, "setHueState url " + url + resourceUrl); // this is the actual resource path
         return new JsonCustomRequest(Request.Method.PUT, url + resourceUrl, jsonObject,
             new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     Log.d(TAG, "setHueState responds " + response.toString());
-                    boolean success = false;
-                    Iterator<String> responseKeys;
-                    String responseKey = null;
-                    Iterator<String> requestKeys;
-                    String requestKey = null;
+                    boolean success = false; // assume the worst
+                    Iterator<String> responseKeys; // iterator for response JSONObject
+                    String responseKey = null; // index for response JSONObject
+                    Iterator<String> requestKeys; // iterator for arg JSONObject jsonObject
+                    String requestKey = null; // index for arg JSONObject jsonObject
 
-                    String responseState = null;
+                    String responseState = null; //
                     String requestedState = null;
 
                     try {
@@ -271,7 +302,7 @@ public class HueBridge {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    if (success) {
+                    if (success ) {
                         Log.d(TAG, "changeHueState successful");
                         if (HueBridge.getInstance() == null){
                             Log.wtf(TAG, "HueBridge.getInstance() == null");

@@ -2,24 +2,20 @@ package com.ize.edgehue.resource;
 
 import android.content.Context;
 import android.util.Log;
-
 import androidx.core.content.ContextCompat;
-
-import com.ize.edgehue.EdgeHueProvider;
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
-
 import org.json.JSONException;
 
 public class BridgeResource {
 
     private static final String TAG = BridgeResource.class.getSimpleName();
 
-    final Context ctx;
-    final String id;
-    final String category;
-    String actionRead;
-    String actionWrite;
+    private final Context ctx;
+    private final String id;
+    private final String category;
+    private String actionRead;
+    private String actionWrite;
 
     public BridgeResource(Context context, String id, String category, String actionRead, String actionWrite){
         this.ctx = context;
@@ -62,8 +58,12 @@ public class BridgeResource {
         }
     }
 
-    public int getState(){
+    private int getState(){
         try {
+            if (category.equals("scenes")) {
+                Log.w(TAG,"You shouldn't use this!");
+                return 1;
+            }
             HueBridge bridge = HueBridge.getInstance();
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
@@ -81,6 +81,28 @@ public class BridgeResource {
         }
     }
     public String getBtnText(){
+        if (category.equals("scenes")) {
+            HueBridge bridge = HueBridge.getInstance();
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
+            if (bridge.getSceneGroup(this).equals(0))
+                return "?";
+            try {
+                if (bridge.getSceneGroup(this).equals("0")) {
+                    return "All";
+                }
+                else {
+                    return bridge.getState().
+                            getJSONObject("groups").
+                            getJSONObject(bridge.getSceneGroup(this)).
+                            getString("name");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         switch (getState()) {
             case 0:
                 return "◯";
@@ -92,6 +114,8 @@ public class BridgeResource {
     }
 
     public int getBtnTextColor(){
+        if (category.equals("scenes"))
+            return ContextCompat.getColor(ctx, R.color.black);
         switch (getState()) {
             case 1:
                 return ContextCompat.getColor(ctx, R.color.black);
@@ -102,6 +126,8 @@ public class BridgeResource {
     }
 
     public int getBtnBackgroundResource(){
+        if (category.equals("scenes"))
+            return R.drawable.on_button_background;
         switch (getState()) {
             case 0:
                 return R.drawable.off_button_background;
@@ -113,10 +139,17 @@ public class BridgeResource {
     }
 
     public String getStateUrl(){
+        if (category.equals("scenes")) {
+            Log.w(TAG,"You shouldn't use this!");
+            return null;
+        }
         return "/" + getCategory() + "/" + getId() + "/state";
     }
 
     public String getActionUrl(){
+        if (category.equals("scenes")) {
+            return "/" + "groups" + "/" + 0 + "/action";
+        }
         return "/" + getCategory() + "/" + getId() + "/action";
     }
 }
