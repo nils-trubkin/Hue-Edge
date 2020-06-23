@@ -52,7 +52,7 @@ public class HueBridge {
     }
 
     //Delete the instance TODO App Reset
-    private static synchronized void deleteInstance() {
+    public static synchronized void deleteInstance() {
         instance = null;
     }
 

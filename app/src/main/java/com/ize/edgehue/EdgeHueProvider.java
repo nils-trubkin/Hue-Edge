@@ -66,7 +66,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private static HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
 
     //Mapping of category to contents
-    private static HashMap<menuCategory, HashMap<Integer, ? extends BridgeResource>> contents =
+    private static HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
             new HashMap<>();
 
     //Selected category initiated to none
@@ -163,18 +163,21 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     public static void addToCurrentCategory(BridgeResource br){
+        Log.d(TAG, "addToCurrentCategory");
+        HashMap<Integer, BridgeResource> cc =
+                (HashMap<Integer, BridgeResource>) contents.get(getCurrentCategory());
         for (int i : btnArr){
-            HashMap<Integer, BridgeResource> cc =
-                    (HashMap<Integer, BridgeResource>) contents.get(getCurrentCategory());
             if(!Objects.requireNonNull(cc.containsKey(i))){
                 cc.put(i, br);
+                contents.get(getCurrentCategory()).put(i, br);
+                Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
                 return;
             }
         }
 
     }
 
-    public static HashMap<menuCategory, HashMap<Integer, ? extends BridgeResource>> getContents() {
+    public static HashMap<menuCategory, HashMap<Integer, BridgeResource>> getContents() {
         return contents;
     }
 

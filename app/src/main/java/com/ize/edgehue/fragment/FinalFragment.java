@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.ize.edgehue.EdgeHueProvider;
 import com.ize.edgehue.R;
@@ -27,7 +28,7 @@ public class FinalFragment extends Fragment {
     public void onViewCreated(@NonNull View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.button_finish).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.fragment_final_button_finish).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
@@ -35,14 +36,15 @@ public class FinalFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-/*
-                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
-                homeIntent.addCategory( Intent.CATEGORY_HOME );
-                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(homeIntent);*/
-
                 requireActivity().finish();
+            }
+        });
 
+        view.findViewById(R.id.fragment_final_button_remove).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(FinalFragment.this)
+                        .navigate(R.id.action_FinalFragment_to_ConfirmationFragment);
             }
         });
     }

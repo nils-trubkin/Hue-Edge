@@ -31,7 +31,7 @@ public class EditActivity extends AppCompatActivity {
         GridView mListView = findViewById(R.id.gridView);
         Button btnSave = findViewById(R.id.btnSave);
         EdgeHueProvider.menuCategory currentCategory = EdgeHueProvider.getCurrentCategory();
-        HashMap<EdgeHueProvider.menuCategory, HashMap<Integer, ? extends BridgeResource>> contents =
+        HashMap<EdgeHueProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
                 EdgeHueProvider.getContents();
 
         btnSave.setOnClickListener(new View.OnClickListener() {

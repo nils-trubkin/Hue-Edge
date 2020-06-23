@@ -56,7 +56,9 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EdgeHueProvider.addToCurrentCategory(getItem(position));
+                Log.d(TAG, getItem(position).toString());
+                BridgeResource br = getItem(position);
+                EdgeHueProvider.addToCurrentCategory(br);
             }
         });
 

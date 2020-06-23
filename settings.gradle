@@ -1,2 +1,4 @@
+include ':huesdk'
+include ':huecppsdk-wrapper-javadoc'
 rootProject.name='EdgeHue'
 include ':app'

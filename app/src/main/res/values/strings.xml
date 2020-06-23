@@ -33,9 +33,23 @@
 
     <!-- Strings used for fragments for navigation -->
     <string name="fragment_welcome_label">We need to perform first time setup for your Philips Hue Bridge</string>
-    <string name="fragment_search_label">The configuration is finished. You may now use the edge panel or connect a different bridge. Your edge panel button’s configuration will be removed if you connect a new bridge.</string>
-    <string name="next">Search for bridge</string>
-    <string name="previous">Finish</string>
+    <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
+    <string name="fragment_result_label">---Results---</string>
+    <string name="fragment_auth_label">Press the link button to authenticate</string>
+    <string name="fragment_settings_label">Would you like to go with quick setup or customize the buttons yorself? You can always edit the buttons later</string>
+    <string name="fragment_final_label">The configuration is finished. You may now use the edge panel or connect a different bridge.\nYour edge panel button’s configuration will be removed if you connect a new bridge</string>
+    <string name="fragment_confirmation_label">Are you sure?</string>
+    <string name="fragment_welcome_button">Search for bridge</string>
+    <string name="fragment_welcome_button_cheat">CHEAT</string>
+    <string name="fragment_search_button">Cancel search</string>
+    <string name="fragment_result_button">Re-run bridge discovery</string>
+    <string name="fragment_auth_button">Re-run bridge discovery</string>
+    <string name="fragment_settings_button_quick">Quick setup</string>
+    <string name="fragment_settings_button_custom">Customize myself</string>
+    <string name="fragment_final_button_finish">Finish</string>
+    <string name="fragment_final_button_remove">Remove configuration</string>
+    <string name="fragment_confirmation_button_yes">Yes</string>
+    <string name="fragment_confirmation_button_no">No</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

@@ -3,21 +3,86 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/WelcomeFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/WelcomeFragment"
         android:name="com.ize.edgehue.fragment.WelcomeFragment"
         android:label="@string/fragment_welcome_label"
         tools:layout="@layout/fragment_welcome">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_WelcomeFragment_to_SearchFragment"
+            app:destination="@id/SearchFragment" />
+        <action
+            android:id="@+id/action_WelcomeFragment_to_FinalFragment"
+            app:destination="@id/FinalFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.ize.edgehue.fragment.FinalFragment"
+        android:id="@+id/SearchFragment"
+        android:name="com.ize.edgehue.fragment.SearchFragment"
         android:label="@string/fragment_search_label"
-        tools:layout="@layout/fragment_final"/>
+        tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_SearchFragment_to_ResultFragment"
+            app:destination="@id/ResultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ResultFragment"
+        android:name="com.ize.edgehue.fragment.ResultFragment"
+        android:label="@string/fragment_result_label"
+        tools:layout="@layout/fragment_result">
+
+        <action
+            android:id="@+id/action_ResultFragment_to_AuthFragment"
+            app:destination="@id/AuthFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AuthFragment"
+        android:name="com.ize.edgehue.fragment.AuthFragment"
+        android:label="@string/fragment_auth_label"
+        tools:layout="@layout/fragment_auth">
+
+        <action
+            android:id="@+id/action_AuthFragment_to_SettingsFragment"
+            app:destination="@id/SettingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.ize.edgehue.fragment.SettingsFragment"
+        android:label="@string/fragment_settings_label"
+        tools:layout="@layout/fragment_settings">
+
+        <action
+            android:id="@+id/action_SettingsFragment_to_FinalFragment"
+            app:destination="@id/FinalFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FinalFragment"
+        android:name="com.ize.edgehue.fragment.FinalFragment"
+        android:label="@string/fragment_final_label"
+        tools:layout="@layout/fragment_final">
+        <action
+            android:id="@+id/action_FinalFragment_to_ConfirmationFragment"
+            app:destination="@id/ConfirmationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ConfirmationFragment"
+        android:name="com.ize.edgehue.fragment.ConfirmationFragment"
+        android:label="@string/fragment_confirmation_label" >
+        <action
+            android:id="@+id/action_ConfirmationFragment_to_FinalFragment"
+            app:destination="@id/FinalFragment" />
+        <action
+            android:id="@+id/action_ConfirmationFragment_to_WelcomeFragment"
+            app:destination="@id/WelcomeFragment" />
+</fragment>
+
 </navigation>

@@ -7,27 +7,42 @@
     tools:context=".fragment.WelcomeFragment">
 
     <TextView
-        android:id="@+id/textview_welcome"
+        android:id="@+id/fragment_welcome_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="300dp"
         android:text="@string/fragment_welcome_label"
         android:textColor="@color/white"
         android:textSize="19sp"
-        app:layout_constraintBottom_toTopOf="@id/button_finish"
+        app:layout_constraintBottom_toTopOf="@id/fragment_welcome_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_finish"
+        android:id="@+id/fragment_welcome_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:layout_marginTop="32dp"
+        android:text="@string/fragment_welcome_button"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_welcome_button_cheat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_welcome_textview" />
+
+    <Button
+        android:id="@+id/fragment_welcome_button_cheat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/fragment_welcome_button_cheat"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_welcome" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_welcome_button"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
