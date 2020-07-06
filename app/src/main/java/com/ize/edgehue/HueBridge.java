@@ -53,6 +53,7 @@ public class HueBridge {
 
     //Delete the instance TODO App Reset
     public static synchronized void deleteInstance() {
+        Log.i(TAG, "Deleting instance of HueBridge");
         instance = null;
     }
 

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
+import com.ize.edgehue.activity.EdgeSetup;
 import com.ize.edgehue.activity.MainActivity;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryImpl;
@@ -39,6 +40,7 @@ public class WelcomeFragment extends Fragment {
         view.findViewById(R.id.fragment_welcome_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((EdgeSetup)getActivity()).startBridgeDiscovery();
 
                 NavHostFragment.findNavController(WelcomeFragment.this)
                         .navigate(R.id.action_WelcomeFragment_to_SearchFragment);

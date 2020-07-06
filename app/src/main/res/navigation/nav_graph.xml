@@ -26,19 +26,8 @@
         tools:layout="@layout/fragment_search">
 
         <action
-            android:id="@+id/action_SearchFragment_to_ResultFragment"
-            app:destination="@id/ResultFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/ResultFragment"
-        android:name="com.ize.edgehue.fragment.ResultFragment"
-        android:label="@string/fragment_result_label"
-        tools:layout="@layout/fragment_result">
-
-        <action
-            android:id="@+id/action_ResultFragment_to_AuthFragment"
-            app:destination="@id/AuthFragment" />
+            android:id="@+id/action_SearchFragment_to_WelcomeFragment"
+            app:destination="@id/WelcomeFragment" />
     </fragment>
 
     <fragment

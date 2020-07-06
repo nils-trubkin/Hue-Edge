@@ -33,19 +33,11 @@
         android:textSize="50sp" />
 
     <include
+        android:id="@+id/include_layout"
         layout="@layout/content_edge_configure"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="#444444"
-        app:srcCompat="@android:drawable/ic_media_next" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

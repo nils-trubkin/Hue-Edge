@@ -12,10 +12,12 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
+import com.ize.edgehue.activity.EdgeSetup;
 
 public class SearchFragment extends Fragment {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
+
 
     @Override
     public View onCreateView(
@@ -32,8 +34,9 @@ public class SearchFragment extends Fragment {
         view.findViewById(R.id.fragment_search_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((EdgeSetup)getActivity()).stopBridgeDiscovery();
                 NavHostFragment.findNavController(SearchFragment.this)
-                        .navigate(R.id.action_SearchFragment_to_ResultFragment);
+                        .navigate(R.id.action_SearchFragment_to_WelcomeFragment);
                 //Add here
             }
         });

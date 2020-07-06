@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
         Slook slook = new Slook();
 
+
         try {
             slook.initialize(this);
         } catch (Exception e) {
