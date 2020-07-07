@@ -2,9 +2,13 @@ package com.ize.edgehue.activity;
 
 import android.app.PendingIntent;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -96,6 +100,12 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setNavigationBarColor(Color.rgb(53,53,53));
+        }
+
         // Setup the UI
         statusTextView = (TextView)findViewById(R.id.status_text);
         bridgeDiscoveryListView = (ListView)findViewById(R.id.bridge_discovery_result_list);
@@ -124,7 +134,12 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "EdgeHue");
         HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG);
 
-        updateUI(UIState.Welcome);
+        if (HueBridge.getInstance() == null){
+            updateUI(UIState.Welcome);
+        }
+        else{
+            updateUI(UIState.Final);
+        }
     }
 
     /**
@@ -188,7 +203,11 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             updateUI(UIState.Error);
             return;
         }
-        statusTextView.setText(new StringBuilder().append(getResources().getString(R.string.fragment_connect_label)).append("\n\n").append(requestAmount).toString());
+        else if(i == -1){
+            updateUI(UIState.Results);
+            return;
+        }
+        statusTextView.setText(new StringBuilder().append(getResources().getString(R.string.fragment_auth_label)).append("\n\n").append(requestAmount).toString());
         Log.d(TAG, "requestAmount = " + requestAmount);
         requestAmount = i - 1;
         JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
@@ -206,7 +225,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         Log.d(TAG, "Sending request for this devicetype: " + "EdgeHUE#" + android.os.Build.MODEL);
         JSONObject j = HueBridge.createJsonOnObject("devicetype", "EdgeHUE#" + android.os.Build.MODEL);
         assert j != null;
-        updateUI(UIState.Connecting);
+        updateUI(UIState.Auth);
         requestAmount = 100; //Requests to send
         sendAuthRequest(requestAmount, j, bridgeIp);
         /*JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
@@ -232,6 +251,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         }
         else if (view == bridgeDiscoveryCancelButton) {
             stopBridgeDiscovery();
+            requestAmount = -1;
         }
         else if (view == quickButton) {
             try {
@@ -311,8 +331,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                     case Auth:
                         statusTextView.setText(getResources().getString(R.string.fragment_auth_label));
                         pushlinkImage.setVisibility(View.VISIBLE);
-                        bridgeDiscoveryButton.setVisibility(View.VISIBLE);
-                        bridgeDiscoveryButton.setText(getResources().getText(R.string.fragment_result_button));
+                        bridgeDiscoveryCancelButton.setVisibility(View.VISIBLE);
                         break;
                     case Settings:
                         statusTextView.setText(getResources().getString(R.string.fragment_settings_label));

@@ -35,13 +35,13 @@
     <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup for your Philips Hue Bridge</string>
     <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
     <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
-    <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device</string>
+    <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\n If you believe this is a bug please report</string>
     <string name="fragment_auth_label">Press the link button to authenticate</string>
-    <string name="fragment_settings_label">Connection successful!\n\nWould you like to go with quick setup or customize the buttons yorself? You can always edit the buttons later</string>
-    <string name="fragment_final_label">The configuration is finished. You may now use the edge panel or connect a different bridge.\nYour edge panel button’s configuration will be removed if you connect a new bridge</string>
+    <string name="fragment_settings_label">Connection successful!\n\nQuick setup or leave the button order to you?\n\nYou can always edit the buttons later</string>
+    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use\n\nRemoving a bridge removes button order</string>
     <string name="fragment_confirmation_label">Are you sure?</string>
     <string name="fragment_welcome_button">Search for bridge</string>
-    <string name="fragment_welcome_button_cheat">CHEAT</string>
+    <string name="fragment_welcome_button_cheat">Cheat</string>
     <string name="fragment_search_button">Cancel search</string>
     <string name="fragment_error_button">Re-run bridge discovery</string>
     <string name="fragment_result_button">Re-run bridge discovery</string>

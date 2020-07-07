@@ -35,7 +35,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_anchor="@+id/backgroundView"
+        app:layout_anchorGravity="bottom|center">
+
+        <ImageView
+            android:id="@+id/pushlink_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:paddingTop="0dp"
+            android:scaleType="fitXY"
+            android:translationX="20dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/pushlink_image" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:paddingBottom="40dp"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="@string/fragment_auth_label" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="476dp"
+        android:layout_marginBottom="20dp"
         android:gravity="bottom"
         android:orientation="vertical"
         android:padding="16dp"
@@ -47,96 +81,127 @@
             android:id="@+id/bridge_discovery_result_list"
             android:layout_width="match_parent"
             android:layout_height="300dp"
+            android:background="@drawable/list_background"
+            android:divider="@null"
             android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/pushlink_image"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="fitXY"
-            android:visibility="gone"
-            app:srcCompat="@drawable/pushlink_image" />
-
-        <TextView
-            android:id="@+id/status_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="40dp"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/white"
-            tools:text="We need to perform first time setup for your Philips Hue Bridge" />
 
         <TextView
             android:id="@+id/bridge_ip_text"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:paddingBottom="16dp"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white"
+            android:textSize="18sp"
             android:visibility="gone"
             tools:text=" Bridge IP:192.168.1.1:600026" />
 
         <Button
             android:id="@+id/bridge_discovery_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_welcome_button" />
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/cheat_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_welcome_button_cheat" />
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button_cheat"
+            android:textAllCaps="false"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/bridge_discovery_cancel_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_search_button"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/quick_setup_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_settings_button_quick"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/custom_setup_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_settings_button_custom"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/finish_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_final_button_finish"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/remove_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_final_button_remove"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/yes_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_confirmation_button_yes"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/no_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="200sp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/setup_button_background"
             android:text="@string/fragment_confirmation_button_no"
+            android:textAllCaps="false"
+            android:textSize="16sp"
             android:visibility="gone" />
 
     </LinearLayout>

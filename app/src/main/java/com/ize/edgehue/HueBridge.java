@@ -17,10 +17,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class HueBridge {
+import static android.content.Context.MODE_PRIVATE;
+
+public class HueBridge implements Serializable {
     private static final String TAG = HueBridge.class.getSimpleName();
 
     private static HueBridge instance;
@@ -105,6 +113,32 @@ public class HueBridge {
             Log.e(TAG, "Can't getSceneGroup()");
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void saveConfigurationToMemory(Context ctx) {
+        try {
+            Log.d(TAG, "saveConfigurationToMemory()");
+            File file = new File(ctx.getDir("data", MODE_PRIVATE), "EdgeHueConfig");
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
+            outputStream.writeObject(instance);
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void loadConfigurationFromMemory(Context ctx){
+        try {
+            // create an ObjectInputStream for the file we created before
+            File file = new File(ctx.getDir("data", MODE_PRIVATE), "EdgeHueConfig");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            // read and print an object and cast it as a HueBridge
+            instance = (HueBridge) ois.readObject();
+            Log.d(TAG, "Size of loaded config is:" + instance.getRooms().size());
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

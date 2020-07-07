@@ -1,5 +1,6 @@
 package com.ize.edgehue.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,8 @@ public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = EditActivity.class.getSimpleName();
 
+    Context ctx = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,13 @@ public class EditActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                assert HueBridge.getInstance() != null;
+                if(HueBridge.getInstance() != null){
+                    HueBridge.getInstance().saveConfigurationToMemory(ctx);
+                }
+                else{
+                    Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
+                }
                 finish();
             }
         });

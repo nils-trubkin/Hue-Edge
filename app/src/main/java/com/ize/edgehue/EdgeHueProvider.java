@@ -82,7 +82,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (HueBridge.getInstance() == null) {
-            currentCategory = menuCategory.NO_BRIDGE;
+            HueBridge.loadConfigurationFromMemory(context);
+            if (HueBridge.getInstance() == null) {
+                currentCategory = menuCategory.NO_BRIDGE;
+            }
         }
         if(contentView == null) {
             contentView = createContentView(context);
@@ -424,6 +427,8 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 quickAccessContent.put(qaButtonIndex++, entry.getValue());
             }
         }
+
+        HueBridge.getInstance().saveConfigurationToMemory(context);
     }
 
     //Refresh both panels
@@ -442,6 +447,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                     contentView.setTextViewText(btnTextArr[i], resource.getName());
                     contentView.setTextViewText(btnArr[i], resource.getBtnText());
                     contentView.setTextColor(btnArr[i], resource.getBtnTextColor());
+                    contentView.setFloat(btnArr[i], "setTextSize", 14);
                     contentView.setInt(btnArr[i], "setBackgroundResource",
                             resource.getBtnBackgroundResource());
                     if(resource.getCategory().equals("scenes")){
