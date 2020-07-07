@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1E1E1E"
@@ -32,12 +33,112 @@
         android:textColor="@color/white"
         android:textSize="50sp" />
 
-    <include
-        android:id="@+id/include_layout"
-        layout="@layout/content_edge_configure"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp" />
+        android:layout_height="476dp"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_anchor="@+id/backgroundView"
+        app:layout_anchorGravity="bottom|center"
+        tools:context="com.philips.lighting.hue.demo.huequickstartapp.MainActivity">
+
+        <ListView
+            android:id="@+id/bridge_discovery_result_list"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/pushlink_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            app:srcCompat="@drawable/pushlink_image" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="40dp"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            tools:text="We need to perform first time setup for your Philips Hue Bridge" />
+
+        <TextView
+            android:id="@+id/bridge_ip_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            tools:text=" Bridge IP:192.168.1.1:600026" />
+
+        <Button
+            android:id="@+id/bridge_discovery_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_welcome_button" />
+
+        <Button
+            android:id="@+id/cheat_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_welcome_button_cheat" />
+
+        <Button
+            android:id="@+id/bridge_discovery_cancel_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_search_button"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/quick_setup_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_settings_button_quick"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/custom_setup_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_settings_button_custom"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/finish_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_final_button_finish"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/remove_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_final_button_remove"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/yes_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_confirmation_button_yes"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/no_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/fragment_confirmation_button_no"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

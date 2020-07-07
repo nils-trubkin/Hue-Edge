@@ -30,8 +30,8 @@ class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
         TextView bridge_id = convertView.findViewById(R.id.bridge_id);
         TextView bridge_ip = convertView.findViewById(R.id.bridge_ip);
 
-        bridge_id.setText(result.getUniqueID());
-        bridge_ip.setText(result.getIP());
+        bridge_ip.setText("IP:" + result.getIp());
+        bridge_id.setText("ID:" + result.getUniqueId());
 
         return convertView;
     }

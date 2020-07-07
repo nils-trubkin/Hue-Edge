@@ -218,7 +218,7 @@ public class HueBridge {
     }
 
     //Create a JsonObject to send to hue bridge
-    private JSONObject createJsonOnObject(String k, Object v) {
+    public static JSONObject createJsonOnObject(String k, Object v) {
         try {
             return new JSONObject().put(k, v);
         } catch (JSONException e) {
