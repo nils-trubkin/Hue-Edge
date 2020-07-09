@@ -3,13 +3,14 @@ package com.ize.edgehue;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.ize.edgehue.resource.BridgeResource;
+import com.google.gson.Gson;
 import com.ize.edgehue.api.JsonCustomRequest;
 import com.ize.edgehue.api.RequestQueueSingleton;
 
@@ -17,16 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class HueBridge implements Serializable {
     private static final String TAG = HueBridge.class.getSimpleName();
@@ -119,11 +113,12 @@ public class HueBridge implements Serializable {
     public void saveConfigurationToMemory(Context ctx) {
         try {
             Log.d(TAG, "saveConfigurationToMemory()");
-            File file = new File(ctx.getDir("data", MODE_PRIVATE), "EdgeHueConfig");
-            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
-            outputStream.writeObject(instance);
-            outputStream.flush();
-            outputStream.close();
+            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(HueBridge.getInstance());
+            editor.putString(ctx.getResources().getString(R.string.hue_bridge_config_file), json);
+            editor.commit();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -131,12 +126,11 @@ public class HueBridge implements Serializable {
 
     public static void loadConfigurationFromMemory(Context ctx){
         try {
-            // create an ObjectInputStream for the file we created before
-            File file = new File(ctx.getDir("data", MODE_PRIVATE), "EdgeHueConfig");
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-            // read and print an object and cast it as a HueBridge
-            instance = (HueBridge) ois.readObject();
-            Log.d(TAG, "Size of loaded config is:" + instance.getRooms().size());
+            Log.d(TAG, "loadConfigurationFromMemory()");
+            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = sharedPref.getString(ctx.getResources().getString(R.string.hue_bridge_config_file), "");
+            instance = gson.fromJson(json, HueBridge.class);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

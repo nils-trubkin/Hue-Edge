@@ -28,7 +28,7 @@
     <string name="button_help_3_text">Rooms</string>
     <string name="button_help_4_text">Zones</string>
     <string name="button_help_5_text">Scenes</string>
-    <string name="title_activity_edge_configure">EdgeConfigure</string>
+    <string name="title_activity_edge_setup">Configure EdgeHUE</string>
 
 
     <!-- Strings used for fragments for navigation -->
@@ -57,4 +57,8 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="no_config">NO CONFIG</string>
     <string name="button_save_text">Save</string>
+
+    <string name="preference_file_key">EdgeHueConfig</string>
+    <string name="hue_bridge_config_file">HueBridgeConfigFile</string>
+
 </resources>

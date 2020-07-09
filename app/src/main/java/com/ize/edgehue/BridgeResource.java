@@ -1,10 +1,9 @@
-package com.ize.edgehue.resource;
+package com.ize.edgehue;
 
 import android.content.Context;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
-import com.ize.edgehue.HueBridge;
-import com.ize.edgehue.R;
+
 import org.json.JSONException;
 
 public class BridgeResource {
@@ -107,7 +106,10 @@ public class BridgeResource {
             case 0:
                 return "◯";
             case 1:
-                return "|";
+                if (actionRead == "any_on")
+                    return "—";
+                else
+                    return "|";
             default:
                 return "?";
         }

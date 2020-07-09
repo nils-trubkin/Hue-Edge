@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ize.edgehue.EdgeHueProvider;
 import com.ize.edgehue.HueBridge;
 import com.ize.edgehue.R;
-import com.ize.edgehue.resource.BridgeResource;
+import com.ize.edgehue.BridgeResource;
 
 import java.util.ArrayList;
 import java.util.HashMap;

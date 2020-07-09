@@ -11,7 +11,6 @@ import android.widget.RemoteViews;
 
 import androidx.core.content.ContextCompat;
 
-import com.ize.edgehue.resource.BridgeResource;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -80,6 +79,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Samsung SDK
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onRecieve()");
         super.onReceive(context, intent);
         if (HueBridge.getInstance() == null) {
             HueBridge.loadConfigurationFromMemory(context);
@@ -290,10 +290,21 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         context.startActivity(editIntent);
     }
 
+    private void startSetupActivity(Context context){
+        /*Intent setupIntent = new Intent(Intent.ACTION_MAIN);
+        setupIntent.addCategory( Intent.CATEGORY_LAUNCHER);
+        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(setupIntent);*/ //TODO
+    }
+
     //Button handler
     private void performRemoteClick(Context context, Intent intent) throws JSONException {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
+        if(currentCategory == menuCategory.NO_BRIDGE){
+            startSetupActivity(context);
+            return;
+        }
         if(key == 0){
             if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
                 BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
@@ -333,10 +344,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONG_CLICK");
         debugString.append("id=").append(intent.getIntExtra("id", -1));
         Log.d(TAG, debugString.toString());
-        Intent editIntent = new Intent(Intent.ACTION_EDIT);
-        editIntent.addCategory( Intent.CATEGORY_DEFAULT);
-        editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(editIntent);
+        startEditActivity(context);
     }
 
     public static void clearAllContents(){

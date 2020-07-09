@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,14 +29,11 @@ import com.philips.lighting.hue.sdk.wrapper.Persistence;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryImpl;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryResult;
-import com.philips.lighting.hue.sdk.wrapper.domain.Bridge;
-import com.philips.lighting.hue.sdk.wrapper.entertainment.Entertainment;
 import com.philips.lighting.hue.sdk.wrapper.utilities.InitSdk;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.Iterator;
 import java.util.List;
@@ -149,7 +145,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     public void startBridgeDiscovery() {
         Log.i(TAG, "startBridgeDiscovery()");
         HueBridge.deleteInstance();
-
+        stopBridgeDiscovery();
         bridgeDiscovery = new BridgeDiscoveryImpl();
         // ALL Include [UPNP, IPSCAN, NUPNP, MDNS] but in some nets UPNP, NUPNP and MDNS is not working properly
         bridgeDiscovery.search(bridgeDiscoveryCallback);
