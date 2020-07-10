@@ -21,7 +21,7 @@
     <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
     <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
     <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\n If you believe this is a bug please report</string>
-    <string name="fragment_auth_label">Press the link button to authenticate</string>
+    <string name="fragment_auth_label">Press the link button to authenticate\n\n%1$d</string>
     <string name="fragment_settings_label">Connection successful!\n\nQuick setup or leave the button order to you?\n\nYou can always edit the buttons later</string>
     <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use\n\nRemoving a bridge removes button order</string>
     <string name="fragment_confirmation_label">Are you sure?</string>
@@ -37,6 +37,9 @@
     <string name="fragment_final_button_remove">Remove configuration</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
+
+    <string name="list_view_ip_label">IP: %1$s</string>
+    <string name="list_view_id_label">ID: %1$s</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

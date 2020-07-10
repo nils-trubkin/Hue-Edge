@@ -14,8 +14,12 @@ import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryResult;
 import java.util.List;
 
 class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
+
+    Context ctx;
+
     BridgeDiscoveryResultAdapter(Context context, List<BridgeDiscoveryResult> results) {
         super(context, 0, results);
+        ctx = context;
     }
 
     @Override
@@ -30,8 +34,9 @@ class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
         TextView bridge_id = convertView.findViewById(R.id.bridge_id);
         TextView bridge_ip = convertView.findViewById(R.id.bridge_ip);
 
-        bridge_ip.setText("IP:" + result.getIp());
-        bridge_id.setText("ID:" + result.getUniqueId());
+        assert result != null;
+        bridge_ip.setText(ctx.getResources().getString(R.string.list_view_ip_label, result.getIp()));
+        bridge_id.setText(ctx.getResources().getString(R.string.list_view_id_label, result.getUniqueId()));
 
         return convertView;
     }

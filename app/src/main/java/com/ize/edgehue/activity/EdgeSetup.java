@@ -1,9 +1,7 @@
 package com.ize.edgehue.activity;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +12,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -97,35 +96,35 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setNavigationBarColor(Color.rgb(53,53,53));
-        }
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {*/
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setNavigationBarColor(Color.rgb(53,53,53));
+        /*}*/
 
         // Setup the UI
-        statusTextView = (TextView)findViewById(R.id.status_text);
-        bridgeDiscoveryListView = (ListView)findViewById(R.id.bridge_discovery_result_list);
+        statusTextView = findViewById(R.id.status_text);
+        bridgeDiscoveryListView = findViewById(R.id.bridge_discovery_result_list);
         bridgeDiscoveryListView.setOnItemClickListener(this);
-        bridgeIpTextView = (TextView)findViewById(R.id.bridge_ip_text);
+        bridgeIpTextView = findViewById(R.id.bridge_ip_text);
         pushlinkImage = findViewById(R.id.pushlink_image);
-        bridgeDiscoveryButton = (Button)findViewById(R.id.bridge_discovery_button);
+        bridgeDiscoveryButton = findViewById(R.id.bridge_discovery_button);
         bridgeDiscoveryButton.setOnClickListener(this);
-        cheatButton = (Button)findViewById(R.id.cheat_button);
+        cheatButton = findViewById(R.id.cheat_button);
         cheatButton.setOnClickListener(this);
-        bridgeDiscoveryCancelButton = (Button)findViewById(R.id.bridge_discovery_cancel_button);
+        bridgeDiscoveryCancelButton = findViewById(R.id.bridge_discovery_cancel_button);
         bridgeDiscoveryCancelButton.setOnClickListener(this);
-        quickButton = (Button)findViewById(R.id.quick_setup_button);
+        quickButton = findViewById(R.id.quick_setup_button);
         quickButton.setOnClickListener(this);
-        customButton = (Button)findViewById(R.id.custom_setup_button);
+        customButton = findViewById(R.id.custom_setup_button);
         customButton.setOnClickListener(this);
-        finishButton = (Button)findViewById(R.id.finish_button);
+        finishButton = findViewById(R.id.finish_button);
         finishButton.setOnClickListener(this);
-        removeButton = (Button)findViewById(R.id.remove_button);
+        removeButton = findViewById(R.id.remove_button);
         removeButton.setOnClickListener(this);
-        yesButton = (Button)findViewById(R.id.yes_button);
+        yesButton = findViewById(R.id.yes_button);
         yesButton.setOnClickListener(this);
-        noButton = (Button)findViewById(R.id.no_button);
+        noButton = findViewById(R.id.no_button);
         noButton.setOnClickListener(this);
         InitSdk.setApplicationContext(getApplicationContext());
         Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "EdgeHue");
@@ -169,7 +168,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
 
     private BridgeDiscovery.Callback bridgeDiscoveryCallback = new BridgeDiscovery.Callback() {
         @Override
-        public void onFinished(final List<BridgeDiscoveryResult> results, final BridgeDiscovery.ReturnCode returnCode) {
+        public void onFinished(@NonNull final List<BridgeDiscoveryResult> results, @NonNull final BridgeDiscovery.ReturnCode returnCode) {
             // Set to null to prevent stopBridgeDiscovery from stopping it
             bridgeDiscovery = null;
 
@@ -204,13 +203,13 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             updateUI(UIState.Results);
             return;
         }
-        statusTextView.setText(new StringBuilder().append(getResources().getString(R.string.fragment_auth_label)).append("\n\n").append(requestAmount).toString());
+        statusTextView.setText(getResources().getString(R.string.fragment_auth_label, requestAmount));
         Log.d(TAG, "requestAmount = " + requestAmount);
         requestAmount = i - 1;
         JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
         Log.d(TAG, "changeHueState postRequest created for this ip " + bridgeIp);
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(this).addToRequestQueue(jcr);
+        RequestQueueSingleton.getInstance(this).addToRequestQueue(this, jcr);
     }
 
     @Override
@@ -252,11 +251,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             requestAmount = -1;
         }
         else if (view == quickButton) {
-            try {
-                EdgeHueProvider.quickSetup(this);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            EdgeHueProvider.quickSetup(this);
             updateUI(UIState.Final);
         }
         else if (view == customButton) {
@@ -356,8 +351,6 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
         }
-        final Context ctx = this;
-        assert jsonObject.keys().hasNext();
         Log.d(TAG, "setHueState url " + ip); // this is the actual resource path
         return new JsonCustomRequest(Request.Method.POST, "http://" + ip + "/api", jsonObject,
                 new Response.Listener<JSONArray>() {
@@ -389,10 +382,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                         .requestHueState(ctx);
 
                                 updateUI(UIState.Settings);
-                                }
-                            else
-                                return;
-                            } catch (JSONException ex) {
+                            }
+                        } catch (JSONException ex) {
                             ex.printStackTrace();
                         }
                     }

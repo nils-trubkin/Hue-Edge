@@ -230,7 +230,7 @@ public class HueBridge implements Serializable {
         JsonCustomRequest jcr = getJsonCustomRequest(context, j, resourceUrl);
         Log.d(TAG, "changeHueState putRequest created for this url\n" + resourceUrl);
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(context).addToRequestQueue(jcr);
+        RequestQueueSingleton.getInstance(context).addToRequestQueue(context, jcr);
     }
 
     //Construct intent for incoming state JsonObject
@@ -287,7 +287,7 @@ public class HueBridge implements Serializable {
                     }
                 });
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jor);
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jor);
         Log.d(TAG, "request sent to queue");
     }
 

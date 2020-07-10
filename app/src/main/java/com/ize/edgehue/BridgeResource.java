@@ -86,8 +86,6 @@ public class BridgeResource {
                 Log.wtf(TAG, "bridge == null");
             }
             assert bridge != null;
-            if (bridge.getSceneGroup(this).equals(0))
-                return "?";
             try {
                 if (bridge.getSceneGroup(this).equals("0")) {
                     return "All";
@@ -106,7 +104,7 @@ public class BridgeResource {
             case 0:
                 return "◯";
             case 1:
-                if (actionRead == "any_on")
+                if (actionRead.equals("any_on"))
                     return "—";
                 else
                     return "|";

@@ -14,8 +14,6 @@ import androidx.core.content.ContextCompat;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
-import org.json.JSONException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -107,11 +105,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 performRemoteLongClick(ctx, intent);
                 break;
             case ACTION_REMOTE_CLICK:
-                try {
-                    performRemoteClick(ctx, intent);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                performRemoteClick(ctx, intent);
                 break;
             case ACTION_PULL_TO_REFRESH:
                 SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
@@ -134,6 +128,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     @Override
     public void onEnabled(Context ctx) {
         // TODO Auto-generated method stub
+        Log.d(TAG, "onEnabled()");
         super.onEnabled(ctx);
 
     }
@@ -144,6 +139,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     @Override
     public void onDisabled(Context ctx) {
         // TODO Auto-generated method stub
+        Log.d(TAG, "onDisabled()");
         super.onDisabled(ctx);
     }
 
@@ -151,13 +147,14 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     @Override
     public void onUpdate(Context ctx, SlookCocktailManager cocktailManager, int[] cocktailIds) {
 
-        Log.i(TAG, "onUpdate");
+        Log.d(TAG, "onUpdate()");
         panelUpdate(ctx);
     }
 
     //TODO
     @Override
     public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
+        Log.d(TAG, "onVisibilityChanged()");
         super.onVisibilityChanged(ctx, cocktailId, visibility);
     }
 
@@ -166,13 +163,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     public static void addToCurrentCategory(BridgeResource br){
-        Log.d(TAG, "addToCurrentCategory");
+        Log.d(TAG, "addToCurrentCategory()");
         HashMap<Integer, BridgeResource> cc =
-                (HashMap<Integer, BridgeResource>) contents.get(getCurrentCategory());
+                contents.get(getCurrentCategory());
         for (int i : btnArr){
-            if(!Objects.requireNonNull(cc.containsKey(i))){
+            if(!Objects.requireNonNull(cc).containsKey(i)){
                 cc.put(i, br);
-                contents.get(getCurrentCategory()).put(i, br);
+                Objects.requireNonNull(contents.get(getCurrentCategory())).put(i, br);
                 Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
                 return;
             }
@@ -222,13 +219,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             contentView.setViewVisibility(R.id.mainColumn, View.GONE);
             contentView.setViewVisibility(R.id.extraColumn, View.GONE);
             for (int i = 0; i < 5; i++) {
-                if (contents.get(currentCategory).containsKey(i)) {
+                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
                     mainColumnEmpty = false;
                     break;
                 }
             }
             for (int i = 5; i < 10; i++) {
-                if (contents.get(currentCategory).containsKey(i)) {
+                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
                     extraColumnEmpty = false;
                     break;
                 }
@@ -290,25 +287,26 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         ctx.startActivity(editIntent);
     }
 
-    private void startSetupActivity(Context ctx){
-        /*Intent setupIntent = new Intent(Intent.ACTION_MAIN);
+    /*private void startSetupActivity(Context ctx){
+        Intent setupIntent = new Intent(Intent.ACTION_MAIN);
         setupIntent.addCategory( Intent.CATEGORY_LAUNCHER);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ctx.startActivity(setupIntent);*/ //TODO
-    }
+        ctx.startActivity(setupIntent); //TODO
+    }*/
 
     //Button handler
-    private void performRemoteClick(Context ctx, Intent intent) throws JSONException {
+    private void performRemoteClick(Context ctx, Intent intent) {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
         if(currentCategory == menuCategory.NO_BRIDGE){
-            startSetupActivity(ctx);
+            //startSetupActivity(ctx);
             return;
         }
         if(key == 0){
             if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
                 BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
-                HueBridge.getInstance(ctx).toggleHueState(ctx, br);
+                assert br != null;
+                Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, br);
             }
             else
                 startEditActivity(ctx);
@@ -341,9 +339,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     private void performRemoteLongClick(Context ctx, Intent intent) {
-        StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONG_CLICK");
-        debugString.append("id=").append(intent.getIntExtra("id", -1));
-        Log.d(TAG, debugString.toString());
+        Log.d(TAG, "ACTION_REMOTE_LONG_CLICK" + "id=" + intent.getIntExtra("id", -1));
         startEditActivity(ctx);
     }
 
@@ -365,7 +361,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     //The initial setup of the buttons
-    public static void quickSetup(Context ctx) throws JSONException {
+    public static void quickSetup(Context ctx) {
         Log.d(TAG, "quickSetup entered");
 
         clearAllContents();
@@ -380,7 +376,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         assert HueBridge.getInstance(ctx) != null;
         int buttonIndex = 0;
         int qaButtonIndex = 0;
-        HashMap<String, BridgeResource> map = null;
+        HashMap<String, BridgeResource> map;
 
         map = bridge.getLights();
         Log.d(TAG, "quickSetup getLights() size: " + map.size());
@@ -436,7 +432,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             }
         }
 
-        HueBridge.getInstance(ctx).saveConfigurationToMemory(ctx);
+        Objects.requireNonNull(HueBridge.getInstance(ctx)).saveConfigurationToMemory(ctx);
     }
 
     //Refresh both panels

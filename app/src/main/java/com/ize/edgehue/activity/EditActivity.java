@@ -42,7 +42,7 @@ public class EditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 assert HueBridge.getInstance(ctx) != null;
                 if(HueBridge.getInstance(ctx) != null){
-                    HueBridge.getInstance(ctx).saveConfigurationToMemory(ctx);
+                    Objects.requireNonNull(HueBridge.getInstance(ctx)).saveConfigurationToMemory(ctx);
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
@@ -126,6 +126,7 @@ public class EditActivity extends AppCompatActivity {
             }
         }
         else {
+            assert map != null;
             for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
                 resourceList.add(entry.getValue());
             }
