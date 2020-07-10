@@ -15,7 +15,7 @@ import java.util.List;
 
 class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
 
-    Context ctx;
+    private final Context ctx;
 
     BridgeDiscoveryResultAdapter(Context context, List<BridgeDiscoveryResult> results) {
         super(context, 0, results);

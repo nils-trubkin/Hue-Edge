@@ -31,12 +31,10 @@ public class HueBridge implements Serializable {
     private static String url;
     private static JSONObject state;
 
-    private static HashMap<String, BridgeResource> lights = new HashMap<>();
-    private static HashMap<String, BridgeResource> rooms = new HashMap<>();
-    private static HashMap<String, BridgeResource> zones = new HashMap<>();
-    private static HashMap<String, BridgeResource> scenes = new HashMap<>();
-
-
+    private static final HashMap<String, BridgeResource> lights = new HashMap<>();
+    private static final HashMap<String, BridgeResource> rooms = new HashMap<>();
+    private static final HashMap<String, BridgeResource> zones = new HashMap<>();
+    private static final HashMap<String, BridgeResource> scenes = new HashMap<>();
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {

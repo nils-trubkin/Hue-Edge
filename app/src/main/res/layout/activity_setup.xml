@@ -49,7 +49,8 @@
             android:scaleType="fitXY"
             android:translationX="20dp"
             android:visibility="visible"
-            app:srcCompat="@drawable/pushlink_image" />
+            app:srcCompat="@drawable/pushlink_image"
+            android:contentDescription="@string/pushlink_image_description" />
 
         <TextView
             android:id="@+id/status_text"

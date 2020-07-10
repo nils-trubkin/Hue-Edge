@@ -52,4 +52,6 @@
     <string name="http_header">http://</string>
     <string name="api_path">/api/</string>
 
+    <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue bridge</string>
+
 </resources>

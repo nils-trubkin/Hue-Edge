@@ -24,7 +24,7 @@ public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = EditActivity.class.getSimpleName();
 
-    Context ctx = this;
+    private final Context ctx = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

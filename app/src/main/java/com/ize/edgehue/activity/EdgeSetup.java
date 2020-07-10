@@ -55,7 +55,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     private static final String TAG = EdgeSetup.class.getSimpleName();
-    private Context ctx = this;
+    private final Context ctx = this;
 
     private BridgeDiscovery bridgeDiscovery;
 
@@ -166,7 +166,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         updateUI(UIState.Welcome);
     }
 
-    private BridgeDiscovery.Callback bridgeDiscoveryCallback = new BridgeDiscovery.Callback() {
+    private final BridgeDiscovery.Callback bridgeDiscoveryCallback = new BridgeDiscovery.Callback() {
         @Override
         public void onFinished(@NonNull final List<BridgeDiscoveryResult> results, @NonNull final BridgeDiscovery.ReturnCode returnCode) {
             // Set to null to prevent stopBridgeDiscovery from stopping it
@@ -238,12 +238,13 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         }
         else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
+            EdgeHueProvider.clearAllContents();
             HueBridge.getInstance(
                     ctx,
                     "192.168.69.166",
                     "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD")
                     .requestHueState(this);
-            Log.d(TAG, "getInstance() returns (!= null):" + HueBridge.getInstance(ctx));
+            Log.d(TAG, "getInstance() returns cheat bridge:" + HueBridge.getInstance(ctx));
             updateUI(UIState.Settings);
         }
         else if (view == bridgeDiscoveryCancelButton) {
@@ -377,7 +378,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                 }
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
-
+                                EdgeHueProvider.clearAllContents();
                                 HueBridge.getInstance(ctx, ip, username)
                                         .requestHueState(ctx);
 

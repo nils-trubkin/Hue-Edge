@@ -56,14 +56,14 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private static RemoteViews helpView = null;
 
     //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
-    private static HashMap<Integer, BridgeResource> quickAccessContent = new HashMap<>();
-    private static HashMap<Integer, BridgeResource> lightsContent = new HashMap<>();
-    private static HashMap<Integer, BridgeResource> roomsContent = new HashMap<>();
-    private static HashMap<Integer, BridgeResource> zonesContent = new HashMap<>();
-    private static HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
+    private static final HashMap<Integer, BridgeResource> quickAccessContent = new HashMap<>();
+    private static final HashMap<Integer, BridgeResource> lightsContent = new HashMap<>();
+    private static final HashMap<Integer, BridgeResource> roomsContent = new HashMap<>();
+    private static final HashMap<Integer, BridgeResource> zonesContent = new HashMap<>();
+    private static final HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
 
     //Mapping of category to contents
-    private static HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
+    private static final HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
             new HashMap<>();
 
     //Selected category initiated to none

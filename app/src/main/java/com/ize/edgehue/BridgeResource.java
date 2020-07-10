@@ -13,8 +13,8 @@ public class BridgeResource {
     private final Context ctx;
     private final String id;
     private final String category;
-    private String actionRead;
-    private String actionWrite;
+    private final String actionRead;
+    private final String actionWrite;
 
     public BridgeResource(Context context, String id, String category, String actionRead, String actionWrite){
         this.ctx = context;

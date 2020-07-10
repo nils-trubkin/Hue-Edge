@@ -37,7 +37,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class JsonCustomRequest extends JsonRequest<JSONArray> {
 
-    private Listener<JSONArray> listener;
+    private final Listener<JSONArray> listener;
 
     public JsonCustomRequest(
             int method,

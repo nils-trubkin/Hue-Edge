@@ -1,7 +1,6 @@
 package com.ize.edgehue.activity;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 import com.ize.edgehue.EdgeHueProvider;
@@ -20,10 +20,8 @@ import java.util.Objects;
 
 public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
-    private static final String TAG = ResourceArrayAdapter.class.getSimpleName();
-
-    private Context ctx;
-    int mResource;
+    private final Context ctx;
+    private final int mResource;
 
     public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects) {
         super(context, resource, objects);
@@ -56,7 +54,6 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, getItem(position).toString());
                 BridgeResource br = getItem(position);
                 EdgeHueProvider.addToCurrentCategory(br);
             }
