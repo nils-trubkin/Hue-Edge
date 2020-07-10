@@ -21,15 +21,13 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class HueBridge implements Serializable {
     private static final String TAG = HueBridge.class.getSimpleName();
 
     private static HueBridge instance;
 
-    private static String ip;
-    private static String userName;
-    private static String urlHeader;
     private static String url;
     private static JSONObject state;
 
@@ -41,16 +39,17 @@ public class HueBridge implements Serializable {
 
 
     //Default constructor with http header
-    private HueBridge(String ip, String userName) {
-        this(ip, userName, "http://");
+    private HueBridge(Context ctx, String ip, String userName) {
+        this(ctx, ip, userName, ctx.getString(R.string.http_header));
     }
 
     //Custom constructor for future use TODO HTTPS
-    private HueBridge(String ip, String userName, String urlHeader) {
-        HueBridge.ip = ip;
-        HueBridge.userName = userName;
-        HueBridge.urlHeader = urlHeader;
-        HueBridge.url = urlHeader + ip + "/api/" + userName;
+    private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
+        HueBridge.url =
+            Objects.requireNonNull(urlHeader) +
+            Objects.requireNonNull(ip) +
+            "/api/" +
+            Objects.requireNonNull(userName);
     }
 
     //Delete the instance TODO App Reset
@@ -60,20 +59,21 @@ public class HueBridge implements Serializable {
     }
 
     //Get instance of instantiated HueBridge
-    public static synchronized HueBridge getInstance() {
+    public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
-            Log.w(TAG, "getInstance() null! Is this the first startup?");
-            return null;
+            Log.i(TAG, "HueBridge instance is null. Attempting to load config...");
+            loadConfigurationFromMemory(ctx);
+            if (instance == null) {
+                Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
+                return null;
+            }
         }
         return instance;
     }
 
     //Constructor for instance, first time setup
-    public static synchronized HueBridge getInstance(String ipAddress, String userName) {
-        if (ipAddress == null || userName == null) {
-            return null;
-        }
-        instance = new HueBridge(ipAddress, userName);
+    public static synchronized HueBridge getInstance(Context ctx, String ipAddress, String userName) {
+        instance = new HueBridge(ctx, ipAddress, userName);
         return instance;
     }
 
@@ -116,7 +116,7 @@ public class HueBridge implements Serializable {
             SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             Gson gson = new Gson();
-            String json = gson.toJson(HueBridge.getInstance());
+            String json = gson.toJson(HueBridge.getInstance(ctx));
             editor.putString(ctx.getResources().getString(R.string.hue_bridge_config_file), json);
             editor.commit();
         } catch (Exception ex) {
@@ -257,20 +257,20 @@ public class HueBridge implements Serializable {
     }
 
     //GET method
-    public void requestHueState(final Context context) {
+    public void requestHueState(final Context ctx) {
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         state = response;
-                        if (HueBridge.getInstance() == null){
+                        if (HueBridge.getInstance(ctx) == null){
                             Log.wtf(TAG, "HueBridge.getInstance() == null");
                         }
-                        assert HueBridge.getInstance() != null;
-                        HueBridge bridge = HueBridge.getInstance();
-                        bridge.refreshAllHashMaps(context);
+                        assert HueBridge.getInstance(ctx) != null;
+                        HueBridge bridge = HueBridge.getInstance(ctx);
+                        bridge.refreshAllHashMaps(ctx);
                         try {
-                            bridge.getStateIntent(context).send();
+                            bridge.getStateIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -283,12 +283,12 @@ public class HueBridge implements Serializable {
                     }
                 });
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(context).addToRequestQueue(jor);
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jor);
         Log.d(TAG, "request sent to queue");
     }
 
     //PUT method
-    private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jsonObject, final String resourceUrl){
+    private JsonCustomRequest getJsonCustomRequest(final Context ctx, final JSONObject jsonObject, final String resourceUrl){
         if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
@@ -333,12 +333,12 @@ public class HueBridge implements Serializable {
                     }
                     if (success ) {
                         Log.d(TAG, "changeHueState successful");
-                        if (HueBridge.getInstance() == null){
+                        if (HueBridge.getInstance(ctx) == null){
                             Log.wtf(TAG, "HueBridge.getInstance() == null");
                         }
-                        assert HueBridge.getInstance() != null;
+                        assert HueBridge.getInstance(ctx) != null;
                         try {
-                            HueBridge.getInstance().getReplyIntent(context).send();
+                            HueBridge.getInstance(ctx).getReplyIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }

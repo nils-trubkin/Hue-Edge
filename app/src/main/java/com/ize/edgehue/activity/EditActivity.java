@@ -40,9 +40,9 @@ public class EditActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                assert HueBridge.getInstance() != null;
-                if(HueBridge.getInstance() != null){
-                    HueBridge.getInstance().saveConfigurationToMemory(ctx);
+                assert HueBridge.getInstance(ctx) != null;
+                if(HueBridge.getInstance(ctx) != null){
+                    HueBridge.getInstance(ctx).saveConfigurationToMemory(ctx);
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
@@ -80,7 +80,7 @@ public class EditActivity extends AppCompatActivity {
 
         ArrayList<BridgeResource> resourceList = new ArrayList<>();
 
-        HueBridge bridge = HueBridge.getInstance();
+        HueBridge bridge = HueBridge.getInstance(ctx);
 
         if (bridge == null){
             Log.e(TAG, "HueBridge.getInstance() == null. Probably missing config");

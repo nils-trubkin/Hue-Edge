@@ -78,22 +78,22 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context ctx, Intent intent) {
         Log.d(TAG, "onRecieve()");
-        super.onReceive(context, intent);
-        if (HueBridge.getInstance() == null) {
-            HueBridge.loadConfigurationFromMemory(context);
-            if (HueBridge.getInstance() == null) {
+        super.onReceive(ctx, intent);
+        if (HueBridge.getInstance(ctx) == null) {
+            HueBridge.loadConfigurationFromMemory(ctx);
+            if (HueBridge.getInstance(ctx) == null) {
                 currentCategory = menuCategory.NO_BRIDGE;
             }
         }
         if(contentView == null) {
-            contentView = createContentView(context);
+            contentView = createContentView(ctx);
         }
         if(helpView == null) {
-            helpView = createHelpView(context);
+            helpView = createHelpView(ctx);
         }
-        if (HueBridge.getInstance() == null) {
+        if (HueBridge.getInstance(ctx) == null) {
             return;
         }
         String action = intent.getAction();
@@ -104,21 +104,21 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         Log.i(TAG, "onReceive: " + action);
         switch (action) {
             case ACTION_REMOTE_LONG_CLICK:
-                performRemoteLongClick(context, intent);
+                performRemoteLongClick(ctx, intent);
                 break;
             case ACTION_REMOTE_CLICK:
                 try {
-                    performRemoteClick(context, intent);
+                    performRemoteClick(ctx, intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 break;
             case ACTION_PULL_TO_REFRESH:
-                SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(context);
-                int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
+                SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+                int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
             case ACTION_RECEIVE_HUE_REPLY:
-                bridge.requestHueState(context);
+                bridge.requestHueState(ctx);
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 //just panel update
@@ -126,15 +126,15 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             default:
                 break;
         }
-        panelUpdate(context);
+        panelUpdate(ctx);
     }
 
     //This method is called when the Edge Single Plus Mode is created for the first time.
     //Samsung SDK
     @Override
-    public void onEnabled(Context context) {
+    public void onEnabled(Context ctx) {
         // TODO Auto-generated method stub
-        super.onEnabled(context);
+        super.onEnabled(ctx);
 
     }
 
@@ -142,23 +142,23 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Edge Single Plus Mode is deleted from the enabled list
     //Samsung SDK
     @Override
-    public void onDisabled(Context context) {
+    public void onDisabled(Context ctx) {
         // TODO Auto-generated method stub
-        super.onDisabled(context);
+        super.onDisabled(ctx);
     }
 
     //TODO
     @Override
-    public void onUpdate(Context context, SlookCocktailManager cocktailManager, int[] cocktailIds) {
+    public void onUpdate(Context ctx, SlookCocktailManager cocktailManager, int[] cocktailIds) {
 
         Log.i(TAG, "onUpdate");
-        panelUpdate(context);
+        panelUpdate(ctx);
     }
 
     //TODO
     @Override
-    public void onVisibilityChanged(Context context, int cocktailId, int visibility) {
-        super.onVisibilityChanged(context, cocktailId, visibility);
+    public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
+        super.onVisibilityChanged(ctx, cocktailId, visibility);
     }
 
     public static menuCategory getCurrentCategory() {
@@ -185,11 +185,11 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     //Create the content view, right panel. Used for buttons
-    private RemoteViews createContentView(Context context) {
+    private RemoteViews createContentView(Context ctx) {
         RemoteViews contentView = null;
         switch (currentCategory){
             case NO_BRIDGE:
-                contentView = new RemoteViews(context.getPackageName(),
+                contentView = new RemoteViews(ctx.getPackageName(),
                         R.layout.content_view_no_bridge);
                 break;
             case QUICK_ACCESS:
@@ -197,19 +197,19 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             case ROOMS:
             case ZONES:
             case SCENES:
-                contentView = new RemoteViews(context.getPackageName(),
+                contentView = new RemoteViews(ctx.getPackageName(),
                         R.layout.view_main);
 
                 int i = 0;
                 for ( int button : btnArr ){
                     contentView.setOnClickPendingIntent(button, getClickIntent(
-                            context, i++, 0));
-                    SlookCocktailManager.getInstance(context).
+                            ctx, i++, 0));
+                    SlookCocktailManager.getInstance(ctx).
                             setOnLongClickPendingIntent(contentView, button,
-                                    getLongClickIntent(context, button, 0));
+                                    getLongClickIntent(ctx, button, 0));
                 }
                 contentView.setOnClickPendingIntent(R.id.btnEdit,
-                        getClickIntent(context, R.id.btnEdit, 1));
+                        getClickIntent(ctx, R.id.btnEdit, 1));
                 break;
             default:
                 break;
@@ -243,11 +243,11 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     //Create the help view, left panel. Used for categories.
-    private RemoteViews createHelpView(Context context) {
-        RemoteViews helpView = new RemoteViews(context.getPackageName(),
+    private RemoteViews createHelpView(Context ctx) {
+        RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
                 R.layout.view_help);
         for( int button : btnCategoryArr){
-            helpView.setOnClickPendingIntent(button, getClickIntent(context, button, 1));
+            helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
         }
         for (int line : btnCategoryLineArr){
@@ -263,55 +263,55 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     //Get the long click intent object to assign to a button
-    private static PendingIntent getLongClickIntent(Context context, int id, int key) {
-        Intent longClickIntent = new Intent(context, EdgeHueProvider.class);
+    private static PendingIntent getLongClickIntent(Context ctx, int id, int key) {
+        Intent longClickIntent = new Intent(ctx, EdgeHueProvider.class);
         longClickIntent.setAction(ACTION_REMOTE_LONG_CLICK);
         longClickIntent.putExtra("id", id);
         longClickIntent.putExtra("key", key);
-        return PendingIntent.getBroadcast(context, id, longClickIntent,
+        return PendingIntent.getBroadcast(ctx, id, longClickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Get the click intent object to assign to a button
-    private static PendingIntent getClickIntent(Context context, int id, int key) {
-        Intent clickIntent = new Intent(context, EdgeHueProvider.class);
+    private static PendingIntent getClickIntent(Context ctx, int id, int key) {
+        Intent clickIntent = new Intent(ctx, EdgeHueProvider.class);
         clickIntent.setAction(ACTION_REMOTE_CLICK);
         clickIntent.putExtra("id", id);
         clickIntent.putExtra("key", key);
-        return PendingIntent.getBroadcast(context, id, clickIntent,
+        return PendingIntent.getBroadcast(ctx, id, clickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Enter the edit activity to customize buttons
-    private void startEditActivity(Context context){
+    private void startEditActivity(Context ctx){
         Intent editIntent = new Intent(Intent.ACTION_EDIT);
         editIntent.addCategory( Intent.CATEGORY_DEFAULT);
         editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(editIntent);
+        ctx.startActivity(editIntent);
     }
 
-    private void startSetupActivity(Context context){
+    private void startSetupActivity(Context ctx){
         /*Intent setupIntent = new Intent(Intent.ACTION_MAIN);
         setupIntent.addCategory( Intent.CATEGORY_LAUNCHER);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(setupIntent);*/ //TODO
+        ctx.startActivity(setupIntent);*/ //TODO
     }
 
     //Button handler
-    private void performRemoteClick(Context context, Intent intent) throws JSONException {
+    private void performRemoteClick(Context ctx, Intent intent) throws JSONException {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
         if(currentCategory == menuCategory.NO_BRIDGE){
-            startSetupActivity(context);
+            startSetupActivity(ctx);
             return;
         }
         if(key == 0){
             if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
                 BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
-                HueBridge.getInstance().toggleHueState(context, br);
+                HueBridge.getInstance(ctx).toggleHueState(ctx, br);
             }
             else
-                startEditActivity(context);
+                startEditActivity(ctx);
         }
         else if(key == 1) {
             switch (id) {
@@ -331,20 +331,20 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                     currentCategory = menuCategory.SCENES;
                     break;
                 case R.id.btnEdit:
-                    startEditActivity(context);
+                    startEditActivity(ctx);
                     break;
                 default:
                     break;
             }
         }
-        panelUpdate(context);
+        panelUpdate(ctx);
     }
 
-    private void performRemoteLongClick(Context context, Intent intent) {
+    private void performRemoteLongClick(Context ctx, Intent intent) {
         StringBuilder debugString = new StringBuilder("ACTION_REMOTE_LONG_CLICK");
         debugString.append("id=").append(intent.getIntExtra("id", -1));
         Log.d(TAG, debugString.toString());
-        startEditActivity(context);
+        startEditActivity(ctx);
     }
 
     public static void clearAllContents(){
@@ -365,19 +365,19 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     }
 
     //The initial setup of the buttons
-    public static void quickSetup(Context context) throws JSONException {
+    public static void quickSetup(Context ctx) throws JSONException {
         Log.d(TAG, "quickSetup entered");
 
         clearAllContents();
 
         currentCategory = menuCategory.QUICK_ACCESS;
 
-        bridge = HueBridge.getInstance();
+        bridge = HueBridge.getInstance(ctx);
 
-        if (HueBridge.getInstance() == null){
+        if (HueBridge.getInstance(ctx) == null){
             Log.e(TAG, "HueBridge.getInstance() == null. Probably missing config");
         }
-        assert HueBridge.getInstance() != null;
+        assert HueBridge.getInstance(ctx) != null;
         int buttonIndex = 0;
         int qaButtonIndex = 0;
         HashMap<String, BridgeResource> map = null;
@@ -436,13 +436,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             }
         }
 
-        HueBridge.getInstance().saveConfigurationToMemory(context);
+        HueBridge.getInstance(ctx).saveConfigurationToMemory(ctx);
     }
 
     //Refresh both panels
-    private void panelUpdate(Context context){
-        contentView = createContentView(context);
-        helpView = createHelpView(context);
+    private void panelUpdate(Context ctx){
+        contentView = createContentView(ctx);
+        helpView = createHelpView(ctx);
         Log.i(TAG, "Doing panelUpdate currentCategory is " + currentCategory + ". Filling in buttons now");
         if(currentCategory != menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
@@ -464,21 +464,21 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 } else {
                     contentView.setTextViewText(btnTextArr[i], "");
                     contentView.setTextViewText(btnArr[i], "+");
-                    contentView.setTextColor(btnArr[i], (ContextCompat.getColor(context, R.color.white)));
+                    contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                     contentView.setInt(btnArr[i], "setBackgroundResource",
                             R.drawable.add_button_background);
                 }
             }
         }
 
-        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(context);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
+        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
 
         //Set pull refresh
-        Intent refreshIntent = new Intent(context, EdgeHueProvider.class);
+        Intent refreshIntent = new Intent(ctx, EdgeHueProvider.class);
         refreshIntent.setAction(ACTION_PULL_TO_REFRESH);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0xff, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        SlookCocktailManager.getInstance(context).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0xff, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }

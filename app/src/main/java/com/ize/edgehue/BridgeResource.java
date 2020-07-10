@@ -42,7 +42,7 @@ public class BridgeResource {
 
     public String getName(){
         try {
-            HueBridge bridge = HueBridge.getInstance();
+            HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
             }
@@ -63,7 +63,7 @@ public class BridgeResource {
                 Log.w(TAG,"You shouldn't use this!");
                 return 1;
             }
-            HueBridge bridge = HueBridge.getInstance();
+            HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
             }
@@ -81,7 +81,7 @@ public class BridgeResource {
     }
     public String getBtnText(){
         if (category.equals("scenes")) {
-            HueBridge bridge = HueBridge.getInstance();
+            HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
             }
