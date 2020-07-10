@@ -40,16 +40,16 @@ public class HueBridge implements Serializable {
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
-        this(ip, userName, ctx.getString(R.string.http_header));
+        this(ctx, ip, userName, ctx.getString(R.string.http_header)); // String "http://"
     }
 
     //Custom constructor for future use TODO HTTPS
-    private HueBridge(String ip, String userName, String urlHeader) {
+    private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
         HueBridge.url =
-            Objects.requireNonNull(urlHeader) +
-            Objects.requireNonNull(ip) +
-            "/api/" +
-            Objects.requireNonNull(userName);
+                Objects.requireNonNull(urlHeader) +
+                        Objects.requireNonNull(ip) +
+                        ctx.getString(R.string.api_path) + // String "/api/"
+                        Objects.requireNonNull(userName);
     }
 
     //Delete the instance TODO App Reset
@@ -299,67 +299,67 @@ public class HueBridge implements Serializable {
         }
         Log.d(TAG, "setHueState url " + url + resourceUrl); // this is the actual resource path
         return new JsonCustomRequest(Request.Method.PUT, url + resourceUrl, jsonObject,
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Log.d(TAG, "setHueState responds " + response.toString());
-                    boolean success = false; // assume the worst
-                    Iterator<String> responseKeys; // iterator for response JSONObject
-                    String responseKey; // index for response JSONObject
-                    Iterator<String> requestKeys; // iterator for arg JSONObject jsonObject
-                    String requestKey; // index for arg JSONObject jsonObject
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, "setHueState responds " + response.toString());
+                        boolean success = false; // assume the worst
+                        Iterator<String> responseKeys; // iterator for response JSONObject
+                        String responseKey; // index for response JSONObject
+                        Iterator<String> requestKeys; // iterator for arg JSONObject jsonObject
+                        String requestKey; // index for arg JSONObject jsonObject
 
-                    String responseState = null;
-                    String requestedState = null;
+                        String responseState = null;
+                        String requestedState = null;
 
-                    HueBridge bridge = HueBridge.getInstance(ctx);
-                    if (bridge == null){
-                        Log.wtf(TAG, "HueBridge.getInstance() == null");
-                    }
-
-                    try {
-                        JSONObject jsonResponse = response.getJSONObject(0);
-                        responseKeys = jsonResponse.keys();
-                        if(responseKeys.hasNext()) {
-                            responseKey = responseKeys.next();
-                            if(!responseKey.equals("success")){  //response key should be success
-                                Log.e(TAG, "Unsuccesfull! Check reply");
-                                return;
-                            }
-                            requestKeys = jsonObject.keys();    // this can be "on" or "all_on" for example
-                            if(requestKeys.hasNext()) {
-                                requestKey = requestKeys.next();
-                                requestedState = jsonObject.getString(requestKey);
-                                JSONObject responseValue = jsonResponse.getJSONObject(responseKey); // get key for success
-                                responseState = responseValue.getString(resourceUrl + "/" + requestKey); //get response for request
-                            }
+                        HueBridge bridge = HueBridge.getInstance(ctx);
+                        if (bridge == null){
+                            Log.wtf(TAG, "HueBridge.getInstance() == null");
                         }
-                        assert requestedState != null;
-                        if (responseState != null) {
-                            success = requestedState.equals(responseState);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (success ) {
-                        Log.d(TAG, "changeHueState successful");
+
                         try {
-                            assert bridge != null;
-                            bridge.getReplyIntent(ctx).send();
-                        } catch (PendingIntent.CanceledException e) {
+                            JSONObject jsonResponse = response.getJSONObject(0);
+                            responseKeys = jsonResponse.keys();
+                            if(responseKeys.hasNext()) {
+                                responseKey = responseKeys.next();
+                                if(!responseKey.equals("success")){  //response key should be success
+                                    Log.e(TAG, "Unsuccesfull! Check reply");
+                                    return;
+                                }
+                                requestKeys = jsonObject.keys();    // this can be "on" or "all_on" for example
+                                if(requestKeys.hasNext()) {
+                                    requestKey = requestKeys.next();
+                                    requestedState = jsonObject.getString(requestKey);
+                                    JSONObject responseValue = jsonResponse.getJSONObject(responseKey); // get key for success
+                                    responseState = responseValue.getString(resourceUrl + "/" + requestKey); //get response for request
+                                }
+                            }
+                            assert requestedState != null;
+                            if (responseState != null) {
+                                success = requestedState.equals(responseState);
+                            }
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    } else {
-                        Log.d(TAG, "changeHueState unsuccessful");
+                        if (success ) {
+                            Log.d(TAG, "changeHueState successful");
+                            try {
+                                assert bridge != null;
+                                bridge.getReplyIntent(ctx).send();
+                            } catch (PendingIntent.CanceledException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d(TAG, "changeHueState unsuccessful");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.toString());
                     }
                 }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e(TAG, error.toString());
-                }
-            }
         );
     }
 

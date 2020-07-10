@@ -47,5 +47,6 @@
     <string name="hue_bridge_config_file">HueBridgeConfigFile</string>
 
     <string name="http_header">http://</string>
+    <string name="api_path">/api/</string>
 
 </resources>
