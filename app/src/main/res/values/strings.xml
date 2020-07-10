@@ -5,17 +5,6 @@
     <string name="main_background_contentDescription">Background</string>
     <string name="clicked">Clicked</string>
     <string name="long_clicked">Long clicked</string>
-<!--    LEGACY-->
-    <string name="button_1_text">HOLMÖ on</string>
-    <string name="button_2_text">HOLMÖ off</string>
-    <string name="button_3_text">Create instance</string>
-    <string name="button_4_text">Request state</string>
-    <string name="button_5_text">State?</string>
-    <string name="button_6_text">Button 6</string>
-    <string name="button_7_text">Button 7</string>
-    <string name="button_8_text">Button 8</string>
-    <string name="button_9_text">Button 9</string>
-    <string name="button_10_text">Button 10</string>
 
 
 
@@ -60,5 +49,7 @@
 
     <string name="preference_file_key">EdgeHueConfig</string>
     <string name="hue_bridge_config_file">HueBridgeConfigFile</string>
+
+    <string name="http_header">http://</string>
 
 </resources>

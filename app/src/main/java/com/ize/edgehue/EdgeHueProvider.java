@@ -82,7 +82,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         Log.d(TAG, "onRecieve()");
         super.onReceive(context, intent);
         if (HueBridge.getInstance() == null) {
-            HueBridge.loadConfigurationFromMemory(context);
+            HueBridge.loadConfigurationFromMemory();
             if (HueBridge.getInstance() == null) {
                 currentCategory = menuCategory.NO_BRIDGE;
             }
@@ -118,7 +118,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(context, EdgeHueProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
             case ACTION_RECEIVE_HUE_REPLY:
-                bridge.requestHueState(context);
+                bridge.requestHueState();
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 //just panel update
@@ -308,7 +308,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         if(key == 0){
             if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
                 BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
-                HueBridge.getInstance().toggleHueState(context, br);
+                HueBridge.getInstance().toggleHueState(br);
             }
             else
                 startEditActivity(context);
@@ -436,7 +436,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             }
         }
 
-        HueBridge.getInstance().saveConfigurationToMemory(context);
+        HueBridge.getInstance().saveConfigurationToMemory();
     }
 
     //Refresh both panels

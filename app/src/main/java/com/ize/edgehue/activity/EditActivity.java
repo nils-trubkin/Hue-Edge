@@ -42,7 +42,7 @@ public class EditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 assert HueBridge.getInstance() != null;
                 if(HueBridge.getInstance() != null){
-                    HueBridge.getInstance().saveConfigurationToMemory(ctx);
+                    HueBridge.getInstance().saveConfigurationToMemory();
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");

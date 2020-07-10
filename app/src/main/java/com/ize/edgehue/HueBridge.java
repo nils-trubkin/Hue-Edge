@@ -21,15 +21,14 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class HueBridge implements Serializable {
     private static final String TAG = HueBridge.class.getSimpleName();
 
     private static HueBridge instance;
+    private static Context ctx;
 
-    private static String ip;
-    private static String userName;
-    private static String urlHeader;
     private static String url;
     private static JSONObject state;
 
@@ -41,22 +40,18 @@ public class HueBridge implements Serializable {
 
 
     //Default constructor with http header
-    private HueBridge(String ip, String userName) {
-        this(ip, userName, "http://");
+    private HueBridge(Context ctx, String ip, String userName) {
+        this(ctx, ip, userName, ctx.getString(R.string.http_header));
     }
 
     //Custom constructor for future use TODO HTTPS
-    private HueBridge(String ip, String userName, String urlHeader) {
-        HueBridge.ip = ip;
-        HueBridge.userName = userName;
-        HueBridge.urlHeader = urlHeader;
-        HueBridge.url = urlHeader + ip + "/api/" + userName;
-    }
-
-    //Delete the instance TODO App Reset
-    public static synchronized void deleteInstance() {
-        Log.i(TAG, "Deleting instance of HueBridge");
-        instance = null;
+    private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
+        HueBridge.ctx = Objects.requireNonNull(ctx);
+        HueBridge.url =
+                Objects.requireNonNull(urlHeader) +
+                Objects.requireNonNull(ip) +
+                "/api/" +
+                Objects.requireNonNull(userName);
     }
 
     //Get instance of instantiated HueBridge
@@ -69,12 +64,15 @@ public class HueBridge implements Serializable {
     }
 
     //Constructor for instance, first time setup
-    public static synchronized HueBridge getInstance(String ipAddress, String userName) {
-        if (ipAddress == null || userName == null) {
-            return null;
-        }
-        instance = new HueBridge(ipAddress, userName);
+    public static synchronized HueBridge getInstance(Context ctx, String ip, String userName) {
+        instance = new HueBridge(ctx, ip, userName);
         return instance;
+    }
+
+    //Delete the instance TODO App Reset
+    public static synchronized void deleteInstance() {
+        Log.i(TAG, "Deleting instance of HueBridge");
+        instance = null;
     }
 
     public JSONObject getState() {
@@ -110,7 +108,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public void saveConfigurationToMemory(Context ctx) {
+    public void saveConfigurationToMemory() {
         try {
             Log.d(TAG, "saveConfigurationToMemory()");
             SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -124,7 +122,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public static void loadConfigurationFromMemory(Context ctx){
+    public static void loadConfigurationFromMemory(){
         try {
             Log.d(TAG, "loadConfigurationFromMemory()");
             SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -136,7 +134,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    private void refreshAllHashMaps(Context context){
+    private void refreshAllHashMaps(){
         Iterator<String> keys = state.keys();
         while(keys.hasNext()){ // iterate over categories
             String key = keys.next();
@@ -149,7 +147,7 @@ public class HueBridge implements Serializable {
                         JSONObject resource = resources.getJSONObject(resourcesKey);
                         if (key.equals("lights")) {
                             BridgeResource br = new BridgeResource(
-                                    context,
+                                    ctx,
                                     resourcesKey,
                                     key,
                                     "on",
@@ -158,7 +156,7 @@ public class HueBridge implements Serializable {
                         }
                         else if (key.equals("groups")) {
                             BridgeResource br = new BridgeResource(
-                                    context,
+                                    ctx,
                                     resourcesKey,
                                     key,
                                     "any_on",
@@ -173,7 +171,7 @@ public class HueBridge implements Serializable {
                             while (sceneKeys.hasNext()){
                                 if(sceneKeys.next().equals("group")){
                                     BridgeResource br = new BridgeResource(
-                                            context,
+                                            ctx,
                                             resourcesKey,
                                             key,
                                             "scene",
@@ -191,7 +189,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public void toggleHueState(Context context, BridgeResource br){
+    public void toggleHueState(BridgeResource br){
         String id = br.getId();
         String category = br.getCategory();
         String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
@@ -200,7 +198,7 @@ public class HueBridge implements Serializable {
         Log.d(TAG, "toggleHueState entered for: " + category + " " + id);
         boolean lastState;
         if(category.equals("scenes")){
-            setHueState(context, actionUrl, actionWrite, id);
+            setHueState(actionUrl, actionWrite, id);
         }
         else {
             try {
@@ -214,34 +212,34 @@ public class HueBridge implements Serializable {
                 e.printStackTrace();
                 return;
             }
-            setHueState(context, actionUrl, actionWrite, !lastState);
+            setHueState(actionUrl, actionWrite, !lastState);
         }
     }
 
     //Set given pair to resourceUrl
-    private void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
+    private void setHueState(final String resourceUrl, final String key, final Object value) {
         Log.d(TAG, "setHueState entered");
         JSONObject j = createJsonOnObject(key, value);
         assert j != null;
-        JsonCustomRequest jcr = getJsonCustomRequest(context, j, resourceUrl);
+        JsonCustomRequest jcr = getJsonCustomRequest(j, resourceUrl);
         Log.d(TAG, "changeHueState putRequest created for this url\n" + resourceUrl);
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(context).addToRequestQueue(jcr);
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jcr);
     }
 
     //Construct intent for incoming state JsonObject
-    private PendingIntent getStateIntent(Context context) {
-        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
+    private PendingIntent getStateIntent() {
+        Intent stateIntent = new Intent(ctx, EdgeHueProvider.class);
         stateIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_STATE);
-        return PendingIntent.getBroadcast(context, 1, stateIntent,
+        return PendingIntent.getBroadcast(ctx, 1, stateIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Construct intent for incoming reply JsonArray
-    private PendingIntent getReplyIntent(Context context) {
-        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
+    private PendingIntent getReplyIntent() {
+        Intent replyIntent = new Intent(ctx, EdgeHueProvider.class);
         replyIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_REPLY);
-        return PendingIntent.getBroadcast(context, 1, replyIntent,
+        return PendingIntent.getBroadcast(ctx, 1, replyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -257,7 +255,7 @@ public class HueBridge implements Serializable {
     }
 
     //GET method
-    public void requestHueState(final Context context) {
+    public void requestHueState() {
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -268,9 +266,9 @@ public class HueBridge implements Serializable {
                         }
                         assert HueBridge.getInstance() != null;
                         HueBridge bridge = HueBridge.getInstance();
-                        bridge.refreshAllHashMaps(context);
+                        bridge.refreshAllHashMaps();
                         try {
-                            bridge.getStateIntent(context).send();
+                            bridge.getStateIntent().send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -283,12 +281,12 @@ public class HueBridge implements Serializable {
                     }
                 });
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(context).addToRequestQueue(jor);
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(jor);
         Log.d(TAG, "request sent to queue");
     }
 
     //PUT method
-    private JsonCustomRequest getJsonCustomRequest(final Context context, final JSONObject jsonObject, final String resourceUrl){
+    private JsonCustomRequest getJsonCustomRequest(final JSONObject jsonObject, final String resourceUrl){
         if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
@@ -338,7 +336,7 @@ public class HueBridge implements Serializable {
                         }
                         assert HueBridge.getInstance() != null;
                         try {
-                            HueBridge.getInstance().getReplyIntent(context).send();
+                            HueBridge.getInstance().getReplyIntent().send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }

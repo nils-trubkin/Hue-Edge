@@ -56,6 +56,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     private static final String TAG = EdgeSetup.class.getSimpleName();
+    private Context ctx = this;
 
     private BridgeDiscovery bridgeDiscovery;
 
@@ -239,9 +240,10 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
             HueBridge.getInstance(
+                    ctx,
                     "192.168.69.166",
                     "aR8A1sBC-crUyPeCjtXJKKm0EEcxr6nXurdOq4gD")
-                    .requestHueState(this);
+                    .requestHueState();
             Log.d(TAG, "getInstance() returns (!= null):" + HueBridge.getInstance());
             updateUI(UIState.Settings);
         }
@@ -354,7 +356,6 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
         }
-        final Context ctx = this;
         assert jsonObject.keys().hasNext();
         Log.d(TAG, "setHueState url " + ip); // this is the actual resource path
         return new JsonCustomRequest(Request.Method.POST, "http://" + ip + "/api", jsonObject,
@@ -383,8 +384,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
 
-                                HueBridge.getInstance(ip, username)
-                                        .requestHueState(ctx);
+                                HueBridge.getInstance(ctx, ip, username)
+                                        .requestHueState();
 
                                 updateUI(UIState.Settings);
                                 }
