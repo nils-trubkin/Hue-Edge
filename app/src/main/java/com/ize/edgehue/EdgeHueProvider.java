@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RemoteViews;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -80,10 +82,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         Log.d(TAG, "onRecieve()");
         super.onReceive(ctx, intent);
         if (HueBridge.getInstance(ctx) == null) {
-            HueBridge.loadConfigurationFromMemory(ctx);
-            if (HueBridge.getInstance(ctx) == null) {
-                currentCategory = menuCategory.NO_BRIDGE;
-            }
+            currentCategory = menuCategory.NO_BRIDGE;
         }
         if(contentView == null) {
             contentView = createContentView(ctx);
@@ -160,6 +159,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
     public static menuCategory getCurrentCategory() {
         return currentCategory;
+    }
+
+    public static void setCurrentCategory(menuCategory currentCategory) {
+        EdgeHueProvider.currentCategory = currentCategory;
     }
 
     public static void addToCurrentCategory(BridgeResource br){
@@ -432,7 +435,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             }
         }
 
-        Objects.requireNonNull(HueBridge.getInstance(ctx)).saveConfigurationToMemory(ctx);
+        saveConfigurationToMemory(ctx);
     }
 
     //Refresh both panels
@@ -477,5 +480,35 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+    }
+
+    public static void saveConfigurationToMemory(Context ctx) {
+        try {
+            Log.d(TAG, "saveConfigurationToMemory()");
+            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(Objects.requireNonNull(HueBridge.getInstance(ctx)));
+            String json2 = gson.toJson(Objects.requireNonNull(getCurrentCategory()));
+            editor.putString(ctx.getResources().getString(R.string.hue_bridge_config_file), json);
+            editor.putString(ctx.getResources().getString(R.string.current_category_config_file), json2);
+            editor.apply(); //TODO may use commit to write at once
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void loadConfigurationFromMemory(Context ctx){
+        try {
+            Log.d(TAG, "loadConfigurationFromMemory()");
+            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String json = sharedPref.getString(ctx.getResources().getString(R.string.hue_bridge_config_file), "");
+            String json2 = sharedPref.getString(ctx.getResources().getString(R.string.current_category_config_file), "");
+            HueBridge.setInstance(Objects.requireNonNull(gson.fromJson(json, HueBridge.class)));
+            setCurrentCategory(Objects.requireNonNull(gson.fromJson(json2, menuCategory.class)));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

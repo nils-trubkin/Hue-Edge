@@ -3,14 +3,12 @@ package com.ize.edgehue;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
 import com.ize.edgehue.api.JsonCustomRequest;
 import com.ize.edgehue.api.RequestQueueSingleton;
 
@@ -60,7 +58,7 @@ public class HueBridge implements Serializable {
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
             Log.i(TAG, "HueBridge instance is null. Attempting to load config...");
-            loadConfigurationFromMemory(ctx);
+            EdgeHueProvider.loadConfigurationFromMemory(ctx);
             if (instance == null) {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
@@ -73,6 +71,11 @@ public class HueBridge implements Serializable {
     public static synchronized HueBridge getInstance(Context ctx, String ipAddress, String userName) {
         instance = new HueBridge(ctx, ipAddress, userName);
         return instance;
+    }
+
+    //Setting the instance for config loading
+    public static synchronized void setInstance(HueBridge bridge) {
+        instance = bridge;
     }
 
     public JSONObject getState() {
@@ -105,32 +108,6 @@ public class HueBridge implements Serializable {
             Log.e(TAG, "Can't getSceneGroup()");
             e.printStackTrace();
             return null;
-        }
-    }
-
-    public void saveConfigurationToMemory(Context ctx) {
-        try {
-            Log.d(TAG, "saveConfigurationToMemory()");
-            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(HueBridge.getInstance(ctx));
-            editor.putString(ctx.getResources().getString(R.string.hue_bridge_config_file), json);
-            editor.apply(); //TODO may use commit to write at once
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void loadConfigurationFromMemory(Context ctx){
-        try {
-            Log.d(TAG, "loadConfigurationFromMemory()");
-            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            Gson gson = new Gson();
-            String json = sharedPref.getString(ctx.getResources().getString(R.string.hue_bridge_config_file), "");
-            instance = gson.fromJson(json, HueBridge.class);
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
