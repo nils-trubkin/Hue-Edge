@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -79,8 +80,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Samsung SDK
     @Override
     public void onReceive(Context ctx, Intent intent) {
-        Log.d(TAG, "onRecieve()");
         super.onReceive(ctx, intent);
+        Log.d(TAG, "onReceive()");
+
+        String toastString = "onReceive";
+        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+
         if (HueBridge.getInstance(ctx) == null) {
             currentCategory = menuCategory.NO_BRIDGE;
         }
@@ -222,13 +227,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             contentView.setViewVisibility(R.id.mainColumn, View.GONE);
             contentView.setViewVisibility(R.id.extraColumn, View.GONE);
             for (int i = 0; i < 5; i++) {
-                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
+                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
                     mainColumnEmpty = false;
                     break;
                 }
             }
             for (int i = 5; i < 10; i++) {
-                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
+                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
                     extraColumnEmpty = false;
                     break;
                 }
@@ -301,6 +306,8 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private void performRemoteClick(Context ctx, Intent intent) {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
+        String toastString = "Clicked id " + id + ", key " + key;
+        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
         if(currentCategory == menuCategory.NO_BRIDGE){
             //startSetupActivity(ctx);
             return;
@@ -445,7 +452,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         Log.i(TAG, "Doing panelUpdate currentCategory is " + currentCategory + ". Filling in buttons now");
         if(currentCategory != menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
-                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
+                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
                     BridgeResource resource = Objects.requireNonNull(contents.get(currentCategory)).get(i);
                     if(resource == null) {
                         Log.wtf(TAG, "resource == null");
@@ -454,11 +461,13 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                     contentView.setTextViewText(btnTextArr[i], resource.getName());
                     contentView.setTextViewText(btnArr[i], resource.getBtnText());
                     contentView.setTextColor(btnArr[i], resource.getBtnTextColor());
-                    contentView.setFloat(btnArr[i], "setTextSize", 14);
                     contentView.setInt(btnArr[i], "setBackgroundResource",
                             resource.getBtnBackgroundResource());
                     if(resource.getCategory().equals("scenes")){
                         contentView.setFloat(btnArr[i], "setTextSize", 10);
+                    }
+                    else {
+                        contentView.setFloat(btnArr[i], "setTextSize", 14);
                     }
                 } else {
                     contentView.setTextViewText(btnTextArr[i], "");

@@ -27,6 +27,7 @@ public class HueBridge implements Serializable {
     private static HueBridge instance;
 
     private static String url;
+    private static String ip;
     private static JSONObject state;
 
     private static final HashMap<String, BridgeResource> lights = new HashMap<>();
@@ -41,6 +42,7 @@ public class HueBridge implements Serializable {
 
     //Custom constructor for future use TODO HTTPS
     private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
+        HueBridge.ip = ip;
         HueBridge.url =
                 Objects.requireNonNull(urlHeader) +
                         Objects.requireNonNull(ip) +
@@ -76,6 +78,10 @@ public class HueBridge implements Serializable {
     //Setting the instance for config loading
     public static synchronized void setInstance(HueBridge bridge) {
         instance = bridge;
+    }
+
+    public static String getIp() {
+        return ip;
     }
 
     public JSONObject getState() {

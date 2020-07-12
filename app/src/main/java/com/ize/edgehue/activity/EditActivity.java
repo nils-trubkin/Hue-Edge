@@ -1,9 +1,12 @@
 package com.ize.edgehue.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -23,26 +26,40 @@ import java.util.Objects;
 public class EditActivity extends AppCompatActivity {
 
     private static final String TAG = EditActivity.class.getSimpleName();
-
     private final Context ctx = this;
+
+    //UI elements
+    private GridView mListView;
+    private Button btnSave;
+    private TextView hueStatus;
+
+    private EdgeHueProvider.menuCategory currentCategory;
+    private HashMap<EdgeHueProvider.menuCategory, HashMap<Integer, BridgeResource>> contents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit);
         Log.d(TAG, "onCreate: Started.");
-        GridView mListView = findViewById(R.id.gridView);
-        Button btnSave = findViewById(R.id.btnSave);
-        EdgeHueProvider.menuCategory currentCategory = EdgeHueProvider.getCurrentCategory();
-        HashMap<EdgeHueProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
-                EdgeHueProvider.getContents();
+
+        setContentView(R.layout.activity_edit);
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setNavigationBarColor(Color.rgb(53,53,53));
+
+        mListView = findViewById(R.id.gridView);
+        btnSave = findViewById(R.id.btnSave);
+        hueStatus = findViewById(R.id.hueStatus);
+
+        currentCategory = EdgeHueProvider.getCurrentCategory();
+        contents = EdgeHueProvider.getContents();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 assert HueBridge.getInstance(ctx) != null;
                 if(HueBridge.getInstance(ctx) != null){
-                    //Objects.requireNonNull(HueBridge.getInstance(ctx)).saveConfigurationToMemory(ctx);
+                    EdgeHueProvider.saveConfigurationToMemory(ctx);
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
@@ -51,9 +68,11 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
+        hueStatus.setText(HueBridge.getInstance(ctx).getIp());
+
         if(currentCategory != EdgeHueProvider.menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
-                if (Objects.requireNonNull(contents.get(currentCategory)).containsKey(i)) {
+                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
                     BridgeResource resource = Objects.requireNonNull(contents.get(currentCategory)).get(i);
                     if(resource == null) {
                         Log.wtf(TAG, "resource == null");
@@ -68,12 +87,15 @@ public class EditActivity extends AppCompatActivity {
                     if(resource.getCategory().equals("scenes")) {
                         btn.setTextSize(10);
                     }
-                } else {/*
-                    contentView.setTextViewText(btnTextArr[i], "");
-                    contentView.setTextViewText(btnArr[i], "+");
-                    contentView.setTextColor(btnArr[i], (ContextCompat.getColor(context, R.color.white)));
-                    contentView.setInt(btnArr[i], "setBackgroundResource",
-                            R.drawable.add_button_background);*/
+                    else{
+                        btn.setTextSize(14);
+                    }
+                } else {
+                    TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
+                    tw.setText("");
+                    Button btn = findViewById(EdgeHueProvider.btnArr[i]);
+                    btn.setText("");
+                    btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
                 }
             }
         }

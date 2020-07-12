@@ -5,8 +5,7 @@
     android:layout_height="100dp"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingTop="20dp"
-    tools:context=".activity.MainActivity">
+    android:paddingTop="20dp">
 
     <Button
         android:id="@+id/gridBtn"

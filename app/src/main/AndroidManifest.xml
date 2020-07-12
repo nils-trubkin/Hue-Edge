@@ -26,9 +26,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.MainActivity">
-        </activity>
-
         <activity
             android:name=".activity.EditActivity"
             android:label="TODO"
@@ -42,11 +39,11 @@
         <receiver android:name=".EdgeHueProvider" >
             <intent-filter>
                 <action android:name="com.samsung.android.cocktail.v2.action.COCKTAIL_UPDATE" />
-<!--                <action android:name="com.ize.edgehue.ACTION_REMOTE_LONG_CLICK" />-->
-<!--                <action android:name="com.ize.edgehue.ACTION_REMOTE_CLICK" />-->
-<!--                <action android:name="com.ize.edgehue.ACTION_PULL_TO_REFRESH" />-->
-<!--                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_STATE" />-->
-<!--                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY" />-->
+                <action android:name="com.ize.edgehue.ACTION_REMOTE_LONG_CLICK" />
+                <action android:name="com.ize.edgehue.ACTION_REMOTE_CLICK" />
+                <action android:name="com.ize.edgehue.ACTION_PULL_TO_REFRESH" />
+                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_STATE" />
+                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY" />
             </intent-filter>
 
             <meta-data

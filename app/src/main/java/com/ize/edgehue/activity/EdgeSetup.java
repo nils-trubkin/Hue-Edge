@@ -96,11 +96,9 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {*/
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(Color.rgb(53,53,53));
-        /*}*/
 
         // Setup the UI
         statusTextView = findViewById(R.id.status_text);
