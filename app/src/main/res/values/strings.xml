@@ -47,12 +47,17 @@
     <string name="button_save_text">Save</string>
 
     <string name="preference_file_key">EdgeHueConfig</string>
-    <string name="hue_bridge_config_file">HueBridgeConfigFile</string>
     <string name="current_category_config_file">CurrentCategoryConfigFile</string>
 
     <string name="http_header">http://</string>
     <string name="api_path">/api/</string>
 
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue bridge</string>
+
+    <string name="large_minus">—</string>
+    <string name="plus_symbol">+</string>
+    <string name="on_symbol">|</string>
+    <string name="off_symbol">◯</string>
+    <string name="question_symbol">\?</string>
 
 </resources>

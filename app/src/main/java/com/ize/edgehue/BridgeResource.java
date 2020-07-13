@@ -1,23 +1,30 @@
 package com.ize.edgehue;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
+
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-public class BridgeResource {
+import java.io.Serializable;
+
+public class BridgeResource implements Serializable {
 
     private static final String TAG = BridgeResource.class.getSimpleName();
 
-    private final Context ctx;
+    //private transient final Context ctx;
     private final String id;
     private final String category;
     private final String actionRead;
     private final String actionWrite;
 
     public BridgeResource(Context context, String id, String category, String actionRead, String actionWrite){
-        this.ctx = context;
+        //this.ctx = context;
         this.id = id;
         this.category = category;
         this.actionRead = actionRead;
@@ -40,7 +47,7 @@ public class BridgeResource {
         return actionWrite;
     }
 
-    public String getName(){
+    public String getName(Context ctx){
         try {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
@@ -52,12 +59,15 @@ public class BridgeResource {
                     getJSONObject(getId()).
                     getString("name");
         } catch (JSONException e) {
+            Log.d(TAG, "Exception!!!");
             e.printStackTrace();
+            String toastString = e.toString();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             return "Not reachable";
         }
     }
 
-    private int getState(){
+    private int getState(Context ctx){
         try {
             if (category.equals("scenes")) {
                 Log.w(TAG,"You shouldn't use this!");
@@ -79,7 +89,7 @@ public class BridgeResource {
             return -1;
         }
     }
-    public String getBtnText(){
+    public String getBtnText(Context ctx){
         if (category.equals("scenes")) {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
@@ -100,23 +110,24 @@ public class BridgeResource {
                 e.printStackTrace();
             }
         }
-        switch (getState()) {
+        Resources resources = ctx.getResources();
+        switch (getState(ctx)) {
             case 0:
-                return "◯";
+                return resources.getString(R.string.off_symbol);
             case 1:
                 if (actionRead.equals("any_on"))
-                    return "—";
+                    return resources.getString(R.string.large_minus);
                 else
-                    return "|";
+                    return resources.getString(R.string.on_symbol);
             default:
-                return "?";
+                return resources.getString(R.string.question_symbol);
         }
     }
 
-    public int getBtnTextColor(){
+    public int getBtnTextColor(Context ctx){
         if (category.equals("scenes"))
             return ContextCompat.getColor(ctx, R.color.black);
-        switch (getState()) {
+        switch (getState(ctx)) {
             case 1:
                 return ContextCompat.getColor(ctx, R.color.black);
             case 0:
@@ -125,10 +136,10 @@ public class BridgeResource {
         }
     }
 
-    public int getBtnBackgroundResource(){
+    public int getBtnBackgroundResource(Context ctx){
         if (category.equals("scenes"))
             return R.drawable.on_button_background;
-        switch (getState()) {
+        switch (getState(ctx)) {
             case 0:
                 return R.drawable.off_button_background;
             case 1:

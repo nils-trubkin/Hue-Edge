@@ -39,10 +39,10 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         Button gridBtn = convertView.findViewById(R.id.gridBtn);
         TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
 
-        String name = Objects.requireNonNull(getItem(position)).getName();
-        String btnText = Objects.requireNonNull(getItem(position)).getBtnText();
-        int btnColor = Objects.requireNonNull(getItem(position)).getBtnTextColor();
-        int btnResource = Objects.requireNonNull(getItem(position)).getBtnBackgroundResource();
+        String name = Objects.requireNonNull(getItem(position)).getName(ctx);
+        String btnText = Objects.requireNonNull(getItem(position)).getBtnText(ctx);
+        int btnColor = Objects.requireNonNull(getItem(position)).getBtnTextColor(ctx);
+        int btnResource = Objects.requireNonNull(getItem(position)).getBtnBackgroundResource(ctx);
         gridBtn.setText(btnText);
         gridBtn.setTextColor(btnColor);
         gridBtn.setBackgroundResource(btnResource);

@@ -22,18 +22,19 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class HueBridge implements Serializable {
-    private static final String TAG = HueBridge.class.getSimpleName();
+    private transient static final String TAG = HueBridge.class.getSimpleName();
 
     private static HueBridge instance;
 
-    private static String url;
-    private static String ip;
-    private static JSONObject state;
+    private String url;
+    private String ip;
+    private transient JSONObject stateJson;
+    private String state;
 
-    private static final HashMap<String, BridgeResource> lights = new HashMap<>();
-    private static final HashMap<String, BridgeResource> rooms = new HashMap<>();
-    private static final HashMap<String, BridgeResource> zones = new HashMap<>();
-    private static final HashMap<String, BridgeResource> scenes = new HashMap<>();
+    private final HashMap<String, BridgeResource> lights = new HashMap<>();
+    private final HashMap<String, BridgeResource> rooms = new HashMap<>();
+    private final HashMap<String, BridgeResource> zones = new HashMap<>();
+    private final HashMap<String, BridgeResource> scenes = new HashMap<>();
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
@@ -42,8 +43,8 @@ public class HueBridge implements Serializable {
 
     //Custom constructor for future use TODO HTTPS
     private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
-        HueBridge.ip = ip;
-        HueBridge.url =
+        this.ip = ip;
+        this.url =
                 Objects.requireNonNull(urlHeader) +
                         Objects.requireNonNull(ip) +
                         ctx.getString(R.string.api_path) + // String "/api/"
@@ -59,13 +60,14 @@ public class HueBridge implements Serializable {
     //Get instance of instantiated HueBridge
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
-            Log.i(TAG, "HueBridge instance is null. Attempting to load config...");
-            EdgeHueProvider.loadConfigurationFromMemory(ctx);
+            Log.i(TAG, "HueBridge instance or state is null. Attempting to load config...");
+            EdgeHueProvider.loadAllConfiguration(ctx);
             if (instance == null) {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
             }
         }
+        //Log.d(TAG, "HueBridge instance returned successfully, state is " + instance.state);
         return instance;
     }
 
@@ -80,12 +82,27 @@ public class HueBridge implements Serializable {
         instance = bridge;
     }
 
-    public static String getIp() {
+    public String getIp() {
         return ip;
     }
 
     public JSONObject getState() {
-        return state;
+        if (stateJson != null)
+            return stateJson;
+        else {
+            try {
+                stateJson = new JSONObject(state);
+                return stateJson;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public void setState(JSONObject state) {
+        stateJson = state;
+        this.state = state.toString();
     }
 
     public HashMap<String, BridgeResource> getLights() {
@@ -106,7 +123,7 @@ public class HueBridge implements Serializable {
 
     public String getSceneGroup(BridgeResource br) {
         try {
-            return  state.
+            return  getState().
                     getJSONObject("scenes").
                     getJSONObject(br.getId()).
                     getString("group");
@@ -118,12 +135,12 @@ public class HueBridge implements Serializable {
     }
 
     private void refreshAllHashMaps(Context context){
-        Iterator<String> keys = state.keys();
+        Iterator<String> keys = getState().keys();
         while(keys.hasNext()){ // iterate over categories
             String key = keys.next();
             if(key.equals("lights") || key.equals("groups") || key.equals("scenes")) {
                 try {
-                    JSONObject resources = state.getJSONObject(key); // get all res. in category
+                    JSONObject resources = getState().getJSONObject(key); // get all res. in category
                     Iterator<String> resourcesKeys = resources.keys();
                     while (resourcesKeys.hasNext()) {    // iterate over one res. at a time
                         String resourcesKey = resourcesKeys.next();
@@ -136,7 +153,7 @@ public class HueBridge implements Serializable {
                                         key,
                                         "on",
                                         "on");
-                                lights.put(resourcesKey, br);
+                                getLights().put(resourcesKey, br);
                                 break;
                             }
                             case "groups": {
@@ -147,9 +164,9 @@ public class HueBridge implements Serializable {
                                         "any_on",
                                         "on");
                                 if (resource.getString("type").equals("Room"))
-                                    rooms.put(resourcesKey, br);
+                                    getRooms().put(resourcesKey, br);
                                 else if (resource.getString("type").equals("Zone"))
-                                    zones.put(resourcesKey, br);
+                                    getZones().put(resourcesKey, br);
                                 break;
                             }
                             case "scenes":
@@ -162,7 +179,7 @@ public class HueBridge implements Serializable {
                                                 key,
                                                 "scene",
                                                 "scene");
-                                        scenes.put(resourcesKey, br);
+                                        getScenes().put(resourcesKey, br);
                                     }
                                 }
                                 break;
@@ -189,7 +206,7 @@ public class HueBridge implements Serializable {
         }
         else {
             try {
-                lastState = state.
+                lastState = getState().
                         getJSONObject(category).
                         getJSONObject(id).
                         getJSONObject("state").
@@ -247,7 +264,7 @@ public class HueBridge implements Serializable {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        state = response;
+                        setState(response);
                         if (HueBridge.getInstance(ctx) == null){
                             Log.wtf(TAG, "HueBridge.getInstance() == null");
                         }

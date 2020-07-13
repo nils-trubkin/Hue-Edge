@@ -59,7 +59,7 @@ public class EditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 assert HueBridge.getInstance(ctx) != null;
                 if(HueBridge.getInstance(ctx) != null){
-                    EdgeHueProvider.saveConfigurationToMemory(ctx);
+                    EdgeHueProvider.saveAllConfiguration(ctx);
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
@@ -79,11 +79,28 @@ public class EditActivity extends AppCompatActivity {
                     }
                     assert resource != null;
                     TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
-                    tw.setText(resource.getName());
+                    tw.setText(resource.getName(ctx));
                     Button btn = findViewById(EdgeHueProvider.btnArr[i]);
-                    btn.setText(resource.getBtnText());
-                    btn.setTextColor(resource.getBtnTextColor());
-                    btn.setBackgroundResource(resource.getBtnBackgroundResource());
+                    btn.setText(resource.getBtnText(ctx));
+                    btn.setTextColor(resource.getBtnTextColor(ctx));
+                    btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
+                    Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
+                    final int finalI = i;
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            contents.get(currentCategory).remove(finalI);
+                            EdgeHueProvider.saveAllConfiguration(ctx);
+                            TextView tw = findViewById(EdgeHueProvider.btnTextArr[finalI]);
+                            tw.setText("");
+                            Button btn = findViewById(EdgeHueProvider.btnArr[finalI]);
+                            btn.setText("");
+                            btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                            Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[finalI]);
+                            btnDelete.setVisibility(View.GONE);
+                        }
+                    });
+                    btnDelete.setVisibility(View.VISIBLE);
                     if(resource.getCategory().equals("scenes")) {
                         btn.setTextSize(10);
                     }
@@ -96,6 +113,8 @@ public class EditActivity extends AppCompatActivity {
                     Button btn = findViewById(EdgeHueProvider.btnArr[i]);
                     btn.setText("");
                     btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                    Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
+                    btnDelete.setVisibility(View.GONE);
                 }
             }
         }

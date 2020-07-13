@@ -34,10 +34,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-public class EdgeSetup extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener  {
+public class EdgeSetup extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
 
     /*
 
@@ -54,30 +55,29 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         System.loadLibrary("huesdk");
     }
 
-    private static final String TAG = EdgeSetup.class.getSimpleName();
-    private final Context ctx = this;
+    private transient static final String TAG = EdgeSetup.class.getSimpleName();
+    private transient final Context ctx = this;
 
-    private BridgeDiscovery bridgeDiscovery;
+    private transient BridgeDiscovery bridgeDiscovery;
 
-    private List<BridgeDiscoveryResult> bridgeDiscoveryResults;
+    private transient List<BridgeDiscoveryResult> bridgeDiscoveryResults;
 
-    private int requestAmount;
+    private transient int requestAmount;
 
     // UI elements
-    private TextView statusTextView;
-    private ListView bridgeDiscoveryListView;
-    private TextView bridgeIpTextView;
-    private View pushlinkImage;
-    private Button bridgeDiscoveryButton;
-    private Button cheatButton;
-    private Button bridgeDiscoveryCancelButton;
-    private Button quickButton;
-    private Button customButton;
-    private Button finishButton;
-    private Button removeButton;
-    private Button yesButton;
-    private Button noButton;
-
+    private transient TextView statusTextView;
+    private transient ListView bridgeDiscoveryListView;
+    private transient TextView bridgeIpTextView;
+    private transient View pushlinkImage;
+    private transient Button bridgeDiscoveryButton;
+    private transient Button cheatButton;
+    private transient Button bridgeDiscoveryCancelButton;
+    private transient Button quickButton;
+    private transient Button customButton;
+    private transient Button finishButton;
+    private transient Button removeButton;
+    private transient Button yesButton;
+    private transient Button noButton;
 
     enum UIState {
         Welcome,

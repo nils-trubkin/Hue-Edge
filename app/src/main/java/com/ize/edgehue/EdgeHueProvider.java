@@ -17,11 +17,19 @@ import com.google.gson.Gson;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EdgeHueProvider extends SlookCocktailProvider {
+import static android.content.Context.MODE_PRIVATE;
+
+public class EdgeHueProvider extends SlookCocktailProvider implements Serializable {
 
     private static final String TAG = EdgeHueProvider.class.getSimpleName();
 
@@ -43,9 +51,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     //Array of references to button texts (text under the button itself)
     public static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
+    //Array of references to delete buttons in Edit activity
+    public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
+            R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
 
     //Categories available in the left pane (helpContent)
-    public enum menuCategory {
+    public enum menuCategory implements Serializable {
         NO_BRIDGE,
         QUICK_ACCESS,
         LIGHTS,
@@ -66,7 +77,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private static final HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
 
     //Mapping of category to contents
-    private static final HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
+    private static HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
             new HashMap<>();
 
     //Selected category initiated to none
@@ -83,11 +94,12 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
 
-        String toastString = "onReceive";
-        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        //if(getContents().isEmpty() || getCurrentCategory() == null || getCurrentCategory() == menuCategory.NO_BRIDGE) {
+        //    loadAllConfiguration(ctx);
+        //}
 
         if (HueBridge.getInstance(ctx) == null) {
-            currentCategory = menuCategory.NO_BRIDGE;
+            setCurrentCategory(menuCategory.NO_BRIDGE);
         }
         if(contentView == null) {
             contentView = createContentView(ctx);
@@ -104,6 +116,9 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         }
         assert action != null;
         Log.i(TAG, "onReceive: " + action);
+
+        //String toastString = "onReceive: " + action;
+        //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show(); // TODO delete
         switch (action) {
             case ACTION_REMOTE_LONG_CLICK:
                 performRemoteLongClick(ctx, intent);
@@ -116,7 +131,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                 int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
             case ACTION_RECEIVE_HUE_REPLY:
-                bridge.requestHueState(ctx);
+                HueBridge.getInstance(ctx).requestHueState(ctx);
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 //just panel update
@@ -189,9 +204,18 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         return contents;
     }
 
+    public static void setContents(HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents) {
+        EdgeHueProvider.contents = contents;
+    }
+
     //Create the content view, right panel. Used for buttons
     private RemoteViews createContentView(Context ctx) {
         RemoteViews contentView = null;
+
+        /*if(contents.isEmpty()){
+            loadConfigurationFromMemory(ctx);
+        }*/
+
         switch (currentCategory){
             case NO_BRIDGE:
                 contentView = new RemoteViews(ctx.getPackageName(),
@@ -202,6 +226,10 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             case ROOMS:
             case ZONES:
             case SCENES:
+
+                //String toastString = "createContentView: " + contents.size();
+                //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+
                 contentView = new RemoteViews(ctx.getPackageName(),
                         R.layout.view_main);
 
@@ -306,9 +334,9 @@ public class EdgeHueProvider extends SlookCocktailProvider {
     private void performRemoteClick(Context ctx, Intent intent) {
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
-        String toastString = "Clicked id " + id + ", key " + key;
-        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-        if(currentCategory == menuCategory.NO_BRIDGE){
+        //String toastString = "Clicked id " + id + ", key " + key;
+        //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        if(getCurrentCategory() == menuCategory.NO_BRIDGE){
             //startSetupActivity(ctx);
             return;
         }
@@ -324,26 +352,28 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         else if(key == 1) {
             switch (id) {
                 case R.id.btnCategory1:
-                    currentCategory = menuCategory.QUICK_ACCESS;
+                    setCurrentCategory(menuCategory.QUICK_ACCESS);
                     break;
                 case R.id.btnCategory2:
-                    currentCategory = menuCategory.LIGHTS;
+                    setCurrentCategory(menuCategory.LIGHTS);
                     break;
                 case R.id.btnCategory3:
-                    currentCategory = menuCategory.ROOMS;
+                    setCurrentCategory(menuCategory.ROOMS);
                     break;
                 case R.id.btnCategory4:
-                    currentCategory = menuCategory.ZONES;
+                    setCurrentCategory(menuCategory.ZONES);
                     break;
                 case R.id.btnCategory5:
-                    currentCategory = menuCategory.SCENES;
+                    setCurrentCategory(menuCategory.SCENES);
                     break;
                 case R.id.btnEdit:
+                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
                     startEditActivity(ctx);
                     break;
                 default:
                     break;
             }
+            saveCurrentCategory(ctx);
         }
         panelUpdate(ctx);
     }
@@ -376,7 +406,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
 
         clearAllContents();
 
-        currentCategory = menuCategory.QUICK_ACCESS;
+        setCurrentCategory(menuCategory.QUICK_ACCESS);
 
         bridge = HueBridge.getInstance(ctx);
 
@@ -442,7 +472,7 @@ public class EdgeHueProvider extends SlookCocktailProvider {
             }
         }
 
-        saveConfigurationToMemory(ctx);
+        saveAllConfiguration(ctx);
     }
 
     //Refresh both panels
@@ -458,11 +488,11 @@ public class EdgeHueProvider extends SlookCocktailProvider {
                         Log.wtf(TAG, "resource == null");
                     }
                     assert resource != null;
-                    contentView.setTextViewText(btnTextArr[i], resource.getName());
-                    contentView.setTextViewText(btnArr[i], resource.getBtnText());
-                    contentView.setTextColor(btnArr[i], resource.getBtnTextColor());
+                    contentView.setTextViewText(btnTextArr[i], resource.getName(ctx));
+                    contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
+                    contentView.setTextColor(btnArr[i], resource.getBtnTextColor(ctx));
                     contentView.setInt(btnArr[i], "setBackgroundResource",
-                            resource.getBtnBackgroundResource());
+                            resource.getBtnBackgroundResource(ctx));
                     if(resource.getCategory().equals("scenes")){
                         contentView.setFloat(btnArr[i], "setTextSize", 10);
                     }
@@ -491,33 +521,77 @@ public class EdgeHueProvider extends SlookCocktailProvider {
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
 
-    public static void saveConfigurationToMemory(Context ctx) {
+    public static void saveCurrentCategory(Context ctx){
+        Gson gson = new Gson();
+        String currentCategory = gson.toJson(getCurrentCategory());
+
+        SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(ctx.getResources().getString(R.string.current_category_config_file), currentCategory);
+        editor.apply(); //TODO may use commit to write at once
+    }
+
+    public static void loadCurrentCategory(Context ctx) {
+        SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        String currentCategory = sharedPref.getString(ctx.getResources().getString(R.string.current_category_config_file), "");
+        setCurrentCategory(Objects.requireNonNull(gson.fromJson(currentCategory, menuCategory.class)));
+    }
+
+    public static void saveAllConfiguration(Context ctx) {
         try {
             Log.d(TAG, "saveConfigurationToMemory()");
-            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(Objects.requireNonNull(HueBridge.getInstance(ctx)));
-            String json2 = gson.toJson(Objects.requireNonNull(getCurrentCategory()));
-            editor.putString(ctx.getResources().getString(R.string.hue_bridge_config_file), json);
-            editor.putString(ctx.getResources().getString(R.string.current_category_config_file), json2);
-            editor.apply(); //TODO may use commit to write at once
+
+            saveCurrentCategory(ctx);
+
+            //Log.d(TAG, "attempting to save state: " + HueBridge.getInstance(ctx).getState());
+            File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
+            outputStream.writeObject(HueBridge.getInstance(ctx));
+            outputStream.writeObject(getContents());
+            outputStream.flush();
+            outputStream.close();
+
+            String toastString = "Saved";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //TODO maybe remove toast
         } catch (Exception ex) {
             ex.printStackTrace();
+            String toastString = ex.toString();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //TODO remove toast
         }
     }
 
-    public static void loadConfigurationFromMemory(Context ctx){
+    public static void loadAllConfiguration(Context ctx){
         try {
             Log.d(TAG, "loadConfigurationFromMemory()");
-            SharedPreferences sharedPref = ctx.getSharedPreferences(ctx.getResources().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            Gson gson = new Gson();
-            String json = sharedPref.getString(ctx.getResources().getString(R.string.hue_bridge_config_file), "");
-            String json2 = sharedPref.getString(ctx.getResources().getString(R.string.current_category_config_file), "");
-            HueBridge.setInstance(Objects.requireNonNull(gson.fromJson(json, HueBridge.class)));
-            setCurrentCategory(Objects.requireNonNull(gson.fromJson(json2, menuCategory.class)));
+
+            loadCurrentCategory(ctx);
+
+            File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+            ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
+            HueBridge bridge = (HueBridge) inputStream.readObject();
+            HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
+                    (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) inputStream.readObject();
+
+            HueBridge.setInstance(bridge);
+            HueBridge.getInstance(ctx).requestHueState(ctx);
+            setContents(contents);
+//
+//            Log.d(TAG, "attempting to load state: " + bridgeInstance);
+//            Log.d(TAG, "attempting to load state: " + bridgeInstance.getState());
+//            Log.d(TAG, "attempting to load state: " + bridgeInstance.getIp());
+
+            String toastString = "Loading: " + contents.size();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+
         } catch (Exception ex) {
             ex.printStackTrace();
+            String toastString = ex.toString();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //TODO remove toast
         }
     }
 }
