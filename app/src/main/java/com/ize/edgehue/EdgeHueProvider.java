@@ -40,6 +40,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private static final String ACTION_PULL_TO_REFRESH = "com.ize.edgehue.ACTION_PULL_TO_REFRESH";
     protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
     protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
+    protected static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
     //Array of references to buttons
     public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
@@ -140,6 +141,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     ex.printStackTrace();
                 }
                 break;
+            case COCKTAIL_VISIBILITY_CHANGED:
             case ACTION_RECEIVE_HUE_STATE:
                 panelUpdate(ctx);
                 break;
@@ -191,11 +193,11 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         EdgeHueProvider.currentCategory = currentCategory;
     }
 
-    public static void addToCurrentCategory(BridgeResource br){
+    public static int addToCurrentCategory(BridgeResource br){
         Log.d(TAG, "addToCurrentCategory()");
         if (getContents().containsKey(getCurrentCategory())) {
             HashMap<Integer, BridgeResource> currentCategoryContents = getContents().get(getCurrentCategory());
-            for (int i : btnArr) {
+            for (int i = 0; i < 10; i++) {
                 boolean slotIsEmpty = false;
                 try {
                     slotIsEmpty = !Objects.requireNonNull(currentCategoryContents).containsKey(i);
@@ -206,10 +208,11 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 if (slotIsEmpty) {
                     currentCategoryContents.put(i, br);
                     Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
-                    return;
+                    return i;
                 }
             }
         }
+        return -1;
     }
 
     public static HashMap<menuCategory, HashMap<Integer, BridgeResource>> getContents() {
@@ -404,8 +407,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     setCurrentCategory(menuCategory.SCENES);
                     break;
                 case R.id.btnEdit:
-                    loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
-                    //startEditActivity(ctx);
+                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
+                    startEditActivity(ctx);
                     break;
                 default:
                     break;

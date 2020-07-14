@@ -45,7 +45,7 @@ public class EditActivity extends AppCompatActivity {
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setNavigationBarColor(Color.rgb(53,53,53));
+        window.setNavigationBarColor(Color.rgb(30,30,30));
 
         mListView = findViewById(R.id.gridView);
         btnSave = findViewById(R.id.btnSave);
@@ -80,23 +80,20 @@ public class EditActivity extends AppCompatActivity {
 
         if(currentCategory != EdgeHueProvider.menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
-                if (contents.containsKey(currentCategory)){
+                if (contents.containsKey(currentCategory)) {
                     final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
                     boolean slotIsFilled = false;
-                    try
-                    {
+                    try {
                         slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
-                    }
-                    catch (NullPointerException ex){
+                    } catch (NullPointerException ex) {
                         Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
                         ex.printStackTrace();
                     }
-                    if(slotIsFilled) {
+                    if (slotIsFilled) {
                         BridgeResource resource;
                         try {
                             resource = Objects.requireNonNull(currentCategoryContents).get(i);
-                        }
-                        catch (NullPointerException ex){
+                        } catch (NullPointerException ex) {
                             Log.e(TAG, "Failed to load filled slot");
                             ex.printStackTrace();
                             break;
@@ -130,15 +127,15 @@ public class EditActivity extends AppCompatActivity {
                         } else {
                             btn.setTextSize(14);
                         }
+                    } else {
+                        TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
+                        tw.setText("");
+                        Button btn = findViewById(EdgeHueProvider.btnArr[i]);
+                        btn.setText("");
+                        btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                        Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
+                        btnDelete.setVisibility(View.GONE);
                     }
-                } else {
-                    TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
-                    tw.setText("");
-                    Button btn = findViewById(EdgeHueProvider.btnArr[i]);
-                    btn.setText("");
-                    btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                    Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
-                    btnDelete.setVisibility(View.GONE);
                 }
             }
         }

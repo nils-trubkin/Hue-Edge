@@ -91,10 +91,9 @@
 
     <TextView
         android:id="@+id/btn1text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -137,10 +136,9 @@
 
     <TextView
         android:id="@+id/btn2text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -183,10 +181,9 @@
 
     <TextView
         android:id="@+id/btn3text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -229,10 +226,9 @@
 
     <TextView
         android:id="@+id/btn4text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -275,10 +271,9 @@
 
     <TextView
         android:id="@+id/btn5text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -323,10 +318,9 @@
 
     <TextView
         android:id="@+id/btn6text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -371,10 +365,9 @@
 
     <TextView
         android:id="@+id/btn7text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -418,10 +411,9 @@
 
     <TextView
         android:id="@+id/btn8text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -464,10 +456,9 @@
 
     <TextView
         android:id="@+id/btn9text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"
@@ -510,10 +501,9 @@
 
     <TextView
         android:id="@+id/btn10text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:fontFamily="sans-serif-condensed"
-        android:text="test"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/white"

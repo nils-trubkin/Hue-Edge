@@ -1,12 +1,14 @@
 package com.ize.edgehue.activity;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +21,7 @@ import java.util.Objects;
 
 public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
+    private static final String TAG = EdgeHueProvider.class.getSimpleName();
     private final Context ctx;
     private final int mResource;
 
@@ -38,23 +41,62 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         Button gridBtn = convertView.findViewById(R.id.gridBtn);
         TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
 
-        String name = Objects.requireNonNull(getItem(position)).getName(ctx);
-        String btnText = Objects.requireNonNull(getItem(position)).getBtnText(ctx);
-        int btnColor = Objects.requireNonNull(getItem(position)).getBtnTextColor(ctx);
-        int btnResource = Objects.requireNonNull(getItem(position)).getBtnBackgroundResource(ctx);
+        BridgeResource resource = null;
+        try {
+            resource = Objects.requireNonNull(getItem(position));
+        }
+        catch (NullPointerException ex){
+            Log.d(TAG, "");
+            ex.printStackTrace();
+        }
+
+        String name = resource.getName(ctx);
+        String btnText = resource.getBtnText(ctx);
+        int btnColor = resource.getBtnTextColor(ctx);
+        int btnResource = resource.getBtnBackgroundResource(ctx);
         gridBtn.setText(btnText);
         gridBtn.setTextColor(btnColor);
         gridBtn.setBackgroundResource(btnResource);
-        if(Objects.requireNonNull(getItem(position)).getCategory().equals("scenes")){
+        if(resource.getCategory().equals("scenes")){
             gridBtn.setTextSize(10);
+        }
+        else {
+            gridBtn.setTextSize(14);
         }
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);
         gridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BridgeResource br = getItem(position);
-                EdgeHueProvider.addToCurrentCategory(br);
+                BridgeResource br = null;
+                try {
+                    br = Objects.requireNonNull(getItem(position));
+                }
+                catch (NullPointerException ex){
+                    Log.e(TAG, "Failed to get item in grid adapter");
+                    ex.printStackTrace();
+                    return;
+                }
+                int position = EdgeHueProvider.addToCurrentCategory(br);
+                if (position == -1){
+                    String toastString = "Can't add more than 10 buttons";
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                }
+                else {
+                    EdgeHueProvider.saveAllConfiguration(ctx);
+                    EditActivity instance = (EditActivity) ctx;
+                    TextView tw = instance.findViewById(EdgeHueProvider.btnTextArr[position]);
+                    tw.setText(br.getName(ctx));
+                    Button btn = instance.findViewById(EdgeHueProvider.btnArr[position]);
+                    btn.setText(br.getBtnText(ctx));
+                    btn.setTextColor(br.getBtnTextColor(ctx));
+                    btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
+                    Button btnDelete = instance.findViewById(EdgeHueProvider.btnDeleteArr[position]);
+                    btnDelete.setVisibility(View.VISIBLE);
+
+                    String toastString = "Adding \"" + br.getName(ctx) + "\"";
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
