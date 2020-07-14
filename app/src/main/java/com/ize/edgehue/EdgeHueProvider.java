@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -19,6 +20,7 @@ import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -83,9 +85,6 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     //Selected category initiated to none
     private static menuCategory currentCategory = menuCategory.NO_BRIDGE;
 
-    //The HueBridge instance
-    private static HueBridge bridge;
-
 
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
@@ -101,12 +100,12 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         if (HueBridge.getInstance(ctx) == null) {
             setCurrentCategory(menuCategory.NO_BRIDGE);
         }
-        if(contentView == null) {
+        /*if(contentView == null) {
             contentView = createContentView(ctx);
         }
         if(helpView == null) {
             helpView = createHelpView(ctx);
-        }
+        }*/
         if (HueBridge.getInstance(ctx) == null) {
             return;
         }
@@ -130,16 +129,23 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
                 int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
+                String toastString = "Refreshing";
+                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             case ACTION_RECEIVE_HUE_REPLY:
-                HueBridge.getInstance(ctx).requestHueState(ctx);
+                try {
+                    Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx);
+                }
+                catch (NullPointerException ex){
+                    Log.e(TAG, "Received a reply, tried to request new state but there is no instance of HueBridge present");
+                    ex.printStackTrace();
+                }
                 break;
             case ACTION_RECEIVE_HUE_STATE:
-                //just panel update
+                panelUpdate(ctx);
                 break;
             default:
                 break;
         }
-        panelUpdate(ctx);
     }
 
     //This method is called when the Edge Single Plus Mode is created for the first time.
@@ -187,17 +193,23 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     public static void addToCurrentCategory(BridgeResource br){
         Log.d(TAG, "addToCurrentCategory()");
-        HashMap<Integer, BridgeResource> cc =
-                contents.get(getCurrentCategory());
-        for (int i : btnArr){
-            if(!Objects.requireNonNull(cc).containsKey(i)){
-                cc.put(i, br);
-                Objects.requireNonNull(contents.get(getCurrentCategory())).put(i, br);
-                Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
-                return;
+        if (getContents().containsKey(getCurrentCategory())) {
+            HashMap<Integer, BridgeResource> currentCategoryContents = getContents().get(getCurrentCategory());
+            for (int i : btnArr) {
+                boolean slotIsEmpty = false;
+                try {
+                    slotIsEmpty = !Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Failed to get current category contents");
+                    ex.printStackTrace();
+                }
+                if (slotIsEmpty) {
+                    currentCategoryContents.put(i, br);
+                    Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
+                    return;
+                }
             }
         }
-
     }
 
     public static HashMap<menuCategory, HashMap<Integer, BridgeResource>> getContents() {
@@ -249,23 +261,33 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         }
 
         //Hide empty columns but at least show mainColumn if both are empty
-        if(contents.get(currentCategory) != null) {
+        if(getContents().containsKey(currentCategory)) {
+            HashMap<Integer, BridgeResource> currentCategoryContents = getContents().get(currentCategory);
             boolean mainColumnEmpty = true;
             boolean extraColumnEmpty = true;
-            contentView.setViewVisibility(R.id.mainColumn, View.GONE);
-            contentView.setViewVisibility(R.id.extraColumn, View.GONE);
-            for (int i = 0; i < 5; i++) {
-                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
-                    mainColumnEmpty = false;
-                    break;
+
+            for (int i = 0; i < 10; i++) {
+                boolean slotIsFilled = false;
+                try{
+                    slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Failed to get current category contents");
+                    ex.printStackTrace();
+                }
+                if (slotIsFilled) {
+                    if(i < 5){
+                        mainColumnEmpty = false;
+                        Log.d(TAG, "mainColumnEmpty = false");
+                        i = 4;  // Skip to the next column if first is not empty
+                    }
+                    else {
+                        extraColumnEmpty = false;
+                        Log.d(TAG, "extraColumnEmpty = false;");
+                        break;
+                    }
                 }
             }
-            for (int i = 5; i < 10; i++) {
-                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
-                    extraColumnEmpty = false;
-                    break;
-                }
-            }
+
             if (mainColumnEmpty && extraColumnEmpty)
                 mainColumnEmpty = false;
 
@@ -341,10 +363,25 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             return;
         }
         if(key == 0){
-            if(Objects.requireNonNull(contents.get(currentCategory)).containsKey(id)){
-                BridgeResource br = Objects.requireNonNull(contents.get(currentCategory)).get(id);
-                assert br != null;
-                Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, br);
+            boolean buttonIsMapped = false;
+            try{
+                HashMap<Integer, BridgeResource> currentCategoryContents =
+                        Objects.requireNonNull(getContents().get(getCurrentCategory()));
+                buttonIsMapped = currentCategoryContents.containsKey(id);
+            }
+            catch (NullPointerException ex){
+                Log.e(TAG, "Received a button press but contents not set up. Did you clearAllContents at setup?");
+                ex.printStackTrace();
+            }
+            if(buttonIsMapped){
+                try{
+                    BridgeResource br = Objects.requireNonNull(getContents().get(getCurrentCategory())).get(id);
+                    Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, Objects.requireNonNull(br));
+                }
+                catch (NullPointerException ex){
+                    Log.e(TAG, "Received a button press. The button is mapped. But, there is no instance of HueBridge or failed to get the mapping for the button");
+                    ex.printStackTrace();
+                }
             }
             else
                 startEditActivity(ctx);
@@ -367,8 +404,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     setCurrentCategory(menuCategory.SCENES);
                     break;
                 case R.id.btnEdit:
-                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
-                    startEditActivity(ctx);
+                    loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
+                    //startEditActivity(ctx);
                     break;
                 default:
                     break;
@@ -384,19 +421,19 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void clearAllContents(){
-        Log.d(TAG, "clearAllContents entered");
+        Log.d(TAG, "clearAllContents()");
         quickAccessContent.clear();
         lightsContent.clear();
         roomsContent.clear();
         zonesContent.clear();
         scenesContent.clear();
-        contents.clear();
+        getContents().clear();
 
-        contents.put(menuCategory.QUICK_ACCESS, quickAccessContent);
-        contents.put(menuCategory.LIGHTS, lightsContent);
-        contents.put(menuCategory.ROOMS, roomsContent);
-        contents.put(menuCategory.ZONES, zonesContent);
-        contents.put(menuCategory.SCENES, scenesContent);
+        getContents().put(menuCategory.QUICK_ACCESS, quickAccessContent);
+        getContents().put(menuCategory.LIGHTS, lightsContent);
+        getContents().put(menuCategory.ROOMS, roomsContent);
+        getContents().put(menuCategory.ZONES, zonesContent);
+        getContents().put(menuCategory.SCENES, scenesContent);
         Log.d(TAG, "clearAllContents done");
     }
 
@@ -408,10 +445,12 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
         setCurrentCategory(menuCategory.QUICK_ACCESS);
 
-        bridge = HueBridge.getInstance(ctx);
+        //The HueBridge instance
+        HueBridge bridge = HueBridge.getInstance(ctx);
 
-        if (HueBridge.getInstance(ctx) == null){
-            Log.e(TAG, "HueBridge.getInstance() == null. Probably missing config");
+        if (bridge == null){
+            Log.e(TAG, "Quick setup failed. HueBridge instance is null");
+            return;
         }
         assert HueBridge.getInstance(ctx) != null;
         int buttonIndex = 0;
@@ -479,32 +518,41 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private void panelUpdate(Context ctx){
         contentView = createContentView(ctx);
         helpView = createHelpView(ctx);
-        Log.i(TAG, "Doing panelUpdate currentCategory is " + currentCategory + ". Filling in buttons now");
-        if(currentCategory != menuCategory.NO_BRIDGE) {
+        Log.i(TAG, "Doing panelUpdate currentCategory is " + getCurrentCategory() + ". Filling in buttons now");
+        if(getCurrentCategory() != menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
-                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
-                    BridgeResource resource = Objects.requireNonNull(contents.get(currentCategory)).get(i);
-                    if(resource == null) {
-                        Log.wtf(TAG, "resource == null");
+                if (getContents().containsKey(getCurrentCategory())) {
+                    HashMap<Integer, BridgeResource> currentCategoryContents = getContents().get(getCurrentCategory());
+                    boolean slotIsFilled = false;
+                    try {
+                        slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Trying to update panel but failed to get current category contents");
+                        ex.printStackTrace();
                     }
-                    assert resource != null;
-                    contentView.setTextViewText(btnTextArr[i], resource.getName(ctx));
-                    contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
-                    contentView.setTextColor(btnArr[i], resource.getBtnTextColor(ctx));
-                    contentView.setInt(btnArr[i], "setBackgroundResource",
-                            resource.getBtnBackgroundResource(ctx));
-                    if(resource.getCategory().equals("scenes")){
-                        contentView.setFloat(btnArr[i], "setTextSize", 10);
+                    if (slotIsFilled) {
+                        BridgeResource resource = currentCategoryContents.get(i);
+                        if (resource == null) {
+                            Log.wtf(TAG, "resource == null");
+                        }
+                        assert resource != null;
+                        contentView.setTextViewText(btnTextArr[i], resource.getName(ctx));
+                        contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
+                        contentView.setTextColor(btnArr[i], resource.getBtnTextColor(ctx));
+                        contentView.setInt(btnArr[i], "setBackgroundResource",
+                                resource.getBtnBackgroundResource(ctx));
+                        if (resource.getCategory().equals("scenes")) {
+                            contentView.setFloat(btnArr[i], "setTextSize", 10);
+                        } else {
+                            contentView.setFloat(btnArr[i], "setTextSize", 14);
+                        }
+                    } else {
+                        contentView.setTextViewText(btnTextArr[i], "");
+                        contentView.setTextViewText(btnArr[i], "+");
+                        contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
+                        contentView.setInt(btnArr[i], "setBackgroundResource",
+                                R.drawable.add_button_background);
                     }
-                    else {
-                        contentView.setFloat(btnArr[i], "setTextSize", 14);
-                    }
-                } else {
-                    contentView.setTextViewText(btnTextArr[i], "");
-                    contentView.setTextViewText(btnArr[i], "+");
-                    contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
-                    contentView.setInt(btnArr[i], "setBackgroundResource",
-                            R.drawable.add_button_background);
                 }
             }
         }
@@ -536,7 +584,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
         Gson gson = new Gson();
         String currentCategory = sharedPref.getString(ctx.getResources().getString(R.string.current_category_config_file), "");
-        setCurrentCategory(Objects.requireNonNull(gson.fromJson(currentCategory, menuCategory.class)));
+        setCurrentCategory(gson.fromJson(currentCategory, menuCategory.class));
     }
 
     public static void saveAllConfiguration(Context ctx) {
@@ -565,21 +613,36 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void loadAllConfiguration(Context ctx){
+        Log.d(TAG, "loadConfigurationFromMemory()");
+
+        loadCurrentCategory(ctx);
+
         try {
-            Log.d(TAG, "loadConfigurationFromMemory()");
-
-            loadCurrentCategory(ctx);
-
             File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
             ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file));
             HueBridge bridge = (HueBridge) inputStream.readObject();
-            HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
-                    (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) inputStream.readObject();
+
+            HashMap<menuCategory, HashMap<Integer, BridgeResource>> loadedContents = null;
+            try {
+                //noinspection unchecked
+                loadedContents =
+                        (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) inputStream.readObject();
+            }
+            catch (ClassCastException ex){
+                Log.e(TAG, "Unchecked cast failed. Corrupt saved config or old version.");
+                ex.printStackTrace();
+            }
 
             HueBridge.setInstance(bridge);
-            HueBridge.getInstance(ctx).requestHueState(ctx);
-            setContents(contents);
-//
+            try {
+                Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx);
+            }
+            catch (NullPointerException ex){
+                Log.e(TAG, "Loading of settings failed. Is this the first start?");
+                ex.printStackTrace();
+            }
+            setContents(loadedContents);
+
 //            Log.d(TAG, "attempting to load state: " + bridgeInstance);
 //            Log.d(TAG, "attempting to load state: " + bridgeInstance.getState());
 //            Log.d(TAG, "attempting to load state: " + bridgeInstance.getIp());
@@ -587,7 +650,16 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             String toastString = "Loading: " + contents.size();
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
 
-        } catch (Exception ex) {
+        }
+        catch (FileNotFoundException ex){
+            Log.e(TAG, "Config file not found");
+            ex.printStackTrace();
+            String toastString = ex.toString();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //TODO remove toast
+        }
+        catch (Exception ex) {
+            Log.e(TAG, "Failed to load configuration");
             ex.printStackTrace();
             String toastString = ex.toString();
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();

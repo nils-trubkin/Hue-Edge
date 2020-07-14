@@ -75,8 +75,7 @@
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_anchor="@+id/backgroundView"
-        app:layout_anchorGravity="bottom|center"
-        tools:context="com.philips.lighting.hue.demo.huequickstartapp.MainActivity">
+        app:layout_anchorGravity="bottom|center">
 
         <ListView
             android:id="@+id/bridge_discovery_result_list"

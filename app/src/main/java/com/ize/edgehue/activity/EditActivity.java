@@ -68,44 +68,68 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        hueStatus.setText(HueBridge.getInstance(ctx).getIp());
+        String ip = null;
+        try {
+            ip = Objects.requireNonNull(HueBridge.getInstance(ctx)).getIp();
+        }
+        catch (NullPointerException ex){
+            Log.e(TAG, "Trying to enter edit activity but there is no instance of HueBridge");
+            ex.printStackTrace();
+        }
+        hueStatus.setText(ip);
 
         if(currentCategory != EdgeHueProvider.menuCategory.NO_BRIDGE) {
             for (int i = 0; i < 10; i++) {
-                if (contents.containsKey(currentCategory) && contents.get(currentCategory).containsKey(i)) {
-                    BridgeResource resource = Objects.requireNonNull(contents.get(currentCategory)).get(i);
-                    if(resource == null) {
-                        Log.wtf(TAG, "resource == null");
+                if (contents.containsKey(currentCategory)){
+                    final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
+                    boolean slotIsFilled = false;
+                    try
+                    {
+                        slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
                     }
-                    assert resource != null;
-                    TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
-                    tw.setText(resource.getName(ctx));
-                    Button btn = findViewById(EdgeHueProvider.btnArr[i]);
-                    btn.setText(resource.getBtnText(ctx));
-                    btn.setTextColor(resource.getBtnTextColor(ctx));
-                    btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
-                    Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
-                    final int finalI = i;
-                    btnDelete.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            contents.get(currentCategory).remove(finalI);
-                            EdgeHueProvider.saveAllConfiguration(ctx);
-                            TextView tw = findViewById(EdgeHueProvider.btnTextArr[finalI]);
-                            tw.setText("");
-                            Button btn = findViewById(EdgeHueProvider.btnArr[finalI]);
-                            btn.setText("");
-                            btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                            Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[finalI]);
-                            btnDelete.setVisibility(View.GONE);
+                    catch (NullPointerException ex){
+                        Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
+                        ex.printStackTrace();
+                    }
+                    if(slotIsFilled) {
+                        BridgeResource resource;
+                        try {
+                            resource = Objects.requireNonNull(currentCategoryContents).get(i);
                         }
-                    });
-                    btnDelete.setVisibility(View.VISIBLE);
-                    if(resource.getCategory().equals("scenes")) {
-                        btn.setTextSize(10);
-                    }
-                    else{
-                        btn.setTextSize(14);
+                        catch (NullPointerException ex){
+                            Log.e(TAG, "Failed to load filled slot");
+                            ex.printStackTrace();
+                            break;
+                        }
+                        assert resource != null;
+                        TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);
+                        tw.setText(resource.getName(ctx));
+                        Button btn = findViewById(EdgeHueProvider.btnArr[i]);
+                        btn.setText(resource.getBtnText(ctx));
+                        btn.setTextColor(resource.getBtnTextColor(ctx));
+                        btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
+                        Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
+                        final int finalI = i;
+                        btnDelete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                currentCategoryContents.remove(finalI);
+                                EdgeHueProvider.saveAllConfiguration(ctx);
+                                TextView tw = findViewById(EdgeHueProvider.btnTextArr[finalI]);
+                                tw.setText("");
+                                Button btn = findViewById(EdgeHueProvider.btnArr[finalI]);
+                                btn.setText("");
+                                btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                                Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[finalI]);
+                                btnDelete.setVisibility(View.GONE);
+                            }
+                        });
+                        btnDelete.setVisibility(View.VISIBLE);
+                        if (resource.getCategory().equals("scenes")) {
+                            btn.setTextSize(10);
+                        } else {
+                            btn.setTextSize(14);
+                        }
                     }
                 } else {
                     TextView tw = findViewById(EdgeHueProvider.btnTextArr[i]);

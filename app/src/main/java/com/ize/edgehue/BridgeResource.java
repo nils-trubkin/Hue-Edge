@@ -7,8 +7,6 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import com.google.gson.JsonObject;
-
 import org.json.JSONException;
 
 import java.io.Serializable;
@@ -23,8 +21,7 @@ public class BridgeResource implements Serializable {
     private final String actionRead;
     private final String actionWrite;
 
-    public BridgeResource(Context context, String id, String category, String actionRead, String actionWrite){
-        //this.ctx = context;
+    public BridgeResource(String id, String category, String actionRead, String actionWrite){
         this.id = id;
         this.category = category;
         this.actionRead = actionRead;

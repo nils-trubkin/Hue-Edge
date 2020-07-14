@@ -232,6 +232,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == bridgeDiscoveryButton) {
+            EdgeHueProvider.clearAllContents();
             startBridgeDiscovery();
         }
         else if (view == cheatButton) {
@@ -364,13 +365,13 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                             if(responseKeys.hasNext()) {
                                 responseKey = responseKeys.next();
                                 if(!responseKey.equals("success")){  //response key should be success
-                                    Log.e(TAG, "Unsuccesfull! Check reply");
+                                    Log.e(TAG, "Unsuccessful! Check reply");
                                     sendAuthRequest(requestAmount, jsonObject, ip);
                                     return;
                                 }
                                 JSONObject usernameContainer = (JSONObject) jsonResponse.get("success");    // this should be JSONObject with username field
                                 if(!usernameContainer.keys().next().equals("username")) {
-                                    Log.w(TAG, "Unsuccesfull! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
+                                    Log.w(TAG, "Unsuccessful! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
                                     sendAuthRequest(requestAmount, jsonObject, ip);
                                     return;
                                 }

@@ -26,8 +26,8 @@ public class HueBridge implements Serializable {
 
     private static HueBridge instance;
 
-    private String url;
-    private String ip;
+    private final String url;
+    private final String ip;
     private transient JSONObject stateJson;
     private String state;
 
@@ -134,7 +134,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    private void refreshAllHashMaps(Context context){
+    private void refreshAllHashMaps(){
         Iterator<String> keys = getState().keys();
         while(keys.hasNext()){ // iterate over categories
             String key = keys.next();
@@ -148,7 +148,6 @@ public class HueBridge implements Serializable {
                         switch (key) {
                             case "lights": {
                                 BridgeResource br = new BridgeResource(
-                                        context,
                                         resourcesKey,
                                         key,
                                         "on",
@@ -158,7 +157,6 @@ public class HueBridge implements Serializable {
                             }
                             case "groups": {
                                 BridgeResource br = new BridgeResource(
-                                        context,
                                         resourcesKey,
                                         key,
                                         "any_on",
@@ -174,7 +172,6 @@ public class HueBridge implements Serializable {
                                 while (sceneKeys.hasNext()) {
                                     if (sceneKeys.next().equals("group")) {
                                         BridgeResource br = new BridgeResource(
-                                                context,
                                                 resourcesKey,
                                                 key,
                                                 "scene",
@@ -270,7 +267,7 @@ public class HueBridge implements Serializable {
                         }
                         HueBridge bridge = HueBridge.getInstance(ctx);
                         assert bridge != null;
-                        bridge.refreshAllHashMaps(ctx);
+                        bridge.refreshAllHashMaps();
                         try {
                             bridge.getStateIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
@@ -321,7 +318,7 @@ public class HueBridge implements Serializable {
                             if(responseKeys.hasNext()) {
                                 responseKey = responseKeys.next();
                                 if(!responseKey.equals("success")){  //response key should be success
-                                    Log.e(TAG, "Unsuccesfull! Check reply");
+                                    Log.e(TAG, "Unsuccessful! Check reply");
                                     return;
                                 }
                                 requestKeys = jsonObject.keys();    // this can be "on" or "all_on" for example
