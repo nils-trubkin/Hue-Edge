@@ -110,15 +110,7 @@ public class EditActivity extends AppCompatActivity {
                         btnDelete.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                currentCategoryContents.remove(finalI);
-                                EdgeHueProvider.saveAllConfiguration(ctx);
-                                TextView tw = findViewById(EdgeHueProvider.btnTextArr[finalI]);
-                                tw.setText("");
-                                Button btn = findViewById(EdgeHueProvider.btnArr[finalI]);
-                                btn.setText("");
-                                btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                                Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[finalI]);
-                                btnDelete.setVisibility(View.GONE);
+                                clearSlot(finalI);
                             }
                         });
                         btnDelete.setVisibility(View.VISIBLE);
@@ -207,5 +199,18 @@ public class EditActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
+    }
+
+    public void clearSlot (int position) {
+        final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
+        currentCategoryContents.remove(position);
+        EdgeHueProvider.saveAllConfiguration(ctx);
+        TextView tw = findViewById(EdgeHueProvider.btnTextArr[position]);
+        tw.setText("");
+        Button btn = findViewById(EdgeHueProvider.btnArr[position]);
+        btn.setText("");
+        btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+        Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[position]);
+        btnDelete.setVisibility(View.GONE);
     }
 }

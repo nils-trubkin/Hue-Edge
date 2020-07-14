@@ -77,14 +77,14 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                int position = EdgeHueProvider.addToCurrentCategory(br);
+                final int position = EdgeHueProvider.addToCurrentCategory(br);
                 if (position == -1){
                     String toastString = "Can't add more than 10 buttons";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
                 else {
                     EdgeHueProvider.saveAllConfiguration(ctx);
-                    EditActivity instance = (EditActivity) ctx;
+                    final EditActivity instance = (EditActivity) ctx;
                     TextView tw = instance.findViewById(EdgeHueProvider.btnTextArr[position]);
                     tw.setText(br.getName(ctx));
                     Button btn = instance.findViewById(EdgeHueProvider.btnArr[position]);
@@ -93,7 +93,12 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
                     Button btnDelete = instance.findViewById(EdgeHueProvider.btnDeleteArr[position]);
                     btnDelete.setVisibility(View.VISIBLE);
-
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            instance.clearSlot(position);
+                        }
+                    });
                     String toastString = "Adding \"" + br.getName(ctx) + "\"";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
