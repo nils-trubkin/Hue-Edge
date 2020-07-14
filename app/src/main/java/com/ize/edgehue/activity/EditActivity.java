@@ -105,8 +105,14 @@ public class EditActivity extends AppCompatActivity {
                         btn.setText(resource.getBtnText(ctx));
                         btn.setTextColor(resource.getBtnTextColor(ctx));
                         btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
-                        Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
                         final int finalI = i;
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                clearSlot(finalI);
+                            }
+                        });
+                        Button btnDelete = findViewById(EdgeHueProvider.btnDeleteArr[i]);
                         btnDelete.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

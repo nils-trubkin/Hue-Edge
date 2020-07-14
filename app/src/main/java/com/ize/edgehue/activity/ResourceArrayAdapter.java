@@ -91,6 +91,12 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     btn.setText(br.getBtnText(ctx));
                     btn.setTextColor(br.getBtnTextColor(ctx));
                     btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            instance.clearSlot(position);
+                        }
+                    });
                     Button btnDelete = instance.findViewById(EdgeHueProvider.btnDeleteArr[position]);
                     btnDelete.setVisibility(View.VISIBLE);
                     btnDelete.setOnClickListener(new View.OnClickListener() {
