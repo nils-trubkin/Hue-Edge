@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-public class LongClickRemoteViewService extends RemoteViewsService {
+public class LongClickBrightnessSliderService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent arg0) {
@@ -15,7 +15,7 @@ public class LongClickRemoteViewService extends RemoteViewsService {
 
     private class SampleRemoveViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
-        private static final int MAX_CHILD = 40;
+        private static final int MAX_CHILD = 50;
         private static final int MAX_LEVEL = 10;
         private final String TAG = SampleRemoveViewFactory.class.getSimpleName();
         private float mIdOffset = -1;
@@ -38,7 +38,7 @@ public class LongClickRemoteViewService extends RemoteViewsService {
         @Override
         public RemoteViews getViewAt(int id) {
             // create list item
-            RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.single_plus_remote_list_item);
+            RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
             float h = 360f;

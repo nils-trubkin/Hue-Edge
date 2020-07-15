@@ -54,19 +54,19 @@
         </receiver>
 
         <service
-            android:name=".LongClickRemoteViewService"
+            android:name=".LongClickBrightnessSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
         <service
-            android:name=".LongClickRemoteViewService2"
+            android:name=".LongClickColorSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
         <service
-            android:name=".LongClickRemoteViewService3"
+            android:name=".LongClickSaturationSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />

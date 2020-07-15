@@ -41,7 +41,7 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: Started.");
 
-        setContentView(R.layout.activity_edit);
+        setContentView(R.layout.edit_activity);
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -78,7 +78,7 @@ public class EditActivity extends AppCompatActivity {
         }
         hueStatus.setText(ip);
 
-        if(currentCategory != EdgeHueProvider.menuCategory.NO_BRIDGE) {
+        if(EdgeHueProvider.isBridgeConfigured()) {
             for (int i = 0; i < 10; i++) {
                 if (contents.containsKey(currentCategory)) {
                     final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
@@ -191,7 +191,7 @@ public class EditActivity extends AppCompatActivity {
                 resourceList.add(entry.getValue());
             }
         }
-        ResourceArrayAdapter adapter = new ResourceArrayAdapter(this, R.layout.adapter_view_layout, resourceList);
+        ResourceArrayAdapter adapter = new ResourceArrayAdapter(this, R.layout.edit_activity_adapter_view_layout, resourceList);
         mListView.setAdapter(adapter);
 
         /*Toolbar toolbar = findViewById(R.id.toolbar);
