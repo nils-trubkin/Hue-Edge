@@ -41,13 +41,14 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         Button gridBtn = convertView.findViewById(R.id.gridBtn);
         TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
 
-        BridgeResource resource = null;
+        BridgeResource resource;
         try {
             resource = Objects.requireNonNull(getItem(position));
         }
         catch (NullPointerException ex){
-            Log.d(TAG, "");
+            Log.d(TAG, "Could not get item's position");
             ex.printStackTrace();
+            return convertView;
         }
 
         String name = resource.getName(ctx);
@@ -68,7 +69,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BridgeResource br = null;
+                BridgeResource br;
                 try {
                     br = Objects.requireNonNull(getItem(position));
                 }

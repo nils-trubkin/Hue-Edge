@@ -53,6 +53,24 @@
                 android:resource="@xml/edge_hue" />
         </receiver>
 
+        <service
+            android:name=".LongClickRemoteViewService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
+
+        <service
+            android:name=".LongClickRemoteViewService2"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
+
+        <service
+            android:name=".LongClickRemoteViewService3"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
+
     </application>
 
 </manifest>

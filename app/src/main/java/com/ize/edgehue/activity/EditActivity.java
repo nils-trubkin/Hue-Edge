@@ -208,7 +208,15 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void clearSlot (int position) {
-        final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
+        final HashMap<Integer, BridgeResource> currentCategoryContents;
+        try {
+            currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
+        }
+        catch (NullPointerException ex){
+            Log.e(TAG, "Failed to get contents of current category");
+            ex.printStackTrace();
+            return;
+        }
         currentCategoryContents.remove(position);
         EdgeHueProvider.saveAllConfiguration(ctx);
         TextView tw = findViewById(EdgeHueProvider.btnTextArr[position]);

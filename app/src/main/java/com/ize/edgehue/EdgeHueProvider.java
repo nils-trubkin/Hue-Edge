@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.text.LoginFilter;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -57,6 +56,12 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     //Array of references to delete buttons in Edit activity
     public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
             R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
+    //Array of references to category buttons
+    public static final int[] btnSlidersCategoryArr = {R.id.btnSlidersCategory1, R.id.btnSlidersCategory2,
+            R.id.btnSlidersCategory3};
+    //Array of references to category buttons underlines
+    public static final int[] btnSlidersCategoryLineArr = {R.id.btnSlidersCategoryLine1, R.id.btnSlidersCategoryLine2,
+            R.id.btnSlidersCategoryLine3};
 
     //Categories available in the left pane (helpContent)
     public enum menuCategory implements Serializable {
@@ -66,6 +71,13 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         ROOMS,
         ZONES,
         SCENES
+    }
+
+    //Categories available in the left pane (helpContent)
+    public enum slidersCategory implements Serializable {
+        BRIGHTNESS,
+        HUE,
+        SATURATION
     }
 
     //One remoteView for left/help and one for right/content
@@ -85,6 +97,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     //Selected category initiated to none
     private static menuCategory currentCategory = menuCategory.NO_BRIDGE;
+    private static slidersCategory slidersCurrentCategory = slidersCategory.BRIGHTNESS;
+
+    private static boolean slidersActive = false;
 
 
     //This method is called for every broadcast and before each of the other callback methods.
@@ -191,6 +206,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     public static void setCurrentCategory(menuCategory currentCategory) {
         EdgeHueProvider.currentCategory = currentCategory;
+    }
+
+    public static void setCurrentSlidersCategory(slidersCategory currentCategory) {
+        EdgeHueProvider.slidersCurrentCategory = currentCategory;
     }
 
     public static int addToCurrentCategory(BridgeResource br){
@@ -320,6 +339,52 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         return helpView;
     }
 
+    //Create the help view, left panel. Used for categories.
+    private RemoteViews createSlidersHelpView(Context ctx) {
+        RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
+                R.layout.view_help_sliders);
+        for( int button : btnSlidersCategoryArr){
+            helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
+            helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
+        }
+        for (int line : btnSlidersCategoryLineArr){
+            helpView.setInt(line, "setBackgroundResource", 0);
+        }
+        if(slidersCurrentCategory != null){
+            int currentButton = btnSlidersCategoryArr[slidersCurrentCategory.ordinal()];
+            int currentLine = btnSlidersCategoryLineArr[slidersCurrentCategory.ordinal()];
+            helpView.setTextColor(currentButton, Color.parseColor("#2187F3"));
+            helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
+        }
+        return helpView;
+    }
+
+    private RemoteViews createRemoteListView(Context ctx) {
+        Log.d(TAG, "createRemoteListView()");
+        RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.single_plus_remote_list_view);
+        remoteListView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
+        switch (slidersCurrentCategory) {
+            case BRIGHTNESS:
+                Intent remoteIntent = new Intent(ctx, LongClickRemoteViewService.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent);
+                break;
+            case HUE:
+                Intent remoteIntent2 = new Intent(ctx, LongClickRemoteViewService2.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent2);
+                break;
+            case SATURATION:
+                Intent remoteIntent3 = new Intent(ctx, LongClickRemoteViewService3.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent3);
+                break;
+            default:
+                Log.e(TAG,"Unknown category!");
+                break;
+        }
+        //SlookCocktailManager.getInstance(context).setOnLongClickPendingIntentTemplate(remoteListView, R.id.remote_list, getLongClickIntent(context, R.id.remote_list, 0));
+        //remoteListView.setPendingIntentTemplate(R.id.remote_list, getClickIntent(context, R.id.remote_list, 0));
+        return remoteListView;
+    }
+
     //Get the long click intent object to assign to a button
     private static PendingIntent getLongClickIntent(Context ctx, int id, int key) {
         Intent longClickIntent = new Intent(ctx, EdgeHueProvider.class);
@@ -406,6 +471,18 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 case R.id.btnCategory5:
                     setCurrentCategory(menuCategory.SCENES);
                     break;
+                case R.id.btnSlidersCategory1:
+                    setCurrentSlidersCategory(slidersCategory.BRIGHTNESS);
+                    break;
+                case R.id.btnSlidersCategory2:
+                    setCurrentSlidersCategory(slidersCategory.HUE);
+                    break;
+                case R.id.btnSlidersCategory3:
+                    setCurrentSlidersCategory(slidersCategory.SATURATION);
+                    break;
+                case R.id.btnBack:
+                    slidersActive = false;
+                    break;
                 case R.id.btnEdit:
                     //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
                     startEditActivity(ctx);
@@ -419,8 +496,16 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     private void performRemoteLongClick(Context ctx, Intent intent) {
+        Log.d(TAG, "performRemoteLongClick()");
         Log.d(TAG, "ACTION_REMOTE_LONG_CLICK" + "id=" + intent.getIntExtra("id", -1));
-        startEditActivity(ctx);
+        contentView = createRemoteListView(ctx);
+        helpView = createSlidersHelpView(ctx);
+        slidersActive = true;
+
+        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+        cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
+        cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
 
     public static void clearAllContents(){
@@ -519,6 +604,17 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     //Refresh both panels
     private void panelUpdate(Context ctx){
+        if (slidersActive) {
+            contentView = createRemoteListView(ctx);
+            helpView = createSlidersHelpView(ctx);
+
+            final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+            final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+            cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
+            cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+            return;
+        }
+        Log.d(TAG, "panelUpdate()");
         contentView = createContentView(ctx);
         helpView = createHelpView(ctx);
         Log.i(TAG, "Doing panelUpdate currentCategory is " + getCurrentCategory() + ". Filling in buttons now");

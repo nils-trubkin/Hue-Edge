@@ -15,6 +15,11 @@
     <string name="button_help_5_text">Scenes</string>
     <string name="title_activity_edge_setup">Configure EdgeHUE</string>
 
+    <string name="button_sliders_help_1_text">Brightness</string>
+    <string name="button_sliders_help_2_text">Color</string>
+    <string name="button_sliders_help_3_text">Saturation</string>
+    <string name="button_back_text">Back</string>
+
 
     <!-- Strings used for fragments for navigation -->
     <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup for your Philips Hue Bridge</string>
@@ -59,5 +64,9 @@
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>
     <string name="question_symbol">\?</string>
+
+    <string name="remote_list_item_title">Bri. </string>
+    <string name="remote_list_item_title2">HUE </string>
+    <string name="remote_list_item_title3">Sat. </string>
 
 </resources>
