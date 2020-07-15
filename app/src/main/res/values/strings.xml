@@ -66,8 +66,9 @@
     <string name="off_symbol">◯</string>
     <string name="question_symbol">\?</string>
 
-    <string name="remote_list_item_title">Bri. </string>
-    <string name="remote_list_item_title2">HUE </string>
-    <string name="remote_list_item_title3">Sat. </string>
+    <string name="remote_list_item_title">Brightness #</string>
+    <string name="remote_list_item_title2">Hue #</string>
+    <string name="remote_list_item_title3">Saturation #</string>
+    <string name="remote_list_item_clicked">Item no.%d clicked</string>
 
 </resources>

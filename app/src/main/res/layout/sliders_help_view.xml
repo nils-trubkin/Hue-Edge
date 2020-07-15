@@ -103,4 +103,26 @@
             tools:ignore="ContentDescription" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnBack"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginBottom="-7dp"
+            android:fontFamily="sans-serif-thin"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="@string/button_back_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="#99FAFAFA"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
 </LinearLayout>

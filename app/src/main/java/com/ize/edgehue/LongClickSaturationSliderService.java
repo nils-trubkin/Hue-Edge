@@ -15,7 +15,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
 
     private class SampleRemoveViewFactory implements RemoteViewsFactory {
 
-        private static final int MAX_CHILD = 50;
+        private static final int MAX_CHILD = 25;
         private static final int MAX_LEVEL = 10;
         private final String TAG = SampleRemoveViewFactory.class.getSimpleName();
         private float mIdOffset = -1;
@@ -51,6 +51,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             Intent intent = new Intent();
             intent.putExtra("item_id", itemId);
             intent.putExtra("bg_color", bgColor);
+            intent.putExtra("saturation", Math.round(s * 254));
             // should be set fillInIntent to root of item layout
             itemView.setOnClickFillInIntent(R.id.item_root, intent);
 

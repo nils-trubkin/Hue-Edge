@@ -44,6 +44,21 @@ public class BridgeResource implements Serializable {
         return actionWrite;
     }
 
+    public String getBrightnessAction(){
+        String actionBrightness = "bri";
+        return actionBrightness;
+    }
+
+    public String getColorAction(){
+        String actionColor = "hue";
+        return actionColor;
+    }
+
+    public String getSaturationAction(){
+        String actionSaturation = "sat";
+        return actionSaturation;
+    }
+
     public String getName(Context ctx){
         try {
             HueBridge bridge = HueBridge.getInstance(ctx);

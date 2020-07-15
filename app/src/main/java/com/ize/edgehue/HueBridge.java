@@ -123,7 +123,7 @@ public class HueBridge implements Serializable {
 
     public String getSceneGroup(BridgeResource br) {
         try {
-            return  getState().
+            return getState().
                     getJSONObject("scenes").
                     getJSONObject(br.getId()).
                     getString("group");
@@ -134,11 +134,11 @@ public class HueBridge implements Serializable {
         }
     }
 
-    private void refreshAllHashMaps(){
+    private void refreshAllHashMaps() {
         Iterator<String> keys = getState().keys();
-        while(keys.hasNext()){ // iterate over categories
+        while (keys.hasNext()) { // iterate over categories
             String key = keys.next();
-            if(key.equals("lights") || key.equals("groups") || key.equals("scenes")) {
+            if (key.equals("lights") || key.equals("groups") || key.equals("scenes")) {
                 try {
                     JSONObject resources = getState().getJSONObject(key); // get all res. in category
                     Iterator<String> resourcesKeys = resources.keys();
@@ -188,6 +188,45 @@ public class HueBridge implements Serializable {
                 }
             }
         }
+    }
+
+    public void setHueBrightness(Context context, BridgeResource br, int value) {
+        String category = br.getCategory();
+        if (category.equals("scenes")) {
+            Log.e(TAG, "Trying to set brightness for scene");
+            return;
+        }
+        String id = br.getId();
+        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        String brightnessAction = br.getBrightnessAction();
+        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
+        setHueState(context, actionUrl, brightnessAction, value);
+    }
+
+    public void setHueColor(Context context, BridgeResource br, int value) {
+        String category = br.getCategory();
+        if (category.equals("scenes")) {
+            Log.e(TAG, "Trying to set color for scene");
+            return;
+        }
+        String id = br.getId();
+        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        String colorAction = br.getColorAction();
+        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
+        setHueState(context, actionUrl, colorAction, value);
+    }
+
+    public void setHueSaturation(Context context, BridgeResource br, int value) {
+        String category = br.getCategory();
+        if (category.equals("scenes")) {
+            Log.e(TAG, "Trying to set color for scene");
+            return;
+        }
+        String id = br.getId();
+        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        String saturationAction = br.getSaturationAction();
+        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
+        setHueState(context, actionUrl, saturationAction, value);
     }
 
     public void toggleHueState(Context context, BridgeResource br){

@@ -19,17 +19,4 @@
         android:layout_height="match_parent"
         android:longClickable="true" />
 
-    <Button
-        android:id="@+id/btnBack"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="0dp"
-        android:fontFamily="sans-serif-light"
-        android:text="@string/button_back_text"
-        android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="13sp" />
-
 </RelativeLayout>

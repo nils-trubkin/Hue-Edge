@@ -75,7 +75,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     //Categories available in the left pane (helpContent)
     public enum slidersCategory implements Serializable {
         BRIGHTNESS,
-        HUE,
+        COLOR,
         SATURATION
     }
 
@@ -100,6 +100,11 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     private static boolean slidersActive = false;
     private static boolean bridgeConfigured = false;
+
+    private static BridgeResource slidersResource;
+    private static Intent brightnessIntent;
+    private static Intent colorIntent;
+    private static Intent saturationIntent;
 
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
@@ -216,6 +221,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static slidersCategory getCurrentSlidersCategory() {
+        if(slidersCurrentCategory == null){
+            setCurrentSlidersCategory(slidersCategory.BRIGHTNESS);
+        }
         return slidersCurrentCategory;
     }
 
@@ -277,10 +285,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         int i = 0;
         for ( int button : btnArr ){
             contentView.setOnClickPendingIntent(button, getClickIntent(
-                    ctx, i++, 0));
+                    ctx, i, 0));
             SlookCocktailManager.getInstance(ctx).
                     setOnLongClickPendingIntent(contentView, button,
-                            getLongClickIntent(ctx, button, 0));
+                            getLongClickIntent(ctx, i++, 0));
         }
         contentView.setOnClickPendingIntent(R.id.btnEdit,
                 getClickIntent(ctx, R.id.btnEdit, 1));
@@ -345,33 +353,35 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private RemoteViews createSlidersContentView(Context ctx) {
         Log.d(TAG, "createRemoteListView()");
         RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_main_view);
-        remoteListView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
-        switch (slidersCurrentCategory) {
+        switch (getCurrentSlidersCategory()) {
             case BRIGHTNESS:
-                Intent remoteIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent);
+                if(brightnessIntent == null)
+                    brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, brightnessIntent);
                 break;
-            case HUE:
-                Intent remoteIntent2 = new Intent(ctx, LongClickColorSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent2);
+            case COLOR:
+                if(colorIntent == null)
+                    colorIntent = new Intent(ctx, LongClickColorSliderService.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, colorIntent);
                 break;
             case SATURATION:
-                Intent remoteIntent3 = new Intent(ctx, LongClickSaturationSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, remoteIntent3);
+                if(saturationIntent == null)
+                    saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
+                remoteListView.setRemoteAdapter(R.id.remote_list, saturationIntent);
                 break;
             default:
                 Log.e(TAG,"Unknown category!");
                 break;
         }
-        //SlookCocktailManager.getInstance(context).setOnLongClickPendingIntentTemplate(remoteListView, R.id.remote_list, getLongClickIntent(context, R.id.remote_list, 0));
-        //remoteListView.setPendingIntentTemplate(R.id.remote_list, getClickIntent(context, R.id.remote_list, 0));
+        SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.remote_list, getLongClickIntent(ctx, R.id.remote_list, 0));
+        remoteListView.setPendingIntentTemplate(R.id.remote_list, getClickIntent(ctx, R.id.remote_list, 2));
         return remoteListView;
     }
 
     //Create the help view, left panel. Used for categories.
     private RemoteViews createSlidersHelpView(Context ctx) {
-        RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
-                R.layout.sliders_help_view);
+        RemoteViews helpView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_help_view);
+        helpView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
         for( int button : btnSlidersCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
@@ -379,9 +389,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         for (int line : btnSlidersCategoryLineArr){
             helpView.setInt(line, "setBackgroundResource", 0);
         }
-        if(slidersCurrentCategory != null){
-            int currentButton = btnSlidersCategoryArr[slidersCurrentCategory.ordinal()];
-            int currentLine = btnSlidersCategoryLineArr[slidersCurrentCategory.ordinal()];
+        if(getCurrentSlidersCategory() != null){
+            int currentButton = btnSlidersCategoryArr[getCurrentSlidersCategory().ordinal()];
+            int currentLine = btnSlidersCategoryLineArr[getCurrentSlidersCategory().ordinal()];
             helpView.setTextColor(currentButton, Color.parseColor("#2187F3"));
             helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
         }
@@ -454,8 +464,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     ex.printStackTrace();
                 }
             }
-            else
+            else {
                 startEditActivity(ctx);
+                return;
+            }
         }
         else if(key == 1) {
             switch (id) {
@@ -478,7 +490,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     setCurrentSlidersCategory(slidersCategory.BRIGHTNESS);
                     break;
                 case R.id.btnSlidersCategory2:
-                    setCurrentSlidersCategory(slidersCategory.HUE);
+                    setCurrentSlidersCategory(slidersCategory.COLOR);
                     break;
                 case R.id.btnSlidersCategory3:
                     setCurrentSlidersCategory(slidersCategory.SATURATION);
@@ -495,13 +507,80 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             }
             saveCurrentCategory(ctx);
         }
+        else if(key == 2){
+            switch (id) {
+                case R.id.remote_list:
+                    int itemId = intent.getIntExtra("item_id", -1);
+                    int itemBgColor = intent.getIntExtra("bg_color", -1);
+                    HueBridge bridge = HueBridge.getInstance(ctx);
+                    assert bridge != null;
+                    switch (getCurrentSlidersCategory()) {
+                        case BRIGHTNESS:
+                            bridge.setHueBrightness(ctx, slidersResource, intent.getIntExtra("brightness", 0));
+                            break;
+                        case COLOR:
+                            bridge.setHueColor(ctx, slidersResource, intent.getIntExtra("color", 0));
+                            break;
+                        case SATURATION:
+                            bridge.setHueSaturation(ctx, slidersResource, intent.getIntExtra("saturation", 0));
+                            break;
+                        default:
+                            Log.e(TAG,"Unknown category!");
+                            break;
+                    }
+                    String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
         panelUpdate(ctx);
     }
 
     private void performRemoteLongClick(Context ctx, Intent intent) {
+        if(!bridgeConfigured)
+            return;
         Log.d(TAG, "performRemoteLongClick()");
-        Log.d(TAG, "ACTION_REMOTE_LONG_CLICK" + "id=" + intent.getIntExtra("id", -1));
-        slidersActive = true;
+
+        int id = intent.getIntExtra("id", -1);
+        int key = intent.getIntExtra("key", -1);
+
+        if(key == 0){
+            boolean buttonIsMapped = false;
+            try{
+                HashMap<Integer, BridgeResource> currentCategoryContents =
+                        Objects.requireNonNull(getContents().get(getCurrentCategory()));
+                buttonIsMapped = currentCategoryContents.containsKey(id);
+            }
+            catch (NullPointerException ex){
+                Log.e(TAG, "Received a button press but contents not set up. Did you clearAllContents at setup?");
+                ex.printStackTrace();
+            }
+            if(buttonIsMapped){
+                BridgeResource br;
+                try {
+                    br = Objects.requireNonNull(getContents().get(getCurrentCategory())).get(id);
+                }
+                catch (NullPointerException ex){
+                    Log.e(TAG, "Received a button press. The button is mapped. Failed to get the mapping for the button");
+                    ex.printStackTrace();
+                    return;
+                }
+                if (!br.getCategory().equals("scenes")){
+                    slidersActive = true;
+                    slidersResource = br;
+                }
+                else {
+                    String toastString = "Sliders not available for scenes";
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+            else {
+                startEditActivity(ctx);
+                return;
+            }
+        }
+
         contentView = createSlidersContentView(ctx);
         helpView = createSlidersHelpView(ctx);
 
