@@ -125,8 +125,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         noButton = findViewById(R.id.no_button);
         noButton.setOnClickListener(this);
         InitSdk.setApplicationContext(getApplicationContext());
-        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "EdgeHue");
-        HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG);
+        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "EdgeHue"); //TODO check what this is
+        HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG); //TODO remove debug
 
         if (HueBridge.getInstance(ctx) == null){
             updateUI(UIState.Welcome);
@@ -142,7 +142,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
      */
     public void startBridgeDiscovery() {
         Log.i(TAG, "startBridgeDiscovery()");
-        HueBridge.deleteInstance();
+        HueBridge.deleteInstance(this); //TODO Is this necessary
         stopBridgeDiscovery();
         bridgeDiscovery = new BridgeDiscoveryImpl();
         // ALL Include [UPNP, IPSCAN, NUPNP, MDNS] but in some nets UPNP, NUPNP and MDNS is not working properly
@@ -265,7 +265,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             updateUI(UIState.Confirmation);
         }
         else if (view == yesButton) {
-            HueBridge.deleteInstance();
+            HueBridge.deleteInstance(this);
             updateUI(UIState.Welcome);
         }
         else if (view == noButton) {

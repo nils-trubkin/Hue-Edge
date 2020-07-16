@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -80,9 +81,12 @@ public class HueBridge implements Serializable {
     }
 
     //Delete the instance TODO App Reset
-    public static synchronized void deleteInstance() {
+    public static synchronized void deleteInstance(Context ctx) {
         Log.i(TAG, "Deleting instance of HueBridge");
         instance = null;
+        boolean deleted = EdgeHueProvider.deleteAllConfiguration(ctx);
+        String toastString = deleted ? "Configuration was deleted" : "Configuration was not deleted";
+        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
     }
 
     //Get instance of instantiated HueBridge

@@ -114,9 +114,21 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
 
-        //if(getContents().isEmpty() || getCurrentCategory() == null || getCurrentCategory() == menuCategory.NO_BRIDGE) {
-        //    loadAllConfiguration(ctx);
-        //}
+        if (getContents().isEmpty()) {
+            String toastString = "getContents is empty, loading";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            loadAllConfiguration(ctx);
+        }
+        if (getCurrentCategory() == null){
+            String toastString = "getCurrentCategory is empty, loading";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            loadAllConfiguration(ctx);
+        }
+        if (getCurrentSlidersCategory() == null){
+            String toastString = "getCurrentSlidersCategory is empty, loading";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            loadAllConfiguration(ctx);
+        }
 
         if (HueBridge.getInstance(ctx) == null) {
             bridgeConfigured = false;
@@ -500,8 +512,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     slidersActive = false;
                     break;
                 case R.id.btnEdit:
-                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
-                    startEditActivity(ctx);
+                    loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
+                    //startEditActivity(ctx);
                     break;
                 default:
                     break;
@@ -860,5 +872,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast
         }
+    }
+
+    public static boolean deleteAllConfiguration(Context ctx){
+        File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        return file.delete();
     }
 }
