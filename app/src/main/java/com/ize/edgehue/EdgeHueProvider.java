@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -844,6 +845,13 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             String toastString = ex.toString();
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast
+        }
+        catch (InvalidClassException ex){
+            Log.e(TAG, "Config file is old version");
+            ex.printStackTrace();
+            String toastString = "Old version of config file";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //TODO remove toast, fix deletition or something.
         }
         catch (Exception ex) {
             Log.e(TAG, "Failed to load configuration");

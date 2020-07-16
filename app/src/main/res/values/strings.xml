@@ -71,4 +71,17 @@
     <string name="remote_list_item_title3">Saturation #</string>
     <string name="remote_list_item_clicked">Item no.%d clicked</string>
 
+    <string name="hue_api_lights">lights</string>
+    <string name="hue_api_groups">groups</string>
+    <string name="hue_api_scenes">scenes</string>
+    <string name="hue_api_on">on</string>
+    <string name="hue_api_any_on">any_on</string>
+    <string name="hue_api_type">type</string>
+    <string name="hue_api_Room">Room</string>
+    <string name="hue_api_Zone">Zone</string>
+    <string name="hue_api_group">group</string>
+    <string name="hue_api_scene">scene</string>
+    <string name="hue_api_state">state</string>
+    <string name="hue_api_success">success</string>
+
 </resources>

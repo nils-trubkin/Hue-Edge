@@ -3,6 +3,7 @@ package com.ize.edgehue;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -36,6 +37,19 @@ public class HueBridge implements Serializable {
     private final HashMap<String, BridgeResource> zones = new HashMap<>();
     private final HashMap<String, BridgeResource> scenes = new HashMap<>();
 
+    final String LIGHTS;
+    final String GROUPS;
+    final String SCENES;
+    final String ON;
+    final String ANY_ON;
+    final String TYPE;
+    final String ROOM;
+    final String ZONE;
+    final String GROUP;
+    final String SCENE;
+    final String STATE;
+    final String SUCCESS;
+
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
         this(ctx, ip, userName, ctx.getString(R.string.http_header)); // String "http://"
@@ -49,6 +63,20 @@ public class HueBridge implements Serializable {
                         Objects.requireNonNull(ip) +
                         ctx.getString(R.string.api_path) + // String "/api/"
                         Objects.requireNonNull(userName);
+
+        Resources res = ctx.getResources();
+        LIGHTS = res.getString(R.string.hue_api_lights);
+        GROUPS = res.getString(R.string.hue_api_groups);
+        SCENES = res.getString(R.string.hue_api_scenes);
+        ON = res.getString(R.string.hue_api_on);
+        ANY_ON = res.getString(R.string.hue_api_any_on);
+        TYPE = res.getString(R.string.hue_api_type);
+        ROOM = res.getString(R.string.hue_api_Room);
+        ZONE = res.getString(R.string.hue_api_Zone);
+        GROUP = res.getString(R.string.hue_api_group);
+        SCENE = res.getString(R.string.hue_api_scene);
+        STATE = res.getString(R.string.hue_api_state);
+        SUCCESS = res.getString(R.string.hue_api_success);
     }
 
     //Delete the instance TODO App Reset
@@ -124,9 +152,9 @@ public class HueBridge implements Serializable {
     public String getSceneGroup(BridgeResource br) {
         try {
             return getState().
-                    getJSONObject("scenes").
+                    getJSONObject(SCENES).
                     getJSONObject(br.getId()).
-                    getString("group");
+                    getString(GROUP);
         } catch (JSONException e) {
             Log.e(TAG, "Can't getSceneGroup()");
             e.printStackTrace();
@@ -134,56 +162,54 @@ public class HueBridge implements Serializable {
         }
     }
 
-    private void refreshAllHashMaps() {
+    private void refreshAllHashMaps(Context ctx) {
         Iterator<String> keys = getState().keys();
+        Resources res = ctx.getResources();
+
         while (keys.hasNext()) { // iterate over categories
             String key = keys.next();
-            if (key.equals("lights") || key.equals("groups") || key.equals("scenes")) {
+            if (key.equals(LIGHTS) ||
+                    key.equals(GROUPS) ||
+                    key.equals(SCENES)) {
                 try {
                     JSONObject resources = getState().getJSONObject(key); // get all res. in category
                     Iterator<String> resourcesKeys = resources.keys();
                     while (resourcesKeys.hasNext()) {    // iterate over one res. at a time
                         String resourcesKey = resourcesKeys.next();
                         JSONObject resource = resources.getJSONObject(resourcesKey);
-                        switch (key) {
-                            case "lights": {
-                                BridgeResource br = new BridgeResource(
-                                        resourcesKey,
-                                        key,
-                                        "on",
-                                        "on");
-                                getLights().put(resourcesKey, br);
-                                break;
-                            }
-                            case "groups": {
-                                BridgeResource br = new BridgeResource(
-                                        resourcesKey,
-                                        key,
-                                        "any_on",
-                                        "on");
-                                if (resource.getString("type").equals("Room"))
-                                    getRooms().put(resourcesKey, br);
-                                else if (resource.getString("type").equals("Zone"))
-                                    getZones().put(resourcesKey, br);
-                                break;
-                            }
-                            case "scenes":
-                                Iterator<String> sceneKeys = resource.keys();
-                                while (sceneKeys.hasNext()) {
-                                    if (sceneKeys.next().equals("group")) {
-                                        BridgeResource br = new BridgeResource(
-                                                resourcesKey,
-                                                key,
-                                                "scene",
-                                                "scene");
-                                        getScenes().put(resourcesKey, br);
-                                    }
+                        if (key.equals(LIGHTS)) {
+                            BridgeResource br = new BridgeResource(
+                                    resourcesKey,
+                                    key,
+                                    ON,
+                                    ON);
+                            getLights().put(resourcesKey, br);
+                        } else if (key.equals(GROUPS)) {
+                            BridgeResource br = new BridgeResource(
+                                    resourcesKey,
+                                    key,
+                                    ANY_ON,
+                                    ON);
+                            if (resource.getString(TYPE).equals(ROOM))
+                                getRooms().put(resourcesKey, br);
+                            else if (resource.getString(TYPE).equals(ZONE))
+                                getZones().put(resourcesKey, br);
+                        } else if (key.equals(SCENES)) {
+                            Iterator<String> sceneKeys = resource.keys();
+                            while (sceneKeys.hasNext()) {
+                                if (sceneKeys.next().equals(GROUP)) {
+                                    BridgeResource br = new BridgeResource(
+                                            resourcesKey,
+                                            key,
+                                            SCENE,
+                                            SCENE);
+                                    getScenes().put(resourcesKey, br);
                                 }
-                                break;
+                            }
                         }
                     }
                 } catch (JSONException e) {
-                    Log.wtf(TAG, "Can't find lights in state!");
+                    Log.e(TAG, "Can't find lights in state!");
                     e.printStackTrace();
                 }
             }
@@ -192,52 +218,52 @@ public class HueBridge implements Serializable {
 
     public void setHueBrightness(Context context, BridgeResource br, int value) {
         String category = br.getCategory();
-        if (category.equals("scenes")) {
-            Log.e(TAG, "Trying to set brightness for scene");
+        if (category.equals(SCENES)) {
+            Log.e(TAG, "Can't set brightness for scene");
             return;
         }
         String id = br.getId();
-        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        Log.d(TAG, "setHueBrightness entered for: " + category + " " + id);
+        String actionUrl = category.equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
         String brightnessAction = br.getBrightnessAction();
-        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
         setHueState(context, actionUrl, brightnessAction, value);
     }
 
     public void setHueColor(Context context, BridgeResource br, int value) {
         String category = br.getCategory();
-        if (category.equals("scenes")) {
-            Log.e(TAG, "Trying to set color for scene");
+        if (category.equals(SCENES)) {
+            Log.e(TAG, "Can't set color for scene");
             return;
         }
         String id = br.getId();
-        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        Log.d(TAG, "setHueColor() for: " + category + " " + id);
+        String actionUrl = category.equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
         String colorAction = br.getColorAction();
-        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
         setHueState(context, actionUrl, colorAction, value);
     }
 
     public void setHueSaturation(Context context, BridgeResource br, int value) {
         String category = br.getCategory();
-        if (category.equals("scenes")) {
-            Log.e(TAG, "Trying to set color for scene");
+        if (category.equals(SCENES)) {
+            Log.e(TAG, "Can't set color for scene");
             return;
         }
         String id = br.getId();
-        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        Log.d(TAG, "setHueSaturation() for: " + category + " " + id);
+        String actionUrl = category.equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
         String saturationAction = br.getSaturationAction();
-        Log.d(TAG, "setHueColorHueState entered for: " + category + " " + id);
         setHueState(context, actionUrl, saturationAction, value);
     }
 
     public void toggleHueState(Context context, BridgeResource br){
         String id = br.getId();
         String category = br.getCategory();
-        String actionUrl = category.equals("lights") ? br.getStateUrl() : br.getActionUrl();
+        Log.d(TAG, "toggleHueState() for: " + category + " " + id);
+        String actionUrl = category.equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
         String actionRead = br.getActionRead();
         String actionWrite = br.getActionWrite();
-        Log.d(TAG, "toggleHueState entered for: " + category + " " + id);
         boolean lastState;
-        if(category.equals("scenes")){
+        if(category.equals(SCENES)){
             setHueState(context, actionUrl, actionWrite, id);
         }
         else {
@@ -245,7 +271,7 @@ public class HueBridge implements Serializable {
                 lastState = getState().
                         getJSONObject(category).
                         getJSONObject(id).
-                        getJSONObject("state").
+                        getJSONObject(STATE).
                         getBoolean(actionRead);
             } catch (JSONException e) {
                 Log.e(TAG, "Can't get lastState");
@@ -258,7 +284,7 @@ public class HueBridge implements Serializable {
 
     //Set given pair to resourceUrl
     private void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
-        Log.d(TAG, "setHueState entered");
+        Log.d(TAG, "setHueState()");
         JSONObject j = createJsonOnObject(key, value);
         assert j != null;
         JsonCustomRequest jcr = getJsonCustomRequest(context, j, resourceUrl);
@@ -301,12 +327,17 @@ public class HueBridge implements Serializable {
                     @Override
                     public void onResponse(JSONObject response) {
                         setState(response);
-                        if (HueBridge.getInstance(ctx) == null){
-                            Log.wtf(TAG, "HueBridge.getInstance() == null");
+                        HueBridge bridge;
+                        try {
+                            bridge = HueBridge.getInstance(ctx);
                         }
-                        HueBridge bridge = HueBridge.getInstance(ctx);
+                        catch (NullPointerException ex){
+                            Log.e(TAG, "HueBridge.getInstance() == null");
+                            ex.printStackTrace();
+                            return;
+                        }
                         assert bridge != null;
-                        bridge.refreshAllHashMaps();
+                        bridge.refreshAllHashMaps(ctx);
                         try {
                             bridge.getStateIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
@@ -322,13 +353,13 @@ public class HueBridge implements Serializable {
                 });
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jor);
-        Log.d(TAG, "request sent to queue");
+        Log.d(TAG, "Request for Hue state sent to queue");
     }
 
     //PUT method
     private JsonCustomRequest getJsonCustomRequest(final Context ctx, final JSONObject jsonObject, final String resourceUrl){
         if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
-            Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
+            Log.e(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
         }
         Log.d(TAG, "setHueState url " + url + resourceUrl); // this is the actual resource path
@@ -356,7 +387,7 @@ public class HueBridge implements Serializable {
                             responseKeys = jsonResponse.keys();
                             if(responseKeys.hasNext()) {
                                 responseKey = responseKeys.next();
-                                if(!responseKey.equals("success")){  //response key should be success
+                                if(!responseKey.equals(SUCCESS)){  //response key should be success
                                     Log.e(TAG, "Unsuccessful! Check reply");
                                     return;
                                 }
@@ -375,7 +406,7 @@ public class HueBridge implements Serializable {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if (success ) {
+                        if (success) {
                             Log.d(TAG, "changeHueState successful");
                             try {
                                 assert bridge != null;
@@ -384,7 +415,7 @@ public class HueBridge implements Serializable {
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.d(TAG, "changeHueState unsuccessful");
+                            Log.e(TAG, "changeHueState unsuccessful");
                         }
                     }
                 },
