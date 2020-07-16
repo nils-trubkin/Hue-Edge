@@ -33,7 +33,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
     @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent){
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent){
 
         LayoutInflater inflater = LayoutInflater.from(ctx);
         convertView = inflater.inflate(mResource, parent, false);

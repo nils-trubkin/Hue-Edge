@@ -51,7 +51,7 @@ public class LongClickColorSliderService extends RemoteViewsService {
             Intent intent = new Intent();
             intent.putExtra("item_id", itemId);
             intent.putExtra("bg_color", bgColor);
-            intent.putExtra("color", Math.round(h * (65536 / 360)));
+            intent.putExtra("color", Math.round(h * (65536f / 360f)));
             // should be set fillInIntent to root of item layout
             itemView.setOnClickFillInIntent(R.id.item_root, intent);
 

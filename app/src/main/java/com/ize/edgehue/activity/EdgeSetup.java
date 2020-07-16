@@ -250,7 +250,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 handler.post(new Runnable() {
                                         public void run() {
                         try {
-                            sendAuthRequestTask performBackgroundTask = new sendAuthRequestTask((EdgeSetup) ctx);
+                            sendAuthRequestTask<Object> performBackgroundTask = new sendAuthRequestTask<>((EdgeSetup) ctx);
                             // PerformBackgroundTask this class is the class that extends AsynchTask
                             performBackgroundTask.execute(job, bridgeIp);
                         } catch (Exception e) {
@@ -285,8 +285,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
 
     }
 
-    private static class sendAuthRequestTask extends AsyncTask {
-        private WeakReference<EdgeSetup> activityReference;
+    private static class sendAuthRequestTask<T> extends AsyncTask<T, T, T> {
+        private final WeakReference<EdgeSetup> activityReference;
         sendAuthRequestTask(EdgeSetup context) {
             activityReference = new WeakReference<>(context);
         }
@@ -299,9 +299,9 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     private static class ProgressBarAnimation extends Animation {
-        private ProgressBar progressBar;
-        private float from;
-        private float  to;
+        private final ProgressBar progressBar;
+        private final float from;
+        private final float to;
 
         public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
             super();

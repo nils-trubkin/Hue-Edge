@@ -45,18 +45,15 @@ public class BridgeResource implements Serializable {
     }
 
     public String getBrightnessAction(){
-        String actionBrightness = "bri";
-        return actionBrightness;
+        return "bri";
     }
 
     public String getColorAction(){
-        String actionColor = "hue";
-        return actionColor;
+        return "hue";
     }
 
     public String getSaturationAction(){
-        String actionSaturation = "sat";
-        return actionSaturation;
+        return "sat";
     }
 
     public String getName(Context ctx){

@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +41,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private static final String ACTION_PULL_TO_REFRESH = "com.ize.edgehue.ACTION_PULL_TO_REFRESH";
     protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
     protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
-    protected static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
+    private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
+
+    private String LIGHTS;
 
     //Array of references to buttons
     public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
@@ -118,6 +121,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     public void onReceive(Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
+
+        Resources res = ctx.getResources();
+        LIGHTS = res.getString(R.string.hue_api_lights);
 
         /*if (getContents().isEmpty()) {
             String toastString = "getContents is empty, loading";
@@ -285,7 +291,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     //Create the content view, right panel. Used for buttons
     private RemoteViews createContentView(Context ctx) {
-        RemoteViews contentView = null;
+        RemoteViews contentView;
 
         /*if(contents.isEmpty()){
             loadConfigurationFromMemory(ctx);
@@ -375,24 +381,35 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             case BRIGHTNESS:
                 if(brightnessIntent == null)
                     brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, brightnessIntent);
+                remoteListView.setRemoteAdapter(R.id.sliders_brightness, brightnessIntent);
+                remoteListView.setViewVisibility(R.id.sliders_brightness, View.VISIBLE);
+                remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
+                remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
                 break;
             case COLOR:
                 if(colorIntent == null)
                     colorIntent = new Intent(ctx, LongClickColorSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, colorIntent);
+                remoteListView.setRemoteAdapter(R.id.sliders_color, colorIntent);
+                remoteListView.setViewVisibility(R.id.sliders_color, View.VISIBLE);
+                remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
+                remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
                 break;
             case SATURATION:
                 if(saturationIntent == null)
                     saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.remote_list, saturationIntent);
+                remoteListView.setRemoteAdapter(R.id.sliders_saturation, saturationIntent);
+                remoteListView.setViewVisibility(R.id.sliders_saturation, View.VISIBLE);
+                remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
+                remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
                 break;
             default:
                 Log.e(TAG,"Unknown category!");
                 break;
         }
-        SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.remote_list, getLongClickIntent(ctx, R.id.remote_list, 0));
-        remoteListView.setPendingIntentTemplate(R.id.remote_list, getClickIntent(ctx, R.id.remote_list, 2));
+        //SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.sliders_brightness, getLongClickIntent(ctx, R.id.sliders_brightness, 0));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_brightness, getClickIntent(ctx, R.id.sliders_brightness, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_color, getClickIntent(ctx, R.id.sliders_color, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_saturation, getClickIntent(ctx, R.id.sliders_saturation, 2));
         return remoteListView;
     }
 
@@ -518,8 +535,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     slidersActive = false;
                     break;
                 case R.id.btnEdit:
-                    loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
-                    //startEditActivity(ctx);
+                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
+                    startEditActivity(ctx);
                     break;
                 default:
                     break;
@@ -527,30 +544,30 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             saveCurrentCategory(ctx);
         }
         else if(key == 2){
-            switch (id) {
-                case R.id.remote_list:
-                    int itemId = intent.getIntExtra("item_id", -1);
-                    int itemBgColor = intent.getIntExtra("bg_color", -1);
-                    HueBridge bridge = HueBridge.getInstance(ctx);
-                    assert bridge != null;
-                    switch (getCurrentSlidersCategory()) {
-                        case BRIGHTNESS:
-                            bridge.setHueBrightness(ctx, slidersResource, intent.getIntExtra("brightness", 0));
-                            break;
-                        case COLOR:
-                            bridge.setHueColor(ctx, slidersResource, intent.getIntExtra("color", 0));
-                            break;
-                        case SATURATION:
-                            bridge.setHueSaturation(ctx, slidersResource, intent.getIntExtra("saturation", 0));
-                            break;
-                        default:
-                            Log.e(TAG,"Unknown category!");
-                            break;
-                    }
-                    String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            int itemId = intent.getIntExtra("item_id", -1);
+            int itemBgColor = intent.getIntExtra("bg_color", -1);
+            HueBridge bridge = HueBridge.getInstance(ctx);
+            assert bridge != null;
+            String actionUrl = slidersResource.getCategory().equals(LIGHTS) ? slidersResource.getStateUrl() : slidersResource.getActionUrl();
+            switch (id){
+                case R.id.sliders_brightness:
+                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
+                    bridge.setHueBrightness(ctx, slidersResource, intent.getIntExtra("brightness", 0));
+                    break;
+                case R.id.sliders_color:
+                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
+                    bridge.setHueColor(ctx, slidersResource, intent.getIntExtra("color", 0));
+                    break;
+                case R.id.sliders_saturation:
+                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
+                    bridge.setHueSaturation(ctx, slidersResource, intent.getIntExtra("saturation", 0));
+                    break;
+                default:
+                    Log.e(TAG, "Unknown category!");
                     break;
             }
+            String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
         }
         panelUpdate(ctx);
     }
@@ -576,15 +593,17 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             }
             if(buttonIsMapped){
                 BridgeResource br;
+                boolean isNotAScene;
                 try {
                     br = Objects.requireNonNull(getContents().get(getCurrentCategory())).get(id);
+                    isNotAScene = !Objects.requireNonNull(br).getCategory().equals("scenes");
                 }
                 catch (NullPointerException ex){
                     Log.e(TAG, "Received a button press. The button is mapped. Failed to get the mapping for the button");
                     ex.printStackTrace();
                     return;
                 }
-                if (!br.getCategory().equals("scenes")){
+                if (isNotAScene){
                     slidersActive = true;
                     slidersResource = br;
                 }
@@ -874,7 +893,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             ex.printStackTrace();
             String toastString = "Config file is old version";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            //TODO remove toast, fix deletition or something.
+            //TODO remove toast, delete it or something.
         }
         catch (Exception ex) {
             Log.e(TAG, "Failed to load configuration for other reason");

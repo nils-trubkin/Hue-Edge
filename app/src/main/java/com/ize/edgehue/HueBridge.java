@@ -166,10 +166,8 @@ public class HueBridge implements Serializable {
         }
     }
 
-    private void refreshAllHashMaps(Context ctx) {
+    private void refreshAllHashMaps() {
         Iterator<String> keys = getState().keys();
-        Resources res = ctx.getResources();
-
         while (keys.hasNext()) { // iterate over categories
             String key = keys.next();
             if (key.equals(LIGHTS) ||
@@ -198,7 +196,7 @@ public class HueBridge implements Serializable {
                                 getRooms().put(resourcesKey, br);
                             else if (resource.getString(TYPE).equals(ZONE))
                                 getZones().put(resourcesKey, br);
-                        } else if (key.equals(SCENES)) {
+                        } else { // key.equals(SCENES)
                             Iterator<String> sceneKeys = resource.keys();
                             while (sceneKeys.hasNext()) {
                                 if (sceneKeys.next().equals(GROUP)) {
@@ -287,7 +285,7 @@ public class HueBridge implements Serializable {
     }
 
     //Set given pair to resourceUrl
-    private void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
+    public void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
         Log.d(TAG, "setHueState()");
         JSONObject j = createJsonOnObject(key, value);
         assert j != null;
@@ -341,7 +339,7 @@ public class HueBridge implements Serializable {
                             return;
                         }
                         assert bridge != null;
-                        bridge.refreshAllHashMaps(ctx);
+                        bridge.refreshAllHashMaps();
                         try {
                             bridge.getStateIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
