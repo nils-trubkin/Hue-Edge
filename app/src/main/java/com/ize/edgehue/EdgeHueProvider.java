@@ -63,6 +63,9 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     //Array of references to category buttons underlines
     public static final int[] btnSlidersCategoryLineArr = {R.id.btnSlidersCategoryLine1, R.id.btnSlidersCategoryLine2,
             R.id.btnSlidersCategoryLine3};
+    //Array of references to progress bars
+    public static final int[] progressBarArr = {R.id.progress_bar1, R.id.progress_bar2, R.id.progress_bar3, R.id.progress_bar4,
+            R.id.progress_bar5, R.id.progress_bar6, R.id.progress_bar7, R.id.progress_bar8, R.id.progress_bar9, R.id.progress_bar10};
 
     //Categories available in the left pane (helpContent)
     public enum menuCategory implements Serializable {
@@ -106,6 +109,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private static Intent brightnessIntent;
     private static Intent colorIntent;
     private static Intent saturationIntent;
+
+    private static int currentlyClicked = -1;
 
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
@@ -469,6 +474,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             }
             if(buttonIsMapped){
                 try{
+                    currentlyClicked = id;
                     BridgeResource br = Objects.requireNonNull(getContents().get(getCurrentCategory())).get(id);
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, Objects.requireNonNull(br));
                 }
@@ -732,6 +738,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                             Log.wtf(TAG, "resource == null");
                         }
                         assert resource != null;
+                        contentView.setViewVisibility(progressBarArr[i], View.GONE);
                         contentView.setTextViewText(btnTextArr[i], resource.getName(ctx));
                         contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
                         contentView.setTextColor(btnArr[i], resource.getBtnTextColor(ctx));
@@ -750,6 +757,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                                 R.drawable.add_button_background);
                     }
                 }
+            }
+            if (currentlyClicked != -1){
+                contentView.setViewVisibility(progressBarArr[currentlyClicked], View.VISIBLE);
+                currentlyClicked = -1;
             }
         }
 

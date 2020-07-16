@@ -1,16 +1,15 @@
 package com.ize.edgehue.activity;
 
-import android.app.Application;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -119,7 +118,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         bridgeDiscoveryListView.setOnItemClickListener(this);
         bridgeIpTextView = findViewById(R.id.bridge_ip_text);
         pushlinkImage = findViewById(R.id.pushlink_image);
-        progressBar = findViewById(R.id.progress_bar);
+        progressBar = findViewById(R.id.progress_bar1);
         bridgeDiscoveryButton = findViewById(R.id.bridge_discovery_button);
         bridgeDiscoveryButton.setOnClickListener(this);
         cheatButton = findViewById(R.id.cheat_button);
@@ -221,7 +220,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             return;
         }
         ins.statusTextView.setText(ins.getResources().getString(R.string.fragment_auth_label, ins.requestAmount));
-        ins.progressBar.incrementProgressBy(ins.progressBar.getMax() / REQUEST_AMOUNT);
+        //ins.progressBar.incrementProgressBy(ins.progressBar.getMax() / REQUEST_AMOUNT);
         Log.d(TAG, "requestAmount = " + ins.requestAmount);
         ins.requestAmount--;
         JsonCustomRequest jcr = getJsonCustomRequest(ins, job, bridgeIp);
@@ -261,6 +260,11 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 });
             }
         };
+        progressBar.setMax(1000000);
+        ProgressBarAnimation anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
+        anim.setDuration(1000 * REQUEST_AMOUNT);
+        progressBar.startAnimation(anim);
+
         timer.schedule(doAsynchronousTask, 0, 1000); //execute in every 50000 ms
 
         /*while (!authSuccess || requestAmount >= 0){
@@ -290,6 +294,27 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         protected Object doInBackground(Object[] objects) {
             sendAuthRequest(activityReference.get(), (JSONObject) objects[0], (String) objects[1]);
             return null;
+        }
+
+    }
+
+    private static class ProgressBarAnimation extends Animation {
+        private ProgressBar progressBar;
+        private float from;
+        private float  to;
+
+        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
+            super();
+            this.progressBar = progressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            progressBar.setProgress((int) value);
         }
 
     }
