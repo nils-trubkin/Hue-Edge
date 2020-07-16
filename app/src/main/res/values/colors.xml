@@ -7,4 +7,6 @@
     <color name="black">#252525</color>
     <color name="help_view_grey">#7FFAFAFA</color>
     <color name="content_view_background">#664C4C4C</color>
+
+    <color name="navigation_bar_color_setup">#353535</color>
 </resources>

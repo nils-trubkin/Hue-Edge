@@ -1,8 +1,12 @@
 package com.ize.edgehue.activity;
 
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -10,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,10 +40,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class EdgeSetup extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
+
+    private transient static final int REQUEST_AMOUNT = 10;
 
     /*
 
@@ -63,12 +73,15 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     private transient List<BridgeDiscoveryResult> bridgeDiscoveryResults;
 
     private transient int requestAmount;
+    private transient boolean authSuccess;
+    private transient Timer timer;
 
     // UI elements
     private transient TextView statusTextView;
     private transient ListView bridgeDiscoveryListView;
     private transient TextView bridgeIpTextView;
     private transient View pushlinkImage;
+    private transient ProgressBar progressBar;
     private transient Button bridgeDiscoveryButton;
     private transient Button cheatButton;
     private transient Button bridgeDiscoveryCancelButton;
@@ -98,7 +111,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setNavigationBarColor(Color.rgb(53,53,53));
+        window.setNavigationBarColor(getResources().getColor(R.color.navigation_bar_color_setup, getTheme()));
 
         // Setup the UI
         statusTextView = findViewById(R.id.status_text);
@@ -106,6 +119,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         bridgeDiscoveryListView.setOnItemClickListener(this);
         bridgeIpTextView = findViewById(R.id.bridge_ip_text);
         pushlinkImage = findViewById(R.id.pushlink_image);
+        progressBar = findViewById(R.id.progress_bar);
         bridgeDiscoveryButton = findViewById(R.id.bridge_discovery_button);
         bridgeDiscoveryButton.setOnClickListener(this);
         cheatButton = findViewById(R.id.cheat_button);
@@ -147,7 +161,6 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         bridgeDiscovery = new BridgeDiscoveryImpl();
         // ALL Include [UPNP, IPSCAN, NUPNP, MDNS] but in some nets UPNP, NUPNP and MDNS is not working properly
         bridgeDiscovery.search(bridgeDiscoveryCallback);
-
         updateUI(UIState.Search);
     }
 
@@ -160,7 +173,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             bridgeDiscovery.stop();
             bridgeDiscovery = null;
         }
-
+        authSuccess = false;
         updateUI(UIState.Welcome);
     }
 
@@ -176,15 +189,15 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                     if (returnCode == BridgeDiscovery.ReturnCode.SUCCESS) {
                         bridgeDiscoveryListView.setAdapter(new BridgeDiscoveryResultAdapter(getApplicationContext(), results));
                         bridgeDiscoveryResults = results;
-                        Log.i(TAG, "Bridge discovery found " + results.size() + " bridge(s) in the network.");
+                        Log.i(TAG, "Bridge discovery found " + results.size() + " bridge(s) in the network");
 
                         updateUI(UIState.Results);
 
                     } else if (returnCode == BridgeDiscovery.ReturnCode.STOPPED) {
-                        Log.i(TAG, "Bridge discovery stopped.");
+                        Log.i(TAG, "Bridge discovery stopped");
                         updateUI(UIState.Welcome);
                     } else {
-                        Log.i(TAG, "Bridge discovery error.");
+                        Log.e(TAG, "Bridge discovery error");
                         updateUI(UIState.Error);
                     }
                 }
@@ -192,40 +205,92 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         }
     };
 
-    private void sendAuthRequest(int i, JSONObject j, String bridgeIp){
-        if(i == 0){
-            updateUI(UIState.Error);
+    static private void sendAuthRequest(EdgeSetup ins, JSONObject job, String bridgeIp){
+        if(ins.authSuccess){
+            ins.timer.cancel();
             return;
         }
-        else if(i == -1){
-            updateUI(UIState.Results);
+        else if(ins.requestAmount == 0){
+            ins.updateUI(UIState.Error);
+            ins.timer.cancel();
             return;
         }
-        statusTextView.setText(getResources().getString(R.string.fragment_auth_label, requestAmount));
-        Log.d(TAG, "requestAmount = " + requestAmount);
-        requestAmount = i - 1;
-        JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
+        else if(ins.requestAmount == -1){
+            ins.updateUI(UIState.Results);
+            ins.timer.cancel();
+            return;
+        }
+        ins.statusTextView.setText(ins.getResources().getString(R.string.fragment_auth_label, ins.requestAmount));
+        ins.progressBar.incrementProgressBy(ins.progressBar.getMax() / REQUEST_AMOUNT);
+        Log.d(TAG, "requestAmount = " + ins.requestAmount);
+        ins.requestAmount--;
+        JsonCustomRequest jcr = getJsonCustomRequest(ins, job, bridgeIp);
         Log.d(TAG, "changeHueState postRequest created for this ip " + bridgeIp);
         // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(this).addToRequestQueue(this, jcr);
+        RequestQueueSingleton.getInstance(ins).addToRequestQueue(ins, jcr);
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-        String bridgeIp = bridgeDiscoveryResults.get(i).getIp();
+        final String bridgeIp = bridgeDiscoveryResults.get(i).getIp();
         Log.i(TAG, "Selected Bridge " + bridgeIp);
         //connectToBridge(bridgeIp);
         Log.d(TAG, "Sending request for this devicetype: " + "EdgeHUE#" + android.os.Build.MODEL);
-        JSONObject j = HueBridge.createJsonOnObject("devicetype", "EdgeHUE#" + android.os.Build.MODEL);
-        assert j != null;
+        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "EdgeHUE#" + android.os.Build.MODEL);
+        assert job != null;
         updateUI(UIState.Auth);
-        requestAmount = 100; //Requests to send
-        sendAuthRequest(requestAmount, j, bridgeIp);
+        requestAmount = REQUEST_AMOUNT; //Requests to send
+        authSuccess = false;
+
+        final Handler handler = new Handler();
+        timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                                        public void run() {
+                        try {
+                            sendAuthRequestTask performBackgroundTask = new sendAuthRequestTask((EdgeSetup) ctx);
+                            // PerformBackgroundTask this class is the class that extends AsynchTask
+                            performBackgroundTask.execute(job, bridgeIp);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 1000); //execute in every 50000 ms
+
+        /*while (!authSuccess || requestAmount >= 0){
+            sendAuthRequest(job, bridgeIp);
+            long timeStampBegin = System.currentTimeMillis();
+            long timeStampEnd = System.currentTimeMillis();
+            long delta = timeStampEnd - timeStampBegin;
+            while (delta < 1000) {
+                timeStampEnd = System.currentTimeMillis();
+                delta = timeStampEnd - timeStampBegin;
+                if (authSuccess) return;
+            }
+        }*/
         /*JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
         Log.d(TAG, "changeHueState postRequest created for this ip " + bridgeIp);
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(this).addToRequestQueue(jcr);*/
+
+    }
+
+    private static class sendAuthRequestTask extends AsyncTask {
+        private WeakReference<EdgeSetup> activityReference;
+        sendAuthRequestTask(EdgeSetup context) {
+            activityReference = new WeakReference<>(context);
+        }
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            sendAuthRequest(activityReference.get(), (JSONObject) objects[0], (String) objects[1]);
+            return null;
+        }
 
     }
 
@@ -283,6 +348,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 bridgeIpTextView.setVisibility(View.GONE);
                 statusTextView.setVisibility(View.VISIBLE);
                 pushlinkImage.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 bridgeDiscoveryButton.setVisibility(View.GONE);
                 cheatButton.setVisibility(View.GONE);
                 bridgeDiscoveryCancelButton.setVisibility(View.GONE);
@@ -324,6 +390,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                     case Auth:
                         statusTextView.setText(getResources().getString(R.string.fragment_auth_label));
                         pushlinkImage.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setProgress(0);
                         bridgeDiscoveryCancelButton.setVisibility(View.VISIBLE);
                         break;
                     case Settings:
@@ -346,7 +414,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         });
     }
 
-    private JsonCustomRequest getJsonCustomRequest(final JSONObject jsonObject, final String ip){
+    static private JsonCustomRequest getJsonCustomRequest(Context ctx, final JSONObject jsonObject, final String ip){
+        final EdgeSetup ins = (EdgeSetup) ctx;
         if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
@@ -366,22 +435,21 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                 responseKey = responseKeys.next();
                                 if(!responseKey.equals("success")){  //response key should be success
                                     Log.e(TAG, "Unsuccessful! Check reply");
-                                    sendAuthRequest(requestAmount, jsonObject, ip);
                                     return;
                                 }
                                 JSONObject usernameContainer = (JSONObject) jsonResponse.get("success");    // this should be JSONObject with username field
                                 if(!usernameContainer.keys().next().equals("username")) {
                                     Log.w(TAG, "Unsuccessful! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
-                                    sendAuthRequest(requestAmount, jsonObject, ip);
                                     return;
                                 }
+                                ins.authSuccess = true;
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
                                 EdgeHueProvider.clearAllContents();
-                                HueBridge.getInstance(ctx, ip, username)
-                                        .requestHueState(ctx);
+                                HueBridge.getInstance(ins, ip, username)
+                                        .requestHueState(ins);
 
-                                updateUI(UIState.Settings);
+                                ins.updateUI(UIState.Settings);
                             }
                         } catch (JSONException ex) {
                             ex.printStackTrace();

@@ -114,7 +114,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
 
-        if (getContents().isEmpty()) {
+        /*if (getContents().isEmpty()) {
             String toastString = "getContents is empty, loading";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             loadAllConfiguration(ctx);
@@ -128,7 +128,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             String toastString = "getCurrentSlidersCategory is empty, loading";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             loadAllConfiguration(ctx);
-        }
+        }*/
 
         if (HueBridge.getInstance(ctx) == null) {
             bridgeConfigured = false;
@@ -854,28 +854,39 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         catch (FileNotFoundException ex){
             Log.e(TAG, "Config file not found");
             ex.printStackTrace();
-            String toastString = ex.toString();
+            String toastString = "Config file not found";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast
         }
         catch (InvalidClassException ex){
             Log.e(TAG, "Config file is old version");
             ex.printStackTrace();
-            String toastString = "Old version of config file";
+            String toastString = "Config file is old version";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast, fix deletition or something.
         }
         catch (Exception ex) {
-            Log.e(TAG, "Failed to load configuration");
+            Log.e(TAG, "Failed to load configuration for other reason");
             ex.printStackTrace();
-            String toastString = ex.toString();
+            String toastString = "Failed to load configuration for other reason";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast
         }
     }
 
     public static boolean deleteAllConfiguration(Context ctx){
-        File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        File file;
+        try {
+            file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        }
+        catch (NullPointerException ex) {
+            Log.e(TAG, "deleteAllConfig could not find configuration");
+            ex.printStackTrace();
+            String toastString = ex.toString();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            return false;
+            //TODO remove toast
+        }
         return file.delete();
     }
 }
