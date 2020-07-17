@@ -73,6 +73,9 @@
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
+        <meta-data
+            android:name="com.samsung.android.cocktail.mode"
+            android:value="edge_single_plus" />
     </application>
 
 </manifest>
