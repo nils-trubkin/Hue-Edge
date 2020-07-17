@@ -41,8 +41,9 @@ public class LongClickColorSliderService extends RemoteViewsService {
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title2) + itemId);
+            int slidersResourceSaturation = Math.max(100, EdgeHueProvider.getSlidersResourceSaturation());
             float h = 360 * id / (float) MAX_CHILD;
-            float s = 1f;
+            float s = slidersResourceSaturation / 255f;
             float v = 1f;
             int bgColor = Color.HSVToColor(new float[]{h, s, v});
             itemView.setInt(R.id.item_text1, "setBackgroundColor", bgColor);

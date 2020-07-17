@@ -15,7 +15,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
 
     private class SampleRemoveViewFactory implements RemoteViewsFactory {
 
-        private static final int MAX_CHILD = 25;
+        private static final int MAX_CHILD = 15;
         private static final int MAX_LEVEL = 10;
         private final String TAG = SampleRemoveViewFactory.class.getSimpleName();
         private float mIdOffset = -1;
@@ -41,7 +41,8 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title3) + itemId);
-            float h = 360f;
+            int slidersResourceColor = EdgeHueProvider.getSlidersResourceColor();
+            float h = slidersResourceColor * 360f / 65536f;
             float s = id / (float) MAX_CHILD;
             float v = 1f;
             int bgColor = Color.HSVToColor(new float[]{h, s, v});

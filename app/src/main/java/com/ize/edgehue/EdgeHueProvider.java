@@ -109,11 +109,31 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private static boolean bridgeConfigured = false;
 
     private static BridgeResource slidersResource;
-    private static Intent brightnessIntent;
-    private static Intent colorIntent;
-    private static Intent saturationIntent;
+
+    private static int slidersResourceColor;
+    private static int slidersResourceSaturation;
 
     private static int currentlyClicked = -1;
+
+    public static BridgeResource getSlidersResource() {
+        return slidersResource;
+    }
+
+    public static int getSlidersResourceColor() {
+        return slidersResourceColor;
+    }
+
+    public static void setSlidersResourceColor(int slidersResourceColor) {
+        EdgeHueProvider.slidersResourceColor = slidersResourceColor;
+    }
+
+    public static void setSlidersResourceSaturation(int slidersResourceSaturation) {
+        EdgeHueProvider.slidersResourceSaturation = slidersResourceSaturation;
+    }
+
+    public static int getSlidersResourceSaturation() {
+        return slidersResourceSaturation;
+    }
 
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
@@ -377,26 +397,25 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     private RemoteViews createSlidersContentView(Context ctx) {
         Log.d(TAG, "createRemoteListView()");
         RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_main_view);
+        setSlidersResourceColor(getSlidersResource().getColor(ctx));
+        setSlidersResourceSaturation(getSlidersResource().getSaturation(ctx));
         switch (getCurrentSlidersCategory()) {
             case BRIGHTNESS:
-                if(brightnessIntent == null)
-                    brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
+                Intent brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
                 remoteListView.setRemoteAdapter(R.id.sliders_brightness, brightnessIntent);
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
                 break;
             case COLOR:
-                if(colorIntent == null)
-                    colorIntent = new Intent(ctx, LongClickColorSliderService.class);
+                Intent colorIntent = new Intent(ctx, LongClickColorSliderService.class);
                 remoteListView.setRemoteAdapter(R.id.sliders_color, colorIntent);
                 remoteListView.setViewVisibility(R.id.sliders_color, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
                 break;
             case SATURATION:
-                if(saturationIntent == null)
-                    saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
+                Intent saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
                 remoteListView.setRemoteAdapter(R.id.sliders_saturation, saturationIntent);
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
@@ -548,19 +567,20 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             int itemBgColor = intent.getIntExtra("bg_color", -1);
             HueBridge bridge = HueBridge.getInstance(ctx);
             assert bridge != null;
-            String actionUrl = slidersResource.getCategory().equals(LIGHTS) ? slidersResource.getStateUrl() : slidersResource.getActionUrl();
+            BridgeResource br = getSlidersResource();
+            String actionUrl = br.getCategory().equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
             switch (id){
                 case R.id.sliders_brightness:
-                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
-                    bridge.setHueBrightness(ctx, slidersResource, intent.getIntExtra("brightness", 0));
+                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
+                    bridge.setHueBrightness(ctx, br, intent.getIntExtra("brightness", 0));
                     break;
                 case R.id.sliders_color:
-                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
-                    bridge.setHueColor(ctx, slidersResource, intent.getIntExtra("color", 0));
+                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
+                    bridge.setHueColor(ctx, br, intent.getIntExtra("color", 0));
                     break;
                 case R.id.sliders_saturation:
-                    bridge.setHueState(ctx, actionUrl, slidersResource.getActionWrite(), true);
-                    bridge.setHueSaturation(ctx, slidersResource, intent.getIntExtra("saturation", 0));
+                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
+                    bridge.setHueSaturation(ctx, br, intent.getIntExtra("saturation", 0));
                     break;
                 default:
                     Log.e(TAG, "Unknown category!");
@@ -893,7 +913,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             ex.printStackTrace();
             String toastString = "Config file is old version";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            //TODO remove toast, delete it or something.
+            //TODO remove toast, convert config
         }
         catch (Exception ex) {
             Log.e(TAG, "Failed to load configuration for other reason");

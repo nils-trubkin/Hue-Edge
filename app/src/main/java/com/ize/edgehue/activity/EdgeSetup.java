@@ -72,8 +72,9 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     private transient List<BridgeDiscoveryResult> bridgeDiscoveryResults;
 
     private transient int requestAmount;
-    private transient boolean authSuccess;
     private transient Timer timer;
+    private transient sendAuthRequestTask<Object> backgroundAuthRequestTask;
+    private transient ProgressBarAnimation anim;
 
     // UI elements
     private transient TextView statusTextView;
@@ -118,7 +119,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         bridgeDiscoveryListView.setOnItemClickListener(this);
         bridgeIpTextView = findViewById(R.id.bridge_ip_text);
         pushlinkImage = findViewById(R.id.pushlink_image);
-        progressBar = findViewById(R.id.progress_bar1);
+        progressBar = findViewById(R.id.progress_bar);
         bridgeDiscoveryButton = findViewById(R.id.bridge_discovery_button);
         bridgeDiscoveryButton.setOnClickListener(this);
         cheatButton = findViewById(R.id.cheat_button);
@@ -172,8 +173,6 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             bridgeDiscovery.stop();
             bridgeDiscovery = null;
         }
-        authSuccess = false;
-        updateUI(UIState.Welcome);
     }
 
     private final BridgeDiscovery.Callback bridgeDiscoveryCallback = new BridgeDiscovery.Callback() {
@@ -205,11 +204,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     };
 
     static private void sendAuthRequest(EdgeSetup ins, JSONObject job, String bridgeIp){
-        if(ins.authSuccess){
-            ins.timer.cancel();
-            return;
-        }
-        else if(ins.requestAmount == 0){
+        if(ins.requestAmount == 0){
             ins.updateUI(UIState.Error);
             ins.timer.cancel();
             return;
@@ -240,8 +235,6 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         assert job != null;
         updateUI(UIState.Auth);
         requestAmount = REQUEST_AMOUNT; //Requests to send
-        authSuccess = false;
-
         final Handler handler = new Handler();
         timer = new Timer();
         TimerTask doAsynchronousTask = new TimerTask() {
@@ -250,9 +243,9 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 handler.post(new Runnable() {
                                         public void run() {
                         try {
-                            sendAuthRequestTask<Object> performBackgroundTask = new sendAuthRequestTask<>((EdgeSetup) ctx);
+                            backgroundAuthRequestTask = new sendAuthRequestTask<>((EdgeSetup) ctx);
                             // PerformBackgroundTask this class is the class that extends AsynchTask
-                            performBackgroundTask.execute(job, bridgeIp);
+                            backgroundAuthRequestTask.execute(job, bridgeIp);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                         }
@@ -260,8 +253,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 });
             }
         };
-        progressBar.setMax(1000000);
-        ProgressBarAnimation anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
+        progressBar.setMax(10000);
+        anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
         anim.setDuration(1000 * REQUEST_AMOUNT);
         progressBar.startAnimation(anim);
 
@@ -286,16 +279,21 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     private static class sendAuthRequestTask<T> extends AsyncTask<T, T, T> {
-        private final WeakReference<EdgeSetup> activityReference;
+        private transient final WeakReference<EdgeSetup> activityReference;
         sendAuthRequestTask(EdgeSetup context) {
             activityReference = new WeakReference<>(context);
         }
+
         @Override
-        protected Object doInBackground(Object[] objects) {
+        protected T doInBackground(T[] objects) {
             sendAuthRequest(activityReference.get(), (JSONObject) objects[0], (String) objects[1]);
             return null;
         }
 
+        public void success() {
+            activityReference.get().timer.cancel();
+            activityReference.get().progressBar.clearAnimation();
+        }
     }
 
     private static class ProgressBarAnimation extends Animation {
@@ -467,7 +465,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                     Log.w(TAG, "Unsuccessful! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
                                     return;
                                 }
-                                ins.authSuccess = true;
+                                ins.backgroundAuthRequestTask.success();
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
                                 EdgeHueProvider.clearAllContents();

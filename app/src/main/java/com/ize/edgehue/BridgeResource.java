@@ -91,13 +91,58 @@ public class BridgeResource implements Serializable {
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
                     getJSONObject("state").
-                    getBoolean(actionRead) ?
+                    getBoolean(getActionRead()) ?
                     1 : 0);
         } catch (JSONException e) {
             e.printStackTrace();
             return -1;
         }
     }
+
+    public int getColor(Context ctx){
+        try {
+            if (category.equals("scenes")) {
+                Log.w(TAG,"You shouldn't use this!");
+                return 1;
+            }
+            HueBridge bridge = HueBridge.getInstance(ctx);
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
+            return  (bridge.getState().
+                    getJSONObject(getCategory()).
+                    getJSONObject(getId()).
+                    getJSONObject("state").
+                    getInt(getColorAction()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public int getSaturation(Context ctx){
+        try {
+            if (category.equals("scenes")) {
+                Log.w(TAG,"You shouldn't use this!");
+                return 1;
+            }
+            HueBridge bridge = HueBridge.getInstance(ctx);
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
+            return  (bridge.getState().
+                    getJSONObject(getCategory()).
+                    getJSONObject(getId()).
+                    getJSONObject("state").
+                    getInt(getSaturationAction()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public String getBtnText(Context ctx){
         if (category.equals("scenes")) {
             HueBridge bridge = HueBridge.getInstance(ctx);
