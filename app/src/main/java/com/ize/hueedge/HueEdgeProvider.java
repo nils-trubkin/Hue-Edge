@@ -21,6 +21,9 @@ import com.ize.hueedge.service.LongClickSaturationSliderService;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -216,7 +219,10 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 }
                 break;
             case COCKTAIL_VISIBILITY_CHANGED:
+                panelUpdate(ctx);
+                break;
             case ACTION_RECEIVE_HUE_STATE:
+                saveAllConfiguration(ctx);
                 panelUpdate(ctx);
                 break;
             default:
@@ -890,12 +896,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             recoveryOutputStream.writeObject(bridge.getIp());
             recoveryOutputStream.writeObject(bridge.getUserName());
             recoveryOutputStream.writeObject(bridge.getContents());
+            recoveryOutputStream.writeObject(bridge.getState().toString());
             recoveryOutputStream.flush();
             recoveryOutputStream.close();
-
-            String toastString = "Saved";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            //TODO maybe remove toast
         } catch (Exception ex) {
             ex.printStackTrace();
             String toastString = ex.toString();
@@ -950,13 +953,20 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 String userName = (String) recoveryInputStream.readObject();
                 HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
                         (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) recoveryInputStream.readObject();
-                HueBridge.getInstance(ctx, ip, userName).setContents(contents);
+                bridge = HueBridge.getInstance(ctx, ip, userName);
+                bridge.setContents(contents);
+                String state = (String) recoveryInputStream.readObject();
+                bridge.setState(new JSONObject(state));
+                bridge.requestHueState(ctx);
+                Log.i(TAG,"Recovery successful");
             } catch (FileNotFoundException ex2){
                 toastString = "Recovery file not found";
                 Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 Log.e(TAG, toastString);
                 //TODO remove toast
             } catch (ClassCastException | ClassNotFoundException | IOException ex2){
+                ex2.printStackTrace();
+            } catch (JSONException ex2) {
                 ex2.printStackTrace();
             }
         } catch (Exception ex) {

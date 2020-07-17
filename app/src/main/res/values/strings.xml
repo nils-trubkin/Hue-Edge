@@ -87,4 +87,7 @@
     <string name="hue_api_state">state</string>
     <string name="hue_api_success">success</string>
 
+    <!-- Toasts -->
+    <string name="toast_saved">Saved</string>
+
 </resources>

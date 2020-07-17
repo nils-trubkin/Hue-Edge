@@ -38,6 +38,7 @@ public class HueBridge implements Serializable {
     private final HashMap<String, BridgeResource> rooms = new HashMap<>();
     private final HashMap<String, BridgeResource> zones = new HashMap<>();
     private final HashMap<String, BridgeResource> scenes = new HashMap<>();
+    private final HashMap<String, BridgeResource> scenes1231123123133132 = new HashMap<>();
 
     //Mapping of category to contents
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =

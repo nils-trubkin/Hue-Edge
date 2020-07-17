@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -61,6 +62,8 @@ public class EditActivity extends AppCompatActivity {
                 assert HueBridge.getInstance(ctx) != null;
                 if(HueBridge.getInstance(ctx) != null){
                     HueEdgeProvider.saveAllConfiguration(ctx);
+                    String toastString = ctx.getString(R.string.toast_saved);
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
                 else{
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
