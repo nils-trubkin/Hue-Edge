@@ -35,6 +35,8 @@ import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryImpl;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryResult;
 import com.philips.lighting.hue.sdk.wrapper.utilities.InitSdk;
+import com.samsung.android.sdk.SsdkUnsupportedException;
+import com.samsung.android.sdk.look.Slook;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,12 +104,15 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         Auth,
         Settings,
         Final,
-        Confirmation
+        Confirmation,
+        Not_supported
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.setup_activity);
 
         Window window = getWindow();
@@ -142,6 +147,21 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         InitSdk.setApplicationContext(getApplicationContext());
         Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), Build.ID);
         HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG); //TODO remove debug
+
+        Slook slook = new Slook();
+
+        try {
+            slook.initialize(this);
+        } catch (SsdkUnsupportedException e){
+            updateUI(UIState.Not_supported);
+            return;
+        }
+
+        // The device doesn't support Edge Single Mode, Edge Single Plus Mode, and Edge Feeds Mode.
+        if (!slook.isFeatureEnabled(Slook.COCKTAIL_PANEL)) {
+            updateUI(UIState.Not_supported);
+            return;
+        }
 
         if (HueBridge.getInstance(ctx) == null){
             updateUI(UIState.Welcome);
@@ -413,6 +433,9 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         statusTextView.setText(getResources().getString(R.string.fragment_confirmation_label));
                         yesButton.setVisibility(View.VISIBLE);
                         noButton.setVisibility(View.VISIBLE);
+                        break;
+                    case Not_supported:
+                        statusTextView.setText(getResources().getString(R.string.fragment_not_supported_label));
                         break;
                 }
             }

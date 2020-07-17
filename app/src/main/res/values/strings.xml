@@ -42,6 +42,7 @@
     <string name="fragment_final_button_remove">Remove configuration</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
+    <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
 
     <string name="list_view_ip_label">IP: %1$s</string>
     <string name="list_view_id_label">ID: %1$s</string>

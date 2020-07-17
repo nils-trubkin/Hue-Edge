@@ -95,16 +95,10 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     private static RemoteViews contentView = null;
     private static RemoteViews helpView = null;
 
-
-
-    //Selected category initiated to none
-
-
     private static boolean slidersActive = false;
     private static boolean bridgeConfigured = false;
 
     private static BridgeResource slidersResource;
-
     private static int slidersResourceColor;
     private static int slidersResourceSaturation;
 
