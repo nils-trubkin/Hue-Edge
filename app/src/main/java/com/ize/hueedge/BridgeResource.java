@@ -20,12 +20,18 @@ public class BridgeResource implements Serializable {
     private final String category;
     private final String actionRead;
     private final String actionWrite;
+    private final String actionBrightness;
+    private final String actionColor;
+    private final String actionSaturation;
 
     public BridgeResource(String id, String category, String actionRead, String actionWrite){
         this.id = id;
         this.category = category;
         this.actionRead = actionRead;
         this.actionWrite = actionWrite;
+        this.actionBrightness = "bri";
+        this.actionColor = "hue";
+        this.actionSaturation = "sat";
     }
 
     public String getId(){
@@ -45,15 +51,15 @@ public class BridgeResource implements Serializable {
     }
 
     public String getBrightnessAction(){
-        return "bri";
+        return actionBrightness;
     }
 
     public String getColorAction(){
-        return "hue";
+        return actionColor;
     }
 
     public String getSaturationAction(){
-        return "sat";
+        return actionSaturation;
     }
 
     public String getName(Context ctx){
@@ -134,9 +140,9 @@ public class BridgeResource implements Serializable {
 
     public int getColor(Context ctx){
         try {
-            if (category.equals("scenes")) {
-                Log.w(TAG,"You shouldn't use this!");
-                return 1;
+            if (category.equals("scenes") || category.equals("groups")) {
+                Log.e(TAG,"You shouldn't use this!");
+                return 65536;
             }
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
@@ -156,9 +162,9 @@ public class BridgeResource implements Serializable {
 
     public int getSaturation(Context ctx){
         try {
-            if (category.equals("scenes")) {
-                Log.w(TAG,"You shouldn't use this!");
-                return 1;
+            if (category.equals("scenes") || category.equals("groups")) {
+                Log.e(TAG,"You shouldn't use this!");
+                return 255;
             }
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){

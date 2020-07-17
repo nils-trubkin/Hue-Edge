@@ -34,11 +34,13 @@ public class HueBridge implements Serializable {
     private transient JSONObject stateJson;
     private String state;
 
+    private HueEdgeProvider.menuCategory currentCategory = HueEdgeProvider.menuCategory.QUICK_ACCESS;
+    private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
+
     private final HashMap<String, BridgeResource> lights = new HashMap<>();
     private final HashMap<String, BridgeResource> rooms = new HashMap<>();
     private final HashMap<String, BridgeResource> zones = new HashMap<>();
     private final HashMap<String, BridgeResource> scenes = new HashMap<>();
-    private final HashMap<String, BridgeResource> scenes1231123123133132 = new HashMap<>();
 
     //Mapping of category to contents
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
@@ -117,7 +119,7 @@ public class HueBridge implements Serializable {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
             }
-            else HueBridge.getInstance(ctx).requestHueState(ctx);
+            else instance.requestHueState(ctx);
         }
         //Log.d(TAG, "HueBridge instance returned successfully, state is " + instance.state);
         return instance;
@@ -173,6 +175,21 @@ public class HueBridge implements Serializable {
         this.contents = contents;
     }
 
+    public HueEdgeProvider.menuCategory getCurrentCategory() {
+        return currentCategory;
+    }
+
+    public void setCurrentCategory(HueEdgeProvider.menuCategory currentCategory) {
+        this.currentCategory = currentCategory;
+    }
+
+    public HueEdgeProvider.slidersCategory getCurrentSlidersCategory() {
+        return currentSlidersCategory;
+    }
+
+    public void setCurrentSlidersCategory(HueEdgeProvider.slidersCategory currentSlidersCategory) {
+        this.currentSlidersCategory = currentSlidersCategory;
+    }
 
     public HashMap<String, BridgeResource> getLights() {
         return lights;
@@ -257,7 +274,7 @@ public class HueBridge implements Serializable {
 
     public int addToCurrentCategory(Context ctx, BridgeResource br){
         Log.d(TAG, "addToCurrentCategory()");
-        HueEdgeProvider.menuCategory currentCategory = HueEdgeProvider.getCurrentCategory();
+        HueEdgeProvider.menuCategory currentCategory = getCurrentCategory();
         HueBridge bridge;
         try{
             bridge = Objects.requireNonNull(getInstance(ctx));

@@ -80,7 +80,15 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                final int position = HueBridge.getInstance(ctx).addToCurrentCategory(ctx, br);
+                HueBridge bridge;
+                try {
+                    bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+                } catch (NullPointerException ex){
+                    Log.e(TAG,"Failed to get HueBridge instance");
+                    ex.printStackTrace();
+                    return;
+                }
+                final int position = bridge.addToCurrentCategory(ctx, br);
                 if (position == -1){
                     String toastString = "Can't add more than 10 buttons";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();

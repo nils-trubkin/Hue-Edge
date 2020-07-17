@@ -14,7 +14,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
 
         <activity
             android:name="com.ize.hueedge.activity.SetupActivity"
@@ -38,7 +39,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.ize.hueedge.HueEdgeProvider" >
+        <receiver android:name="com.ize.hueedge.HueEdgeProvider"
+            android:permission="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY">
             <intent-filter>
                 <action android:name="com.samsung.android.cocktail.v2.action.COCKTAIL_UPDATE" />
                 <action android:name="com.ize.hueedge.ACTION_REMOTE_LONG_CLICK" />

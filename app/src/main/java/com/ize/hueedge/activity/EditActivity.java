@@ -30,11 +30,6 @@ public class EditActivity extends AppCompatActivity {
     private static final String TAG = EditActivity.class.getSimpleName();
     private final Context ctx = this;
 
-    //UI elements
-    private GridView mListView;
-    private Button btnSave;
-    private TextView hueStatus;
-
     private HueEdgeProvider.menuCategory currentCategory;
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents;
 
@@ -49,12 +44,22 @@ public class EditActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(Color.rgb(30,30,30));
 
-        mListView = findViewById(R.id.gridView);
-        btnSave = findViewById(R.id.btnSave);
-        hueStatus = findViewById(R.id.hueStatus);
+        //UI elements
+        GridView mListView = findViewById(R.id.gridView);
+        Button btnSave = findViewById(R.id.btnSave);
+        TextView hueStatus = findViewById(R.id.hueStatus);
 
-        currentCategory = HueEdgeProvider.getCurrentCategory();
-        contents = HueBridge.getInstance(this).getContents();
+        HueBridge bridge;
+        try {
+            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+        } catch (NullPointerException ex){
+            Log.e(TAG, "Entering edit activity but no HueBridge instance was found");
+            ex.printStackTrace();
+            return;
+        }
+
+        currentCategory = bridge.getCurrentCategory();
+        contents = bridge.getContents();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,83 +87,89 @@ public class EditActivity extends AppCompatActivity {
         }
         hueStatus.setText(ip);
 
-        if(HueEdgeProvider.isBridgeConfigured()) {
-            for (int i = 0; i < 10; i++) {
-                if (contents.containsKey(currentCategory)) {
-                    final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
-                    boolean slotIsFilled = false;
+        for (int i = 0; i < 10; i++) {
+            if (contents.containsKey(currentCategory)) {
+                final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
+                boolean slotIsFilled = false;
+                try {
+                    slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
+                    ex.printStackTrace();
+                }
+                if (slotIsFilled) {
+                    BridgeResource resource;
                     try {
-                        slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                        resource = Objects.requireNonNull(currentCategoryContents).get(i);
                     } catch (NullPointerException ex) {
-                        Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
+                        Log.e(TAG, "Failed to load filled slot");
                         ex.printStackTrace();
+                        break;
                     }
-                    if (slotIsFilled) {
-                        BridgeResource resource;
-                        try {
-                            resource = Objects.requireNonNull(currentCategoryContents).get(i);
-                        } catch (NullPointerException ex) {
-                            Log.e(TAG, "Failed to load filled slot");
-                            ex.printStackTrace();
-                            break;
-                        }
-                        assert resource != null;
-                        TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
-                        tw.setText(resource.getName(ctx));
-                        Button btn = findViewById(HueEdgeProvider.btnArr[i]);
-                        btn.setText(resource.getBtnText(ctx));
-                        if (resource.getCategory().equals("scenes")) {
-                            btn.setTextSize(10);
-                        } else {
-                            btn.setTextSize(14);
-                        }
-                        btn.setTextColor(resource.getBtnTextColor(ctx));
-                        btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
-                        final int finalI = i;
-                        btn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clearSlot(finalI);
-                            }
-                        });
-                        Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-                        btnDelete.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clearSlot(finalI);
-                            }
-                        });
-                        btnDelete.setVisibility(View.VISIBLE);
-                        if (resource.getCategory().equals("scenes")) {
-                            btn.setTextSize(10);
-                        } else {
-                            btn.setTextSize(14);
-                        }
+                    assert resource != null;
+                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
+                    tw.setText(resource.getName(ctx));
+                    Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+                    btn.setText(resource.getBtnText(ctx));
+                    if (resource.getCategory().equals("scenes")) {
+                        btn.setTextSize(10);
                     } else {
-                        TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
-                        tw.setText("");
-                        Button btn = findViewById(HueEdgeProvider.btnArr[i]);
-                        btn.setText("");
-                        btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                        Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-                        btnDelete.setVisibility(View.GONE);
+                        btn.setTextSize(14);
                     }
+                    btn.setTextColor(resource.getBtnTextColor(ctx));
+                    btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
+                    final int finalI = i;
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clearSlot(finalI);
+                        }
+                    });
+                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clearSlot(finalI);
+                        }
+                    });
+                    btnDelete.setVisibility(View.VISIBLE);
+                    if (resource.getCategory().equals("scenes")) {
+                        btn.setTextSize(10);
+                    } else {
+                        btn.setTextSize(14);
+                    }
+                } else {
+                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
+                    tw.setText("");
+                    Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+                    btn.setText("");
+                    btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+                    btnDelete.setVisibility(View.GONE);
                 }
             }
         }
 
         ArrayList<BridgeResource> resourceList = new ArrayList<>();
-
-        HueBridge bridge = HueBridge.getInstance(ctx);
-
-        if (bridge == null){
-            Log.e(TAG, "HueBridge.getInstance() == null. Probably missing config");
-        }
-        assert bridge != null;
-
         HashMap<String, BridgeResource> map = null;
-        switch (HueEdgeProvider.getCurrentCategory()) {
+        switch (bridge.getCurrentCategory()) {
             case QUICK_ACCESS:
+                map = bridge.getLights();
+                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                    resourceList.add(entry.getValue());
+                }
+                map = bridge.getRooms();
+                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                    resourceList.add(entry.getValue());
+                }
+                map = bridge.getZones();
+                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                    resourceList.add(entry.getValue());
+                }
+                map = bridge.getScenes();
+                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                    resourceList.add(entry.getValue());
+                }
                 break;
             case LIGHTS:
                 map = bridge.getLights();
@@ -176,26 +187,7 @@ public class EditActivity extends AppCompatActivity {
                 Log.w(TAG, "Unknown category!");
                 break;
         }
-        if(HueEdgeProvider.getCurrentCategory() == HueEdgeProvider.menuCategory.QUICK_ACCESS){
-            map = bridge.getLights();
-            for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resourceList.add(entry.getValue());
-            }
-            map = bridge.getRooms();
-            for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resourceList.add(entry.getValue());
-            }
-            map = bridge.getZones();
-            for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resourceList.add(entry.getValue());
-            }
-            map = bridge.getScenes();
-            for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resourceList.add(entry.getValue());
-            }
-        }
-        else {
-            assert map != null;
+        if(!bridge.getCurrentCategory().equals(HueEdgeProvider.menuCategory.QUICK_ACCESS)){
             for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
                 resourceList.add(entry.getValue());
             }
