@@ -11,7 +11,11 @@
         style="?android:attr/buttonBarButtonStyle"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/add_button_background" />
+        android:background="@drawable/add_button_background"
+        android:hyphenationFrequency="full"
+        android:includeFontPadding="false"
+        android:padding="@dimen/resource_button_padding"
+        android:textAllCaps="false" />
 
     <TextView
         android:id="@+id/gridBtnText"

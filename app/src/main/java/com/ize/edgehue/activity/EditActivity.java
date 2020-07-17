@@ -103,6 +103,11 @@ public class EditActivity extends AppCompatActivity {
                         tw.setText(resource.getName(ctx));
                         Button btn = findViewById(EdgeHueProvider.btnArr[i]);
                         btn.setText(resource.getBtnText(ctx));
+                        if (resource.getCategory().equals("scenes")) {
+                            btn.setTextSize(10);
+                        } else {
+                            btn.setTextSize(14);
+                        }
                         btn.setTextColor(resource.getBtnTextColor(ctx));
                         btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
                         final int finalI = i;

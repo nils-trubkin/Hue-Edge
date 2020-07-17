@@ -57,6 +57,26 @@ public class BridgeResource implements Serializable {
     }
 
     public String getName(Context ctx){
+        if (category.equals("scenes")) {
+            HueBridge bridge = HueBridge.getInstance(ctx);
+            if(bridge == null){
+                Log.wtf(TAG, "bridge == null");
+            }
+            assert bridge != null;
+            try {
+                if (bridge.getSceneGroup(this).equals("0")) {
+                    return "All";
+                }
+                else {
+                    return bridge.getState().
+                            getJSONObject("groups").
+                            getJSONObject(bridge.getSceneGroup(this)).
+                            getString("name");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         try {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
@@ -68,7 +88,7 @@ public class BridgeResource implements Serializable {
                     getJSONObject(getId()).
                     getString("name");
         } catch (JSONException e) {
-            Log.d(TAG, "Exception!!!");
+            Log.e(TAG, "Exception!!!");
             e.printStackTrace();
             String toastString = e.toString();
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
@@ -145,23 +165,22 @@ public class BridgeResource implements Serializable {
 
     public String getBtnText(Context ctx){
         if (category.equals("scenes")) {
-            HueBridge bridge = HueBridge.getInstance(ctx);
-            if(bridge == null){
-                Log.wtf(TAG, "bridge == null");
-            }
-            assert bridge != null;
             try {
-                if (bridge.getSceneGroup(this).equals("0")) {
-                    return "All";
+                HueBridge bridge = HueBridge.getInstance(ctx);
+                if(bridge == null){
+                    Log.wtf(TAG, "bridge == null");
                 }
-                else {
-                    return bridge.getState().
-                            getJSONObject("groups").
-                            getJSONObject(bridge.getSceneGroup(this)).
-                            getString("name");
-                }
+                assert bridge != null;
+                return  bridge.getState().
+                        getJSONObject(getCategory()).
+                        getJSONObject(getId()).
+                        getString("name");
             } catch (JSONException e) {
+                Log.e(TAG, "Exception!!!");
                 e.printStackTrace();
+                String toastString = e.toString();
+                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                return "Not reachable";
             }
         }
         Resources resources = ctx.getResources();

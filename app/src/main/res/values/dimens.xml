@@ -1,4 +1,6 @@
 <resources>
     <dimen name="curved_edge_margin">24dp</dimen>
-    <dimen name="light_button_dimen">48dp</dimen>
+    <dimen name="resource_button_dimen">48dp</dimen>
+
+    <dimen name="resource_button_padding">4dp</dimen>
 </resources>

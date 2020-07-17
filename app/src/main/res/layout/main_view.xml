@@ -55,16 +55,18 @@
                         <Button
                             android:id="@+id/btn6"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar6"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -95,16 +97,18 @@
                         <Button
                             android:id="@+id/btn7"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar7"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -135,16 +139,18 @@
                         <Button
                             android:id="@+id/btn8"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar8"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -175,16 +181,18 @@
                         <Button
                             android:id="@+id/btn9"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar9"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -215,16 +223,18 @@
                         <Button
                             android:id="@+id/btn10"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar10"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -266,16 +276,18 @@
                         <Button
                             android:id="@+id/btn1"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar1"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -306,16 +318,18 @@
                         <Button
                             android:id="@+id/btn2"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar2"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -346,16 +360,18 @@
                         <Button
                             android:id="@+id/btn3"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar3"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -386,16 +402,18 @@
                         <Button
                             android:id="@+id/btn4"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar4"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -426,16 +444,18 @@
                         <Button
                             android:id="@+id/btn5"
                             style="?android:attr/buttonBarButtonStyle"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar5"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:indeterminateDrawable="@drawable/progress"
                             android:visibility="gone" />
@@ -458,8 +478,8 @@
         <Button
             android:id="@+id/btnEdit"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/resource_button_dimen"
+            android:layout_height="@dimen/resource_button_dimen"
             android:layout_gravity="center_horizontal"
             android:fontFamily="sans-serif-light"
             android:text="@string/button_edit_text"
