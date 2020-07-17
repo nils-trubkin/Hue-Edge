@@ -1,4 +1,4 @@
-package com.ize.edgehue.activity;
+package com.ize.hueedge.adapter;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,16 +12,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.ize.edgehue.EdgeHueProvider;
-import com.ize.edgehue.R;
-import com.ize.edgehue.BridgeResource;
+import com.ize.hueedge.HueEdgeProvider;
+import com.ize.hueedge.R;
+import com.ize.hueedge.BridgeResource;
+import com.ize.hueedge.activity.EditActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
-    private static final String TAG = EdgeHueProvider.class.getSimpleName();
+    private static final String TAG = HueEdgeProvider.class.getSimpleName();
     private final Context ctx;
     private final int mResource;
 
@@ -78,17 +79,17 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                final int position = EdgeHueProvider.addToCurrentCategory(br);
+                final int position = HueEdgeProvider.addToCurrentCategory(br);
                 if (position == -1){
                     String toastString = "Can't add more than 10 buttons";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
                 else {
-                    EdgeHueProvider.saveAllConfiguration(ctx);
+                    HueEdgeProvider.saveAllConfiguration(ctx);
                     final EditActivity instance = (EditActivity) ctx;
-                    TextView tw = instance.findViewById(EdgeHueProvider.btnTextArr[position]);
+                    TextView tw = instance.findViewById(HueEdgeProvider.btnTextArr[position]);
                     tw.setText(br.getName(ctx));
-                    Button btn = instance.findViewById(EdgeHueProvider.btnArr[position]);
+                    Button btn = instance.findViewById(HueEdgeProvider.btnArr[position]);
                     btn.setText(br.getBtnText(ctx));
                     btn.setTextColor(br.getBtnTextColor(ctx));
                     btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
@@ -98,7 +99,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                             instance.clearSlot(position);
                         }
                     });
-                    Button btnDelete = instance.findViewById(EdgeHueProvider.btnDeleteArr[position]);
+                    Button btnDelete = instance.findViewById(HueEdgeProvider.btnDeleteArr[position]);
                     btnDelete.setVisibility(View.VISIBLE);
                     btnDelete.setOnClickListener(new View.OnClickListener() {
                         @Override

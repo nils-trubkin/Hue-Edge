@@ -1,4 +1,4 @@
-package com.ize.edgehue.activity;
+package com.ize.hueedge.activity;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -22,11 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.ize.edgehue.EdgeHueProvider;
-import com.ize.edgehue.HueBridge;
-import com.ize.edgehue.R;
-import com.ize.edgehue.api.JsonCustomRequest;
-import com.ize.edgehue.api.RequestQueueSingleton;
+import com.ize.hueedge.HueEdgeProvider;
+import com.ize.hueedge.HueBridge;
+import com.ize.hueedge.R;
+import com.ize.hueedge.adapter.BridgeDiscoveryResultAdapter;
+import com.ize.hueedge.api.JsonCustomRequest;
+import com.ize.hueedge.api.RequestQueueSingleton;
 import com.philips.lighting.hue.sdk.wrapper.HueLog;
 import com.philips.lighting.hue.sdk.wrapper.Persistence;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;
@@ -45,7 +46,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class EdgeSetup extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
+public class SetupActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
 
     private transient static final int REQUEST_AMOUNT = 10;
 
@@ -64,7 +65,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         System.loadLibrary("huesdk");
     }
 
-    private transient static final String TAG = EdgeSetup.class.getSimpleName();
+    private transient static final String TAG = SetupActivity.class.getSimpleName();
     private transient final Context ctx = this;
 
     private transient BridgeDiscovery bridgeDiscovery;
@@ -139,7 +140,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         noButton = findViewById(R.id.no_button);
         noButton.setOnClickListener(this);
         InitSdk.setApplicationContext(getApplicationContext());
-        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "EdgeHue"); //TODO check what this is
+        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "HueEdge"); //TODO check what this is
         HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG); //TODO remove debug
 
         if (HueBridge.getInstance(ctx) == null){
@@ -203,7 +204,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         }
     };
 
-    static private void sendAuthRequest(EdgeSetup ins, JSONObject job, String bridgeIp){
+    static private void sendAuthRequest(SetupActivity ins, JSONObject job, String bridgeIp){
         if(ins.requestAmount == 0){
             ins.updateUI(UIState.Error);
             ins.timer.cancel();
@@ -230,8 +231,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
         final String bridgeIp = bridgeDiscoveryResults.get(i).getIp();
         Log.i(TAG, "Selected Bridge " + bridgeIp);
         //connectToBridge(bridgeIp);
-        Log.d(TAG, "Sending request for this devicetype: " + "EdgeHUE#" + android.os.Build.MODEL);
-        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "EdgeHUE#" + android.os.Build.MODEL);
+        Log.d(TAG, "Sending request for this devicetype: " + "HueEdge#" + android.os.Build.MODEL);
+        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
         assert job != null;
         updateUI(UIState.Auth);
         requestAmount = REQUEST_AMOUNT; //Requests to send
@@ -243,7 +244,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                 handler.post(new Runnable() {
                                         public void run() {
                         try {
-                            backgroundAuthRequestTask = new sendAuthRequestTask<>((EdgeSetup) ctx);
+                            backgroundAuthRequestTask = new sendAuthRequestTask<>((SetupActivity) ctx);
                             // PerformBackgroundTask this class is the class that extends AsynchTask
                             backgroundAuthRequestTask.execute(job, bridgeIp);
                         } catch (Exception e) {
@@ -279,8 +280,8 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     private static class sendAuthRequestTask<T> extends AsyncTask<T, T, T> {
-        private transient final WeakReference<EdgeSetup> activityReference;
-        sendAuthRequestTask(EdgeSetup context) {
+        private transient final WeakReference<SetupActivity> activityReference;
+        sendAuthRequestTask(SetupActivity context) {
             activityReference = new WeakReference<>(context);
         }
 
@@ -320,12 +321,12 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == bridgeDiscoveryButton) {
-            EdgeHueProvider.clearAllContents();
+            HueEdgeProvider.clearAllContents();
             startBridgeDiscovery();
         }
         else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
-            EdgeHueProvider.clearAllContents();
+            HueEdgeProvider.clearAllContents();
             HueBridge.getInstance(
                     ctx,
                     "192.168.69.166",
@@ -339,7 +340,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
             requestAmount = -1;
         }
         else if (view == quickButton) {
-            EdgeHueProvider.quickSetup(this);
+            HueEdgeProvider.quickSetup(this);
             updateUI(UIState.Final);
         }
         else if (view == customButton) {
@@ -438,7 +439,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
     }
 
     static private JsonCustomRequest getJsonCustomRequest(Context ctx, final JSONObject jsonObject, final String ip){
-        final EdgeSetup ins = (EdgeSetup) ctx;
+        final SetupActivity ins = (SetupActivity) ctx;
         if(!jsonObject.keys().hasNext()){ // make sure we get an object that is not empty
             Log.wtf(TAG, "!jsonObject.keys().hasNext() Is this an empty request?");
             return null;
@@ -468,7 +469,7 @@ public class EdgeSetup extends AppCompatActivity implements View.OnClickListener
                                 ins.backgroundAuthRequestTask.success();
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
-                                EdgeHueProvider.clearAllContents();
+                                HueEdgeProvider.clearAllContents();
                                 HueBridge.getInstance(ins, ip, username)
                                         .requestHueState(ins);
 

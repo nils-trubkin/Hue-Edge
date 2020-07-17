@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ize.edgehue">
+    package="com.ize.hueedge">
 
     <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activity.EdgeSetup"
+            android:name="com.ize.hueedge.activity.SetupActivity"
             android:label="@string/title_activity_edge_setup"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -28,7 +28,7 @@
         </activity>
 
         <activity
-            android:name=".activity.EditActivity"
+            android:name="com.ize.hueedge.activity.EditActivity"
             android:label="TODO"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -38,14 +38,14 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".EdgeHueProvider" >
+        <receiver android:name="com.ize.hueedge.HueEdgeProvider" >
             <intent-filter>
                 <action android:name="com.samsung.android.cocktail.v2.action.COCKTAIL_UPDATE" />
-                <action android:name="com.ize.edgehue.ACTION_REMOTE_LONG_CLICK" />
-                <action android:name="com.ize.edgehue.ACTION_REMOTE_CLICK" />
-                <action android:name="com.ize.edgehue.ACTION_PULL_TO_REFRESH" />
-                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_STATE" />
-                <action android:name="com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY" />
+                <action android:name="com.ize.hueedge.ACTION_REMOTE_LONG_CLICK" />
+                <action android:name="com.ize.hueedge.ACTION_REMOTE_CLICK" />
+                <action android:name="com.ize.hueedge.ACTION_PULL_TO_REFRESH" />
+                <action android:name="com.ize.hueedge.ACTION_RECEIVE_HUE_STATE" />
+                <action android:name="com.ize.hueedge.ACTION_RECEIVE_HUE_REPLY" />
             </intent-filter>
 
             <meta-data
@@ -54,19 +54,19 @@
         </receiver>
 
         <service
-            android:name=".LongClickBrightnessSliderService"
+            android:name="com.ize.hueedge.service.LongClickBrightnessSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
         <service
-            android:name=".LongClickColorSliderService"
+            android:name="com.ize.hueedge.service.LongClickColorSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
         <service
-            android:name=".LongClickSaturationSliderService"
+            android:name="com.ize.hueedge.service.LongClickSaturationSliderService"
             android:exported="false"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />

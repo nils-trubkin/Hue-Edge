@@ -4,6 +4,6 @@
     description="@string/edge_hue_description"
     previewImage="@drawable/panel_preview_image"
     permitVisibilityChanged="true"
-    configure="com.ize.edgehue.activity.EdgeSetup"
+    configure="com.ize.hueedge.activity.SetupActivity"
     cocktailWidth="550">
 </cocktail-provider>

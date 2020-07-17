@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1E1E1E"
-    tools:context=".activity.EdgeSetup">
+    tools:context=".activity.SetupActivity">
 
     <ImageView
         android:id="@+id/backgroundView"

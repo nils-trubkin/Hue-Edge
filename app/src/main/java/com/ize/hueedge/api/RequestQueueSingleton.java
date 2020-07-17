@@ -1,4 +1,4 @@
-package com.ize.edgehue.api;
+package com.ize.hueedge.api;
 
 import android.content.Context;
 

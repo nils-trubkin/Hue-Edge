@@ -51,7 +51,8 @@
     <string name="no_config">NO CONFIG</string>
     <string name="button_save_text">Save</string>
 
-    <string name="preference_file_key">EdgeHueConfig</string>
+    <string name="preference_file_key">HueEdgeConfig</string>
+    <string name="recovery_file_key">HueEdgeRecovery</string>
     <string name="current_category_config_file">CurrentCategoryConfigFile</string>
     <string name="current_sliders_category_config_file">CurrentSlidersCategoryConfigFile</string>
 

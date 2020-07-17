@@ -1,4 +1,4 @@
-package com.ize.edgehue;
+package com.ize.hueedge;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -98,7 +98,7 @@ public class BridgeResource implements Serializable {
 
     private int getState(Context ctx){
         try {
-            if (category.equals("scenes")) {
+            if (getCategory().equals("scenes")) {
                 Log.w(TAG,"You shouldn't use this!");
                 return 1;
             }
@@ -107,6 +107,19 @@ public class BridgeResource implements Serializable {
                 Log.wtf(TAG, "bridge == null");
             }
             assert bridge != null;
+            if (getActionRead().equals("any_on")){
+                if (bridge.getState().
+                        getJSONObject(getCategory()).
+                        getJSONObject(getId()).
+                        getJSONObject("state").
+                        getBoolean("all_on"))
+                    return 1;
+                return bridge.getState().
+                        getJSONObject(getCategory()).
+                        getJSONObject(getId()).
+                        getJSONObject("state").
+                        getBoolean("any_on") ? 2 : 0;
+            }
             return  (bridge.getState().
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
@@ -188,10 +201,9 @@ public class BridgeResource implements Serializable {
             case 0:
                 return resources.getString(R.string.off_symbol);
             case 1:
-                if (actionRead.equals("any_on"))
-                    return resources.getString(R.string.large_minus);
-                else
-                    return resources.getString(R.string.on_symbol);
+                return resources.getString(R.string.on_symbol);
+            case 2:
+                return resources.getString(R.string.large_minus);
             default:
                 return resources.getString(R.string.question_symbol);
         }
@@ -202,6 +214,7 @@ public class BridgeResource implements Serializable {
             return ContextCompat.getColor(ctx, R.color.black);
         switch (getState(ctx)) {
             case 1:
+            case 2:
                 return ContextCompat.getColor(ctx, R.color.black);
             case 0:
             default:
@@ -216,6 +229,7 @@ public class BridgeResource implements Serializable {
             case 0:
                 return R.drawable.off_button_background;
             case 1:
+            case 2:
                 return R.drawable.on_button_background;
             default:
                 return R.drawable.add_button_background;

@@ -1,4 +1,4 @@
-package com.ize.edgehue;
+package com.ize.hueedge;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,8 +11,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.ize.edgehue.api.JsonCustomRequest;
-import com.ize.edgehue.api.RequestQueueSingleton;
+import com.ize.hueedge.api.JsonCustomRequest;
+import com.ize.hueedge.api.RequestQueueSingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +30,7 @@ public class HueBridge implements Serializable {
 
     private final String url;
     private final String ip;
+    private final String userName;
     private transient JSONObject stateJson;
     private String state;
 
@@ -59,6 +60,7 @@ public class HueBridge implements Serializable {
     //Custom constructor for future use TODO HTTPS
     private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
         this.ip = ip;
+        this.userName = Objects.requireNonNull(userName);
         this.url =
                 Objects.requireNonNull(urlHeader) +
                         Objects.requireNonNull(ip) +
@@ -84,7 +86,7 @@ public class HueBridge implements Serializable {
     public static synchronized void deleteInstance(Context ctx) {
         Log.i(TAG, "Deleting instance of HueBridge");
         instance = null;
-        boolean deleted = EdgeHueProvider.deleteAllConfiguration(ctx);
+        boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
         String toastString = deleted ? "Configuration was deleted" : "Configuration was not deleted";
         Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
     }
@@ -93,7 +95,7 @@ public class HueBridge implements Serializable {
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
             Log.i(TAG, "HueBridge instance or state is null. Attempting to load config...");
-            EdgeHueProvider.loadAllConfiguration(ctx);
+            HueEdgeProvider.loadAllConfiguration(ctx);
             if (instance == null) {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
@@ -116,6 +118,10 @@ public class HueBridge implements Serializable {
 
     public String getIp() {
         return ip;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public JSONObject getState() {
@@ -297,16 +303,16 @@ public class HueBridge implements Serializable {
 
     //Construct intent for incoming state JsonObject
     private PendingIntent getStateIntent(Context context) {
-        Intent stateIntent = new Intent(context, EdgeHueProvider.class);
-        stateIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_STATE);
+        Intent stateIntent = new Intent(context, HueEdgeProvider.class);
+        stateIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_STATE);
         return PendingIntent.getBroadcast(context, 1, stateIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Construct intent for incoming reply JsonArray
     private PendingIntent getReplyIntent(Context context) {
-        Intent replyIntent = new Intent(context, EdgeHueProvider.class);
-        replyIntent.setAction(EdgeHueProvider.ACTION_RECEIVE_HUE_REPLY);
+        Intent replyIntent = new Intent(context, HueEdgeProvider.class);
+        replyIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_REPLY);
         return PendingIntent.getBroadcast(context, 1, replyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }

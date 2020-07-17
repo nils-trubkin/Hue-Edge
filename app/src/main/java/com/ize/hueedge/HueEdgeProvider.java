@@ -1,4 +1,4 @@
-package com.ize.edgehue;
+package com.ize.hueedge;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -15,6 +15,9 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
+import com.ize.hueedge.service.LongClickBrightnessSliderService;
+import com.ize.hueedge.service.LongClickColorSliderService;
+import com.ize.hueedge.service.LongClickSaturationSliderService;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -22,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,15 +36,15 @@ import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class EdgeHueProvider extends SlookCocktailProvider implements Serializable {
+public class HueEdgeProvider extends SlookCocktailProvider implements Serializable {
 
-    private static final String TAG = EdgeHueProvider.class.getSimpleName();
+    private static final String TAG = HueEdgeProvider.class.getSimpleName();
 
-    private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.edgehue.ACTION_REMOTE_LONG_CLICK";
-    private static final String ACTION_REMOTE_CLICK = "com.ize.edgehue.ACTION_REMOTE_CLICK";
-    private static final String ACTION_PULL_TO_REFRESH = "com.ize.edgehue.ACTION_PULL_TO_REFRESH";
-    protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.edgehue.ACTION_RECEIVE_HUE_STATE";
-    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.edgehue.ACTION_RECEIVE_HUE_REPLY";
+    private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.hueedge.ACTION_REMOTE_LONG_CLICK";
+    private static final String ACTION_REMOTE_CLICK = "com.ize.hueedge.ACTION_REMOTE_CLICK";
+    private static final String ACTION_PULL_TO_REFRESH = "com.ize.hueedge.ACTION_PULL_TO_REFRESH";
+    protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.hueedge.ACTION_RECEIVE_HUE_STATE";
+    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.hueedge.ACTION_RECEIVE_HUE_REPLY";
     private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
     private String LIGHTS;
@@ -124,11 +128,11 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void setSlidersResourceColor(int slidersResourceColor) {
-        EdgeHueProvider.slidersResourceColor = slidersResourceColor;
+        HueEdgeProvider.slidersResourceColor = slidersResourceColor;
     }
 
     public static void setSlidersResourceSaturation(int slidersResourceSaturation) {
-        EdgeHueProvider.slidersResourceSaturation = slidersResourceSaturation;
+        HueEdgeProvider.slidersResourceSaturation = slidersResourceSaturation;
     }
 
     public static int getSlidersResourceSaturation() {
@@ -198,7 +202,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 break;
             case ACTION_PULL_TO_REFRESH:
                 SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-                int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+                int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
                 String toastString = "Refreshing";
                 Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
@@ -261,7 +265,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void setCurrentCategory(menuCategory currentCategory) {
-        EdgeHueProvider.currentCategory = currentCategory;
+        HueEdgeProvider.currentCategory = currentCategory;
     }
 
     public static slidersCategory getCurrentSlidersCategory() {
@@ -272,7 +276,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void setCurrentSlidersCategory(slidersCategory currentCategory) {
-        EdgeHueProvider.slidersCurrentCategory = currentCategory;
+        HueEdgeProvider.slidersCurrentCategory = currentCategory;
     }
 
     public static int addToCurrentCategory(BridgeResource br){
@@ -302,7 +306,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void setContents(HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents) {
-        EdgeHueProvider.contents = contents;
+        HueEdgeProvider.contents = contents;
     }
 
     public static boolean isBridgeConfigured() {
@@ -400,7 +404,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         setSlidersResourceColor(getSlidersResource().getColor(ctx));
         setSlidersResourceSaturation(getSlidersResource().getSaturation(ctx));
         SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
 
         switch (getCurrentSlidersCategory()) {
             case BRIGHTNESS:
@@ -461,7 +465,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     //Get the long click intent object to assign to a button
     private static PendingIntent getLongClickIntent(Context ctx, int id, int key) {
-        Intent longClickIntent = new Intent(ctx, EdgeHueProvider.class);
+        Intent longClickIntent = new Intent(ctx, HueEdgeProvider.class);
         longClickIntent.setAction(ACTION_REMOTE_LONG_CLICK);
         longClickIntent.putExtra("id", id);
         longClickIntent.putExtra("key", key);
@@ -471,7 +475,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
     //Get the click intent object to assign to a button
     private static PendingIntent getClickIntent(Context ctx, int id, int key) {
-        Intent clickIntent = new Intent(ctx, EdgeHueProvider.class);
+        Intent clickIntent = new Intent(ctx, HueEdgeProvider.class);
         clickIntent.setAction(ACTION_REMOTE_CLICK);
         clickIntent.putExtra("id", id);
         clickIntent.putExtra("key", key);
@@ -650,7 +654,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         helpView = createSlidersHelpView(ctx);
 
         final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
         cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
@@ -758,7 +762,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             helpView = createSlidersHelpView(ctx);
 
             final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-            final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+            final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
             cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
             cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
             return;
@@ -811,10 +815,10 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
         }
 
         final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
 
         //Set pull refresh
-        Intent refreshIntent = new Intent(ctx, EdgeHueProvider.class);
+        Intent refreshIntent = new Intent(ctx, HueEdgeProvider.class);
         refreshIntent.setAction(ACTION_PULL_TO_REFRESH);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0xff, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
@@ -850,11 +854,20 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
 
             saveCurrentCategory(ctx);
 
+            HueBridge bridge = HueBridge.getInstance(ctx);
             //Log.d(TAG, "attempting to save state: " + HueBridge.getInstance(ctx).getState());
             File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
-            outputStream.writeObject(HueBridge.getInstance(ctx));
+            outputStream.writeObject(bridge);
             outputStream.writeObject(getContents());
+            outputStream.flush();
+            outputStream.close();
+
+            //recovery
+            file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+            outputStream = new ObjectOutputStream(new FileOutputStream(file));
+            outputStream.writeObject(bridge.getIp());
+            outputStream.writeObject(bridge.getUserName());
             outputStream.flush();
             outputStream.close();
 
@@ -907,19 +920,36 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
             String toastString = "Loading: " + contents.size();
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
 
-        }
-        catch (FileNotFoundException ex){
+        } catch (FileNotFoundException ex){
             Log.e(TAG, "Config file not found");
             ex.printStackTrace();
             String toastString = "Config file not found";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             //TODO remove toast
-        }
-        catch (InvalidClassException ex){
-            Log.e(TAG, "Config file is old version");
+        } catch (InvalidClassException ex){
+            Log.e(TAG, "Config file is old version, updating");
             ex.printStackTrace();
-            String toastString = "Config file is old version";
+            String toastString = "Config file is old version, updating";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+
+            File file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+            ObjectInputStream inputStream = null;
+            try {
+                inputStream = new ObjectInputStream(new FileInputStream(file));
+                String ip = (String) inputStream.readObject();
+                String userName = (String) inputStream.readObject();
+                HueBridge.getInstance(ctx, ip, userName).requestHueState(ctx);
+            } catch (IOException ex2){
+                Log.e(TAG, "Recovery file not found");
+                ex2.printStackTrace();
+                toastString = "Recovery file not found";
+                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                //TODO remove toast
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
             //TODO remove toast, convert config
         }
         catch (Exception ex) {

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.ize.edgehue"
+        applicationId "com.ize.hueedge"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1

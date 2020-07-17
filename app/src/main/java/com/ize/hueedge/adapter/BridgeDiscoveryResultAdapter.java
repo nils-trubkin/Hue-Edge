@@ -1,4 +1,4 @@
-package com.ize.edgehue.activity;
+package com.ize.hueedge.adapter;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -7,17 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.ize.edgehue.R;
+import com.ize.hueedge.R;
 
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscoveryResult;
 
 import java.util.List;
 
-class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
+public class BridgeDiscoveryResultAdapter extends ArrayAdapter<BridgeDiscoveryResult> {
 
     private final Context ctx;
 
-    BridgeDiscoveryResultAdapter(Context context, List<BridgeDiscoveryResult> results) {
+    public BridgeDiscoveryResultAdapter(Context context, List<BridgeDiscoveryResult> results) {
         super(context, 0, results);
         ctx = context;
     }

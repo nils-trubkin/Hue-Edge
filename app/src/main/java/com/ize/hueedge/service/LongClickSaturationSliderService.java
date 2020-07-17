@@ -1,10 +1,13 @@
-package com.ize.edgehue;
+package com.ize.hueedge.service;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
+import com.ize.hueedge.HueEdgeProvider;
+import com.ize.hueedge.R;
 
 public class LongClickSaturationSliderService extends RemoteViewsService {
 
@@ -41,7 +44,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title3) + itemId);
-            int slidersResourceColor = EdgeHueProvider.getSlidersResourceColor();
+            int slidersResourceColor = HueEdgeProvider.getSlidersResourceColor();
             float h = slidersResourceColor * 360f / 65536f;
             float s = id / (float) MAX_CHILD;
             float v = 1f;
