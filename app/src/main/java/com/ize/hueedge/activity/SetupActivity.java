@@ -2,6 +2,7 @@ package com.ize.hueedge.activity;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -140,7 +141,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         noButton = findViewById(R.id.no_button);
         noButton.setOnClickListener(this);
         InitSdk.setApplicationContext(getApplicationContext());
-        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), "HueEdge"); //TODO check what this is
+        Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), Build.ID);
         HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG); //TODO remove debug
 
         if (HueBridge.getInstance(ctx) == null){
@@ -247,8 +248,9 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                             backgroundAuthRequestTask = new sendAuthRequestTask<>((SetupActivity) ctx);
                             // PerformBackgroundTask this class is the class that extends AsynchTask
                             backgroundAuthRequestTask.execute(job, bridgeIp);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Could not start background auth request async task");
+                            ex.printStackTrace();
                         }
                     }
                 });
@@ -258,25 +260,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
         anim.setDuration(1000 * REQUEST_AMOUNT);
         progressBar.startAnimation(anim);
-
-        timer.schedule(doAsynchronousTask, 0, 1000); //execute in every 50000 ms
-
-        /*while (!authSuccess || requestAmount >= 0){
-            sendAuthRequest(job, bridgeIp);
-            long timeStampBegin = System.currentTimeMillis();
-            long timeStampEnd = System.currentTimeMillis();
-            long delta = timeStampEnd - timeStampBegin;
-            while (delta < 1000) {
-                timeStampEnd = System.currentTimeMillis();
-                delta = timeStampEnd - timeStampBegin;
-                if (authSuccess) return;
-            }
-        }*/
-        /*JsonCustomRequest jcr = getJsonCustomRequest(j, bridgeIp);
-        Log.d(TAG, "changeHueState postRequest created for this ip " + bridgeIp);
-        // Add the request to the RequestQueue.
-        RequestQueueSingleton.getInstance(this).addToRequestQueue(jcr);*/
-
+        timer.schedule(doAsynchronousTask, 0, 1000); //execute every second
     }
 
     private static class sendAuthRequestTask<T> extends AsyncTask<T, T, T> {
@@ -321,12 +305,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View view) {
         if (view == bridgeDiscoveryButton) {
-            HueEdgeProvider.clearAllContents();
             startBridgeDiscovery();
         }
         else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
-            HueEdgeProvider.clearAllContents();
             HueBridge.getInstance(
                     ctx,
                     "192.168.69.166",
@@ -458,18 +440,17 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                             if(responseKeys.hasNext()) {
                                 responseKey = responseKeys.next();
                                 if(!responseKey.equals("success")){  //response key should be success
-                                    Log.e(TAG, "Unsuccessful! Check reply");
+                                    Log.i(TAG, "Unsuccessful! Check reply");
                                     return;
                                 }
                                 JSONObject usernameContainer = (JSONObject) jsonResponse.get("success");    // this should be JSONObject with username field
                                 if(!usernameContainer.keys().next().equals("username")) {
-                                    Log.w(TAG, "Unsuccessful! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
+                                    Log.e(TAG, "Unsuccessful! Check reply");            //  really weird if it fails here. API for HUE might have been changed recently
                                     return;
                                 }
                                 ins.backgroundAuthRequestTask.success();
                                 String username = usernameContainer.getString("username");
                                 Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
-                                HueEdgeProvider.clearAllContents();
                                 HueBridge.getInstance(ins, ip, username)
                                         .requestHueState(ins);
 

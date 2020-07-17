@@ -79,7 +79,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                final int position = HueEdgeProvider.addToCurrentCategory(br);
+                final int position = HueEdgeProvider.addToCurrentCategory(ctx, br);
                 if (position == -1){
                     String toastString = "Can't add more than 10 buttons";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();

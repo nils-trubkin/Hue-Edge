@@ -39,6 +39,17 @@ public class HueBridge implements Serializable {
     private final HashMap<String, BridgeResource> zones = new HashMap<>();
     private final HashMap<String, BridgeResource> scenes = new HashMap<>();
 
+    //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
+    private final HashMap<Integer, BridgeResource> quickAccessContent = new HashMap<>();
+    private final HashMap<Integer, BridgeResource> lightsContent = new HashMap<>();
+    private final HashMap<Integer, BridgeResource> roomsContent = new HashMap<>();
+    private final HashMap<Integer, BridgeResource> zonesContent = new HashMap<>();
+    private final HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
+
+    //Mapping of category to contents
+    private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
+            new HashMap<>();
+
     final String LIGHTS;
     final String GROUPS;
     final String SCENES;
@@ -66,6 +77,12 @@ public class HueBridge implements Serializable {
                         Objects.requireNonNull(ip) +
                         ctx.getString(R.string.api_path) + // String "/api/"
                         Objects.requireNonNull(userName);
+
+        getContents().put(HueEdgeProvider.menuCategory.QUICK_ACCESS, quickAccessContent);
+        getContents().put(HueEdgeProvider.menuCategory.LIGHTS, lightsContent);
+        getContents().put(HueEdgeProvider.menuCategory.ROOMS, roomsContent);
+        getContents().put(HueEdgeProvider.menuCategory.ZONES, zonesContent);
+        getContents().put(HueEdgeProvider.menuCategory.SCENES, scenesContent);
 
         Resources res = ctx.getResources();
         LIGHTS = res.getString(R.string.hue_api_lights);
@@ -141,6 +158,18 @@ public class HueBridge implements Serializable {
     public void setState(JSONObject state) {
         stateJson = state;
         this.state = state.toString();
+    }
+
+    public HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> getContents() {
+        return contents;
+    }
+
+    public void setContents(HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents) {
+        this.contents = contents;
+    }
+
+    public void setStateJson(JSONObject stateJson) {
+        this.stateJson = stateJson;
     }
 
     public HashMap<String, BridgeResource> getLights() {

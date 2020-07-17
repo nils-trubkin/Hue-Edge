@@ -53,7 +53,7 @@ public class EditActivity extends AppCompatActivity {
         hueStatus = findViewById(R.id.hueStatus);
 
         currentCategory = HueEdgeProvider.getCurrentCategory();
-        contents = HueEdgeProvider.getContents();
+        contents = HueEdgeProvider.getContents(this);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

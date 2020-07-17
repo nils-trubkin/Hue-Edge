@@ -55,6 +55,8 @@
     <string name="recovery_file_key">HueEdgeRecovery</string>
     <string name="current_category_config_file">CurrentCategoryConfigFile</string>
     <string name="current_sliders_category_config_file">CurrentSlidersCategoryConfigFile</string>
+    <string name="sliders_resource_config_file">SlidersResourceConfigFile</string>
+    <string name="sliders_active_config_file">SlidersActiveConfigFile</string>
 
     <string name="http_header">http://</string>
     <string name="api_path">/api/</string>
