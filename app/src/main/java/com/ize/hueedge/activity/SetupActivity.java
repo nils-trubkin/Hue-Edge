@@ -76,7 +76,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient int requestAmount;
     private transient Timer timer;
     private transient sendAuthRequestTask<Object> backgroundAuthRequestTask;
-    private transient ProgressBarAnimation anim;
 
     // UI elements
     private transient TextView statusTextView;
@@ -257,7 +256,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             }
         };
         progressBar.setMax(10000);
-        anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
+        ProgressBarAnimation anim = new ProgressBarAnimation(progressBar, progressBar.getMin(), progressBar.getMax());
         anim.setDuration(1000 * REQUEST_AMOUNT);
         progressBar.startAnimation(anim);
         timer.schedule(doAsynchronousTask, 0, 1000); //execute every second

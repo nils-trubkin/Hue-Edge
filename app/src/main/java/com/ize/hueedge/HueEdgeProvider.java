@@ -278,35 +278,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         HueEdgeProvider.slidersCurrentCategory = currentCategory;
     }
 
-    public static int addToCurrentCategory(Context ctx, BridgeResource br){
-        Log.d(TAG, "addToCurrentCategory()");
-        if (getContents(ctx).containsKey(getCurrentCategory())) {
-            HashMap<Integer, BridgeResource> currentCategoryContents = getContents(ctx).get(getCurrentCategory());
-            for (int i = 0; i < 10; i++) {
-                boolean slotIsEmpty = false;
-                try {
-                    slotIsEmpty = !Objects.requireNonNull(currentCategoryContents).containsKey(i);
-                } catch (NullPointerException ex) {
-                    Log.e(TAG, "Failed to get current category contents");
-                    ex.printStackTrace();
-                }
-                if (slotIsEmpty) {
-                    currentCategoryContents.put(i, br);
-                    Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
 
-    public static HashMap<menuCategory, HashMap<Integer, BridgeResource>> getContents(Context ctx) {
-        return HueBridge.getInstance(ctx).getContents();
-    }
-
-    public static void setContents(Context ctx, HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents) {
-        HueBridge.getInstance(ctx).setContents(contents);
-    }
 
     public static boolean isBridgeConfigured() {
         return bridgeConfigured;
@@ -316,11 +288,11 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     private RemoteViews createContentView(Context ctx) {
         RemoteViews contentView;
 
-        /*if(contents.isEmpty()){
-            loadConfigurationFromMemory(ctx);
-        }*/
-
-        if(!bridgeConfigured){
+        HueBridge bridge;
+        try {
+            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+        } catch (NullPointerException ex){
+            Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
                     R.layout.main_view_no_bridge);
             return contentView;
@@ -335,14 +307,15 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     ctx, i, 0));
             SlookCocktailManager.getInstance(ctx).
                     setOnLongClickPendingIntent(contentView, button,
-                            getLongClickIntent(ctx, i++, 0));
+                            getLongClickIntent(ctx, i++));
         }
         contentView.setOnClickPendingIntent(R.id.btnEdit,
                 getClickIntent(ctx, R.id.btnEdit, 1));
 
         //Hide empty columns but at least show mainColumn if both are empty
-        if(getContents(ctx).containsKey(getCurrentCategory())) {
-            HashMap<Integer, BridgeResource> currentCategoryContents = getContents(ctx).get(getCurrentCategory());
+        menuCategory currentCategory = getCurrentCategory();
+        if(bridge.getContents().containsKey(currentCategory)) {
+            HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
             boolean mainColumnEmpty = true;
             boolean extraColumnEmpty = true;
 
@@ -463,11 +436,11 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     }
 
     //Get the long click intent object to assign to a button
-    private static PendingIntent getLongClickIntent(Context ctx, int id, int key) {
+    private static PendingIntent getLongClickIntent(Context ctx, int id) {
         Intent longClickIntent = new Intent(ctx, HueEdgeProvider.class);
         longClickIntent.setAction(ACTION_REMOTE_LONG_CLICK);
         longClickIntent.putExtra("id", id);
-        longClickIntent.putExtra("key", key);
+        longClickIntent.putExtra("key", 0);
         return PendingIntent.getBroadcast(ctx, id, longClickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -509,9 +482,18 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
         if(key == 0){
             boolean buttonIsMapped = false;
+            menuCategory currentCategory = getCurrentCategory();
+            HueBridge bridge;
+            try {
+                bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+            } catch (NullPointerException ex){
+                Log.e(TAG, "Performing click on resource buttons but no HueBridge instance is found");
+                ex.printStackTrace();
+                return;
+            }
             try{
                 HashMap<Integer, BridgeResource> currentCategoryContents =
-                        Objects.requireNonNull(getContents(ctx).get(getCurrentCategory()));
+                        Objects.requireNonNull(bridge.getContents().get(currentCategory));
                 buttonIsMapped = currentCategoryContents.containsKey(id);
             }
             catch (NullPointerException ex){
@@ -521,7 +503,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             if(buttonIsMapped){
                 try{
                     currentlyClicked = id;
-                    BridgeResource br = Objects.requireNonNull(getContents(ctx).get(getCurrentCategory())).get(id);
+                    BridgeResource br = Objects.requireNonNull(bridge.getContents().get(currentCategory)).get(id);
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, Objects.requireNonNull(br));
                 }
                 catch (NullPointerException ex){
@@ -612,7 +594,11 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             boolean buttonIsMapped = false;
             try{
                 HashMap<Integer, BridgeResource> currentCategoryContents =
-                        Objects.requireNonNull(getContents(ctx).get(getCurrentCategory()));
+                        Objects.requireNonNull(
+                                Objects.requireNonNull(
+                                        HueBridge.getInstance(ctx)).
+                                        getContents().
+                                        get(getCurrentCategory()));
                 buttonIsMapped = currentCategoryContents.containsKey(id);
             }
             catch (NullPointerException ex){
@@ -623,7 +609,11 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 BridgeResource br;
                 boolean isNotAScene;
                 try {
-                    br = Objects.requireNonNull(getContents(ctx).get(getCurrentCategory())).get(id);
+                    br = Objects.requireNonNull(
+                            Objects.requireNonNull(
+                                    HueBridge.getInstance(ctx)).
+                                    getContents().
+                                    get(getCurrentCategory())).get(id);
                     isNotAScene = !Objects.requireNonNull(br).getCategory().equals("scenes");
                 }
                 catch (NullPointerException ex){
@@ -663,19 +653,34 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         setCurrentCategory(menuCategory.QUICK_ACCESS);
 
         //The HueBridge instance
-        HueBridge bridge = HueBridge.getInstance(ctx);
-
-        if (bridge == null){
-            Log.e(TAG, "Quick setup failed. HueBridge instance is null");
+        HueBridge bridge;
+        try {
+            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+        } catch (NullPointerException ex){
+            Log.e(TAG, "Tried to perform quick setup but no instance of HueBridge was found");
+            ex.printStackTrace();
             return;
         }
-        assert HueBridge.getInstance(ctx) != null;
+
         int buttonIndex = 0;
         int qaButtonIndex = 0;
         HashMap<String, BridgeResource> map;
+        HashMap<Integer, BridgeResource> quickAccessContents;
+        HashMap<Integer, BridgeResource> lightsContents;
+        HashMap<Integer, BridgeResource> roomsContents;
+        HashMap<Integer, BridgeResource> zonesContents;
+        HashMap<Integer, BridgeResource> scenesContents;
         try {
-            HashMap<menuCategory, HashMap<Integer, BridgeResource>> contents =
-                    Objects.requireNonNull(HueBridge.getInstance(ctx)).getContents();
+            quickAccessContents =
+                    Objects.requireNonNull(bridge.getContents().get(menuCategory.QUICK_ACCESS));
+            lightsContents =
+                    Objects.requireNonNull(bridge.getContents().get(menuCategory.LIGHTS));
+            roomsContents =
+                    Objects.requireNonNull(bridge.getContents().get(menuCategory.ROOMS));
+            zonesContents =
+                    Objects.requireNonNull(bridge.getContents().get(menuCategory.ZONES));
+            scenesContents =
+                    Objects.requireNonNull(bridge.getContents().get(menuCategory.SCENES));
         } catch (NullPointerException ex){
             Log.e(TAG, "Tried to perform quick setup but no instance of HueBridge was found");
             ex.printStackTrace();
@@ -688,9 +693,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for lights on id: " + entry.getKey());
-            getContents(ctx).get(menuCategory.LIGHTS).put(buttonIndex++, entry.getValue());
+            lightsContents.put(buttonIndex++, entry.getValue());
             if(qaButtonIndex < 2) {
-                getContents(ctx).get(menuCategory.QUICK_ACCESS).put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
 
@@ -702,9 +707,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for rooms on id: " + entry.getKey());
-            getContents(ctx).get(menuCategory.ROOMS).put(buttonIndex++, entry.getValue());
+            roomsContents.put(buttonIndex++, entry.getValue());
             if(qaButtonIndex < 4) {
-                getContents(ctx).get(menuCategory.QUICK_ACCESS).put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
 
@@ -716,9 +721,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for zones on id: " + entry.getKey());
-            getContents(ctx).get(menuCategory.ZONES).put(buttonIndex++, entry.getValue());
+            zonesContents.put(buttonIndex++, entry.getValue());
             if(qaButtonIndex < 6) {
-                getContents(ctx).get(menuCategory.QUICK_ACCESS).put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
 
@@ -730,9 +735,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for scenes on id: " + entry.getKey());
-            getContents(ctx).get(menuCategory.SCENES).put(buttonIndex++, entry.getValue());
+            scenesContents.put(buttonIndex++, entry.getValue());
             if(qaButtonIndex < 8) {
-                getContents(ctx).get(menuCategory.QUICK_ACCESS).put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
 
@@ -758,9 +763,18 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         helpView = createHelpView(ctx);
 
         if(bridgeConfigured) {
+            HueBridge bridge;
+            try {
+                bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+            } catch (NullPointerException ex){
+                Log.e(TAG, "Updating panel. bridgeConfigured is true but no HueBridge instance is found");
+                ex.printStackTrace();
+                return;
+            }
+            menuCategory currentCategory = getCurrentCategory();
             for (int i = 0; i < 10; i++) {
-                if (getContents(ctx).containsKey(getCurrentCategory())) {
-                    HashMap<Integer, BridgeResource> currentCategoryContents = getContents(ctx).get(getCurrentCategory());
+                if (bridge.getContents().containsKey(currentCategory)) {
+                    HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
                     boolean slotIsFilled = false;
                     try {
                         slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
@@ -868,7 +882,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
             ObjectOutputStream preferenceOutputStream = new ObjectOutputStream(new FileOutputStream(preferenceFile));
             preferenceOutputStream.writeObject(bridge);
-            preferenceOutputStream.writeObject(getContents(ctx));
             preferenceOutputStream.flush();
             preferenceOutputStream.close();
 
@@ -876,6 +889,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             ObjectOutputStream recoveryOutputStream = new ObjectOutputStream(new FileOutputStream(recoveryFile));
             recoveryOutputStream.writeObject(bridge.getIp());
             recoveryOutputStream.writeObject(bridge.getUserName());
+            recoveryOutputStream.writeObject(bridge.getContents());
             recoveryOutputStream.flush();
             recoveryOutputStream.close();
 
@@ -896,7 +910,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
         File configFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         ObjectInputStream configInputStream = null;
-        HashMap<menuCategory, HashMap<Integer, BridgeResource>> loadedContents;
         HueBridge bridge;
 
         // Load config file
@@ -935,13 +948,15 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 ObjectInputStream recoveryInputStream = new ObjectInputStream(new FileInputStream(recoveryFile));
                 String ip = (String) recoveryInputStream.readObject();
                 String userName = (String) recoveryInputStream.readObject();
-                HueBridge.getInstance(ctx, ip, userName);
+                HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
+                        (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) recoveryInputStream.readObject();
+                HueBridge.getInstance(ctx, ip, userName).setContents(contents);
             } catch (FileNotFoundException ex2){
                 toastString = "Recovery file not found";
                 Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 Log.e(TAG, toastString);
                 //TODO remove toast
-            } catch (ClassNotFoundException | IOException ex2){
+            } catch (ClassCastException | ClassNotFoundException | IOException ex2){
                 ex2.printStackTrace();
             }
         } catch (Exception ex) {
@@ -952,24 +967,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             //TODO remove toast
         }
 
-        // Load contents;
-        try {
-            //Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx); //TODO uncomment
-
-            //loadedContents =
-            //        (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) Objects.requireNonNull(configInputStream).readObject();
-            Object loadedContentsObject = Objects.requireNonNull(configInputStream).readObject();
-            Log.e(TAG,loadedContentsObject.getClass().toString());
-            //setContents(loadedContents);
-        } catch (ClassCastException | ClassNotFoundException | IOException ex){
-            Log.e(TAG, "Unchecked cast failed. Corrupt saved config or old version.");
-            ex.printStackTrace();
-        } catch (NullPointerException ex){
-            Log.e(TAG, "Loading of settings failed. Is this the first start?");
-            ex.printStackTrace();
-        }
-
-        String toastString = "Loading: " + getContents(ctx).size();
+        String toastString = "Loading successful";
         Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
     }
 

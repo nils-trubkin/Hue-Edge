@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.ize.hueedge.HueBridge;
 import com.ize.hueedge.HueEdgeProvider;
 import com.ize.hueedge.R;
 import com.ize.hueedge.BridgeResource;
@@ -79,7 +80,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                final int position = HueEdgeProvider.addToCurrentCategory(ctx, br);
+                final int position = HueBridge.getInstance(ctx).addToCurrentCategory(ctx, br);
                 if (position == -1){
                     String toastString = "Can't add more than 10 buttons";
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();

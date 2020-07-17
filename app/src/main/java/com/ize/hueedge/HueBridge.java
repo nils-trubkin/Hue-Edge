@@ -39,13 +39,6 @@ public class HueBridge implements Serializable {
     private final HashMap<String, BridgeResource> zones = new HashMap<>();
     private final HashMap<String, BridgeResource> scenes = new HashMap<>();
 
-    //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
-    private final HashMap<Integer, BridgeResource> quickAccessContent = new HashMap<>();
-    private final HashMap<Integer, BridgeResource> lightsContent = new HashMap<>();
-    private final HashMap<Integer, BridgeResource> roomsContent = new HashMap<>();
-    private final HashMap<Integer, BridgeResource> zonesContent = new HashMap<>();
-    private final HashMap<Integer, BridgeResource> scenesContent = new HashMap<>();
-
     //Mapping of category to contents
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
             new HashMap<>();
@@ -78,11 +71,17 @@ public class HueBridge implements Serializable {
                         ctx.getString(R.string.api_path) + // String "/api/"
                         Objects.requireNonNull(userName);
 
-        getContents().put(HueEdgeProvider.menuCategory.QUICK_ACCESS, quickAccessContent);
-        getContents().put(HueEdgeProvider.menuCategory.LIGHTS, lightsContent);
-        getContents().put(HueEdgeProvider.menuCategory.ROOMS, roomsContent);
-        getContents().put(HueEdgeProvider.menuCategory.ZONES, zonesContent);
-        getContents().put(HueEdgeProvider.menuCategory.SCENES, scenesContent);
+        //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
+        getContents().
+                put(HueEdgeProvider.menuCategory.QUICK_ACCESS, new HashMap<Integer, BridgeResource>());
+        getContents().
+                put(HueEdgeProvider.menuCategory.LIGHTS, new HashMap<Integer, BridgeResource>());
+        getContents().
+                put(HueEdgeProvider.menuCategory.ROOMS, new HashMap<Integer, BridgeResource>());
+        getContents().
+                put(HueEdgeProvider.menuCategory.ZONES, new HashMap<Integer, BridgeResource>());
+        getContents().
+                put(HueEdgeProvider.menuCategory.SCENES, new HashMap<Integer, BridgeResource>());
 
         Resources res = ctx.getResources();
         LIGHTS = res.getString(R.string.hue_api_lights);
@@ -117,6 +116,7 @@ public class HueBridge implements Serializable {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
             }
+            else HueBridge.getInstance(ctx).requestHueState(ctx);
         }
         //Log.d(TAG, "HueBridge instance returned successfully, state is " + instance.state);
         return instance;
@@ -146,7 +146,7 @@ public class HueBridge implements Serializable {
             return stateJson;
         else {
             try {
-                stateJson = new JSONObject(state);
+                setStateJson(new JSONObject(state));
                 return stateJson;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -160,6 +160,10 @@ public class HueBridge implements Serializable {
         this.state = state.toString();
     }
 
+    public void setStateJson(JSONObject stateJson) {
+        this.stateJson = stateJson;
+    }
+
     public HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> getContents() {
         return contents;
     }
@@ -168,9 +172,6 @@ public class HueBridge implements Serializable {
         this.contents = contents;
     }
 
-    public void setStateJson(JSONObject stateJson) {
-        this.stateJson = stateJson;
-    }
 
     public HashMap<String, BridgeResource> getLights() {
         return lights;
@@ -251,6 +252,37 @@ public class HueBridge implements Serializable {
                 }
             }
         }
+    }
+
+    public int addToCurrentCategory(Context ctx, BridgeResource br){
+        Log.d(TAG, "addToCurrentCategory()");
+        HueEdgeProvider.menuCategory currentCategory = HueEdgeProvider.getCurrentCategory();
+        HueBridge bridge;
+        try{
+            bridge = Objects.requireNonNull(getInstance(ctx));
+        } catch (NullPointerException ex){
+            Log.e(TAG, "Tried to add to current category but no instance of HueBridge was found");
+            ex.printStackTrace();
+            return -1;
+        }
+        if (bridge.getContents().containsKey(currentCategory)) {
+            HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
+            for (int i = 0; i < 10; i++) {
+                boolean slotIsEmpty = false;
+                try {
+                    slotIsEmpty = !Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Failed to get current category contents");
+                    ex.printStackTrace();
+                }
+                if (slotIsEmpty) {
+                    currentCategoryContents.put(i, br);
+                    Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     public void setHueBrightness(Context context, BridgeResource br, int value) {
