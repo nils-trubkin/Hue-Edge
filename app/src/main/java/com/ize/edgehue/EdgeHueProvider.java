@@ -395,10 +395,13 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
     }
 
     private RemoteViews createSlidersContentView(Context ctx) {
-        Log.d(TAG, "createRemoteListView()");
+        Log.d(TAG, "createSlidersContentView()");
         RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_main_view);
         setSlidersResourceColor(getSlidersResource().getColor(ctx));
         setSlidersResourceSaturation(getSlidersResource().getSaturation(ctx));
+        SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, EdgeHueProvider.class));
+
         switch (getCurrentSlidersCategory()) {
             case BRIGHTNESS:
                 Intent brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
@@ -406,6 +409,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_brightness);
                 break;
             case COLOR:
                 Intent colorIntent = new Intent(ctx, LongClickColorSliderService.class);
@@ -413,6 +417,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 remoteListView.setViewVisibility(R.id.sliders_color, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_color);
                 break;
             case SATURATION:
                 Intent saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
@@ -420,12 +425,14 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                 remoteListView.setViewVisibility(R.id.sliders_saturation, View.VISIBLE);
                 remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
                 remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_saturation);
                 break;
             default:
                 Log.e(TAG,"Unknown category!");
                 break;
         }
-        //SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.sliders_brightness, getLongClickIntent(ctx, R.id.sliders_brightness, 0));
+
+        //SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.sliders_brightness, getLongClickIntent(ctx, R.id.sliders_brightness, 0)); // Long click of slider buttons
         remoteListView.setPendingIntentTemplate(R.id.sliders_brightness, getClickIntent(ctx, R.id.sliders_brightness, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_color, getClickIntent(ctx, R.id.sliders_color, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_saturation, getClickIntent(ctx, R.id.sliders_saturation, 2));
@@ -554,7 +561,7 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     slidersActive = false;
                     break;
                 case R.id.btnEdit:
-                    //loadAllConfiguration(ctx); // rebind for quick to debug loadAllConfiguration() TODO delete
+                    //loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
                     startEditActivity(ctx);
                     break;
                 default:
@@ -586,8 +593,8 @@ public class EdgeHueProvider extends SlookCocktailProvider implements Serializab
                     Log.e(TAG, "Unknown category!");
                     break;
             }
-            String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            //String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
+            //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show(); // Debug toast for presses on the sliders buttons.
         }
         panelUpdate(ctx);
     }

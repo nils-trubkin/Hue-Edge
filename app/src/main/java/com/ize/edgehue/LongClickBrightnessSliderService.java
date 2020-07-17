@@ -40,7 +40,7 @@ public class LongClickBrightnessSliderService extends RemoteViewsService {
             // create list item
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
-            itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
+            //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
             int slidersResourceColor = EdgeHueProvider.getSlidersResourceColor();
             int slidersResourceSaturation = EdgeHueProvider.getSlidersResourceSaturation();
             float h = slidersResourceColor * 360f / 65536f;

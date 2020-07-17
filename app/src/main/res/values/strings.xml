@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">EdgeHue</string>
-    <string name="edge_hue_name">EdgeHUE</string>
-    <string name="edge_hue_description">Panel to control HUE</string>
+    <string name="app_name">Hue edge</string>
+    <string name="edge_hue_name">Hue edge</string>
+    <string name="edge_hue_description">Panel to control Philips Hue</string>
     <string name="main_background_contentDescription">Background</string>
     <string name="clicked">Clicked</string>
     <string name="long_clicked">Long clicked</string>
@@ -13,7 +13,7 @@
     <string name="button_help_3_text">Rooms</string>
     <string name="button_help_4_text">Zones</string>
     <string name="button_help_5_text">Scenes</string>
-    <string name="title_activity_edge_setup">Configure EdgeHUE</string>
+    <string name="title_activity_edge_setup">Configure Hue edge</string>
 
     <string name="button_sliders_help_1_text">Brightness</string>
     <string name="button_sliders_help_2_text">Color</string>
