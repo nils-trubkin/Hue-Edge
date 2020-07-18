@@ -93,11 +93,9 @@ public class BridgeResource implements Serializable {
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
                     getString("name");
-        } catch (JSONException e) {
-            Log.e(TAG, "Exception!!!");
-            e.printStackTrace();
-            String toastString = e.toString();
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSONException");
+            ex.printStackTrace();
             return "Not reachable";
         }
     }
@@ -132,8 +130,9 @@ public class BridgeResource implements Serializable {
                     getJSONObject("state").
                     getBoolean(getActionRead()) ?
                     1 : 0);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSONException");
+            ex.printStackTrace();
             return -1;
         }
     }
@@ -154,9 +153,10 @@ public class BridgeResource implements Serializable {
                     getJSONObject(getId()).
                     getJSONObject("state").
                     getInt(getColorAction()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return -1;
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSONException");
+            ex.printStackTrace();
+            return 65536;
         }
     }
 
@@ -176,9 +176,10 @@ public class BridgeResource implements Serializable {
                     getJSONObject(getId()).
                     getJSONObject("state").
                     getInt(getSaturationAction()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return -1;
+        } catch (JSONException ex) {
+            Log.e(TAG, "JSONException");
+            ex.printStackTrace();
+            return 255;
         }
     }
 
@@ -194,11 +195,9 @@ public class BridgeResource implements Serializable {
                         getJSONObject(getCategory()).
                         getJSONObject(getId()).
                         getString("name");
-            } catch (JSONException e) {
-                Log.e(TAG, "Exception!!!");
-                e.printStackTrace();
-                String toastString = e.toString();
-                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            } catch (JSONException ex) {
+                Log.e(TAG, "JSONException");
+                ex.printStackTrace();
                 return "Not reachable";
             }
         }

@@ -142,6 +142,7 @@ public class EditActivity extends AppCompatActivity {
                     tw.setText("");
                     Button btn = findViewById(HueEdgeProvider.btnArr[i]);
                     btn.setText("");
+                    btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                     btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
                     Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
                     btnDelete.setVisibility(View.GONE);

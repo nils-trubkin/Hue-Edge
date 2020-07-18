@@ -107,7 +107,7 @@ public class HueBridge implements Serializable {
         instance = null;
         boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
         if (deleted) {
-            String toastString = "Configuration was deleted";
+            String toastString = ctx.getString(R.string.toast_configuration_deleted);
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
         }
     }

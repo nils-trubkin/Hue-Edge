@@ -79,5 +79,11 @@
 
     <!-- Toasts -->
     <string name="toast_saved">Saved</string>
+    <string name="toast_refreshing">Refreshing</string>
+    <string name="toast_add_over_ten_buttons">Can\'t add more than 10 buttons</string>
+    <string name="toast_sliders_not_available">Sliders not available for scenes</string>
+    <string name="toast_adding">Adding: "%1$s"</string>
+    <string name="toast_configuration_deleted">Configuration was deleted</string>
+    <string name="toast_old_version_updating">Config file is old version, attempting to update</string>
 
 </resources>

@@ -177,7 +177,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
                 int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
-                String toastString = "Refreshing";
+                String toastString = ctx.getString(R.string.toast_refreshing);
                 Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             case ACTION_RECEIVE_HUE_REPLY:
                 try {
@@ -604,7 +604,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     setSlidersResource(br);
                 }
                 else {
-                    String toastString = "Sliders not available for scenes";
+                    String toastString = ctx.getString(R.string.toast_sliders_not_available);
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -780,6 +780,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnArr[i], ctx.getResources().getString(R.string.plus_symbol));
+                        contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                         contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
@@ -905,7 +906,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
         // Catch old version
         catch (InvalidClassException ex){
-            String toastString = "Config file is old version, attempting to update";
+            String toastString = ctx.getString(R.string.toast_old_version_updating);
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             Log.e(TAG, toastString);
 

@@ -90,7 +90,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 }
                 final int position = bridge.addToCurrentCategory(ctx, br);
                 if (position == -1){
-                    String toastString = "Can't add more than 10 buttons";
+                    String toastString = ctx.getString(R.string.toast_add_over_ten_buttons);
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
                 else {
@@ -116,7 +116,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                             instance.clearSlot(position);
                         }
                     });
-                    String toastString = "Adding \"" + br.getName(ctx) + "\"";
+                    String toastString = ctx.getString(R.string.toast_adding, br.getName(ctx));
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
             }
