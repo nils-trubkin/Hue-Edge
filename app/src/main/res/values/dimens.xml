@@ -1,6 +1,50 @@
 <resources>
+    <dimen name="zero">0dp</dimen>
     <dimen name="curved_edge_margin">24dp</dimen>
-    <dimen name="resource_button_dimen">48dp</dimen>
 
+    <!-- content view -->
+    <dimen name="resource_button_dimen">48dp</dimen>
     <dimen name="resource_button_padding">4dp</dimen>
+    <dimen name="resource_btn_text_text_size">12sp</dimen>
+
+    <!-- help view -->
+    <dimen name="category_view_root_padding_top">15dp</dimen>
+    <!-- help view top line -->
+    <dimen name="category_view_top_line_width">200dp</dimen>
+    <dimen name="category_view_top_line_height">1dp</dimen>
+    <dimen name="category_view_top_line_margin_bottom">5dp</dimen>
+    <!-- help view category buttons -->
+    <dimen name="category_btn_text_size">15sp</dimen>
+    <dimen name="category_btn_height">40dp</dimen>
+    <dimen name="category_btn_margin_bottom">-7dp</dimen>
+    <!-- help view category button lines -->
+    <dimen name="category_btn_line_height">3dp</dimen>
+
+    <!-- edit activity -->
+    <dimen name="resource_button_delete_dimen">24dp</dimen>
+    <dimen name="resource_button_delete_margin_start_bottom">24dp</dimen>
+    <dimen name="views_margin_top_bottom">8dp</dimen>
+    <dimen name="top_guideline_space">100dp</dimen>
+    <dimen name="bottom_guideline_space">40dp</dimen>
+    <dimen name="vertical_guideline_space">150dp</dimen>
+    <dimen name="adapter_root_layout_height">100dp</dimen>
+
+    <!-- setup activity -->
+    <dimen name="setup_root_layout_height">500dp</dimen>
+    <dimen name="setup_status_text_size">18sp</dimen>
+    <dimen name="setup_status_text_padding_bottom">40dp</dimen>
+    <dimen name="setup_button_width">200dp</dimen>
+    <dimen name="setup_button_height">40dp</dimen>
+    <dimen name="setup_button_margin_top">16dp</dimen>
+    <dimen name="setup_button_text_size">16sp</dimen>
+    <dimen name="setup_discovery_results_height">300dp</dimen>
+    <dimen name="setup_progress_bar_padding_bottom">20dp</dimen>
+    <dimen name="setup_pushlink_image_dimen">200dp</dimen>
+    <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
+    <dimen name="setup_big_logo_height">400dp</dimen>
+    <dimen name="setup_big_logo_text_size">56sp</dimen>
+
+    <!-- sliders -->
+    <dimen name="sliders_button_min_height">60dp</dimen>
+
 </resources>

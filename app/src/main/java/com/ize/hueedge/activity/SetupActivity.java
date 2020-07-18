@@ -82,7 +82,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     // UI elements
     private transient TextView statusTextView;
     private transient ListView bridgeDiscoveryListView;
-    private transient TextView bridgeIpTextView;
     private transient View pushlinkImage;
     private transient ProgressBar progressBar;
     private transient Button bridgeDiscoveryButton;
@@ -123,7 +122,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         statusTextView = findViewById(R.id.status_text);
         bridgeDiscoveryListView = findViewById(R.id.bridge_discovery_result_list);
         bridgeDiscoveryListView.setOnItemClickListener(this);
-        bridgeIpTextView = findViewById(R.id.bridge_ip_text);
         pushlinkImage = findViewById(R.id.pushlink_image);
         progressBar = findViewById(R.id.progress_bar);
         bridgeDiscoveryButton = findViewById(R.id.bridge_discovery_button);
@@ -370,7 +368,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 Log.i(TAG, "Status: " + state.toString());
 
                 bridgeDiscoveryListView.setVisibility(View.GONE);
-                bridgeIpTextView.setVisibility(View.GONE);
                 statusTextView.setVisibility(View.VISIBLE);
                 pushlinkImage.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);

@@ -142,22 +142,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         Resources res = ctx.getResources();
         LIGHTS = res.getString(R.string.hue_api_lights);
 
-        /*if (getContents().isEmpty()) {
-            String toastString = "getContents is empty, loading";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            loadAllConfiguration(ctx);
-        }
-        if (getCurrentCategory() == null){
-            String toastString = "getCurrentCategory is empty, loading";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            loadAllConfiguration(ctx);
-        }
-        if (getCurrentSlidersCategory() == null){
-            String toastString = "getCurrentSlidersCategory is empty, loading";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            loadAllConfiguration(ctx);
-        }*/
-
         if (HueBridge.getInstance(ctx) == null) {
             bridgeConfigured = false;
             panelUpdate(ctx);
@@ -165,6 +149,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         }
         else
             bridgeConfigured = true;
+
         /*if(contentView == null) {
             contentView = createContentView(ctx);
         }
@@ -173,7 +158,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         }*/
 
         String action;
-
         try{
             action = Objects.requireNonNull(intent.getAction());
         }
@@ -183,9 +167,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             return;
         }
         Log.d(TAG, "onReceive: " + action);
-
-        //String toastString = "onReceive: " + action;
-        //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show(); // TODO delete
         switch (action) {
             case ACTION_REMOTE_LONG_CLICK:
                 performRemoteLongClick(ctx, intent);
@@ -225,10 +206,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     //Samsung SDK
     @Override
     public void onEnabled(Context ctx) {
-        // TODO Auto-generated method stub
+        // TODO run setup;
         Log.d(TAG, "onEnabled()");
         super.onEnabled(ctx);
-
     }
 
     //This method is called when the instance of
@@ -241,15 +221,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         super.onDisabled(ctx);
     }
 
-    //TODO
     @Override
     public void onUpdate(Context ctx, SlookCocktailManager cocktailManager, int[] cocktailIds) {
-
         Log.d(TAG, "onUpdate()");
         panelUpdate(ctx);
     }
 
-    //TODO
     @Override
     public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
         Log.d(TAG, "onVisibilityChanged()");
@@ -459,12 +436,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         ctx.startActivity(editIntent);
     }
 
-    /*private void startSetupActivity(Context ctx){
+    private void startSetupActivity(Context ctx){
         Intent setupIntent = new Intent(Intent.ACTION_MAIN);
-        setupIntent.addCategory( Intent.CATEGORY_LAUNCHER);
+        setupIntent.addCategory( Intent.CATEGORY_DEFAULT);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ctx.startActivity(setupIntent); //TODO
-    }*/
+        ctx.startActivity(setupIntent);
+    }
 
     //Button handler
     private void performRemoteClick(Context ctx, Intent intent) {
@@ -541,8 +518,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     setSlidersActive(false);
                     break;
                 case R.id.btnEdit:
-                    loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
+                    //loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
                     //startEditActivity(ctx);
+                    startSetupActivity(ctx);
                     break;
                 default:
                     break;

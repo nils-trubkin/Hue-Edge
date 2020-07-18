@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:minHeight="60dp"
+        android:minHeight="@dimen/sliders_button_min_height"
         android:textColor="@android:color/black" />
 
 </FrameLayout>

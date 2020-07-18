@@ -30,7 +30,7 @@
 
         <activity
             android:name="com.ize.hueedge.activity.EditActivity"
-            android:label="TODO"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait">
             <intent-filter>

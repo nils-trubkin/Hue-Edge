@@ -27,14 +27,14 @@
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/zero"
             android:layout_weight="1"
             android:baselineAligned="false">
 
             <LinearLayout
                 android:id="@+id/extraColumn"
                 style="?android:attr/buttonBarStyle"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zero"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -42,11 +42,10 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -79,16 +78,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -121,16 +119,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -163,16 +160,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -205,16 +201,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -247,7 +242,7 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -255,7 +250,7 @@
             <LinearLayout
                 android:id="@+id/mainColumn"
                 style="?android:attr/buttonBarStyle"
-                android:layout_width="0dp"
+                android:layout_width="@dimen/zero"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -263,11 +258,10 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -300,16 +294,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -342,16 +335,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -384,16 +376,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -426,16 +417,15 @@
                         android:fontFamily="sans-serif-condensed"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="12sp" />
+                        android:textSize="@dimen/resource_btn_text_text_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="@dimen/zero"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                     <FrameLayout
                         android:layout_width="wrap_content"
@@ -467,7 +457,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-condensed"
                         android:textColor="@color/white"
-                        android:textSize="12sp"
+                        android:textSize="@dimen/resource_btn_text_text_size"
                         android:textAlignment="center" />
                 </LinearLayout>
 

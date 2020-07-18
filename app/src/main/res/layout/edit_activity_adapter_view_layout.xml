@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingTop="20dp">
+    android:layout_height="@dimen/adapter_root_layout_height"
+    android:gravity="center"
+    android:orientation="vertical">
 
     <Button
         android:id="@+id/gridBtn"
         style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/resource_button_dimen"
+        android:layout_height="@dimen/resource_button_dimen"
         android:background="@drawable/add_button_background"
         android:hyphenationFrequency="full"
         android:includeFontPadding="false"
@@ -23,6 +22,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/white"
-        android:textSize="12sp" />
+        android:textSize="@dimen/resource_btn_text_text_size" />
 
 </LinearLayout>
