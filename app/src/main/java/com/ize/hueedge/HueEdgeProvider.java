@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -243,7 +242,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_demo);//R.layout.main_view_no_bridge); //TODO rebind ////////////////////////////////////////////////////////////
+                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO rebind ////////////////////////////////////////////////////////////
             return contentView;
         }
 
@@ -435,13 +434,13 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(editIntent);
     }
-
+/*
     private void startSetupActivity(Context ctx){
         Intent setupIntent = new Intent(Intent.ACTION_MAIN);
         setupIntent.addCategory( Intent.CATEGORY_DEFAULT);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(setupIntent);
-    }
+    }*/
 
     //Button handler
     private void performRemoteClick(Context ctx, Intent intent) {
@@ -519,8 +518,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     break;
                 case R.id.btnEdit:
                     //loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
-                    //startEditActivity(ctx);
-                    startSetupActivity(ctx);
+                    startEditActivity(ctx);
+                    //startSetupActivity(ctx);
                     break;
                 default:
                     break;
@@ -781,7 +780,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
-                        contentView.setTextViewText(btnArr[i], "+");
+                        contentView.setTextViewText(btnArr[i], ctx.getResources().getString(R.string.plus_symbol));
                         contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);

@@ -27,7 +27,7 @@
         <LinearLayout
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/zero"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:baselineAligned="false">
 
@@ -108,7 +108,7 @@
                             android:textAlignment="center"
                             android:textAllCaps="false"
                             android:textColor="@color/black"
-                            android:textSize="10sp" />
+                            android:textSize="@dimen/resource_btn_text_text_size" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar7"
@@ -154,7 +154,7 @@
                             android:textAlignment="center"
                             android:textAllCaps="false"
                             android:textColor="@color/black"
-                            android:textSize="10sp" />
+                            android:textSize="@dimen/resource_btn_text_text_size" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar8"
