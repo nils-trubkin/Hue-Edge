@@ -241,7 +241,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
+                    R.layout.main_view_demo); // R.layout.main_view_no_bridge); TODO demo
             return contentView;
         }
 
