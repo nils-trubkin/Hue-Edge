@@ -30,7 +30,7 @@
 
     <!-- edit activity -->
     <dimen name="resource_button_delete_dimen">24dp</dimen>
-    <dimen name="resource_button_delete_margin_start_bottom">24dp</dimen>
+    <dimen name="resource_button_delete_margin_start_bottom">40dp</dimen>
     <dimen name="views_margin_top_bottom">8dp</dimen>
     <dimen name="top_guideline_space">100dp</dimen>
     <dimen name="bottom_guideline_space">40dp</dimen>

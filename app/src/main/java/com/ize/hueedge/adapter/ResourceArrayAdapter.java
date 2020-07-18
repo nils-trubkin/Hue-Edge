@@ -100,6 +100,12 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     tw.setText(br.getName(ctx));
                     Button btn = instance.findViewById(HueEdgeProvider.btnArr[position]);
                     btn.setText(br.getBtnText(ctx));
+                    if(br.getCategory().equals("scenes")){
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
+                    }
+                    else {
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                    }
                     btn.setTextColor(br.getBtnTextColor(ctx));
                     btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
                     btn.setOnClickListener(new View.OnClickListener() {
