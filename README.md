@@ -3,13 +3,13 @@ Android (28) Slook SDK application for control of Philips Hue Lights via Edge pa
 
 ![Hue edge logo](https://github.com/nils-trubkin/Hue-Edge/blob/master/app/src/main/res/drawable/hue_edge_logo.png?raw=true)
 
-Hue edge - control your Philips Hue system via the edge panel.
+Hue edge - control your Philips Hue system via the edge panel
 
 Features:
-• Toggle lights, rooms, groups, zones and apply scenes via the edge panel
-• Press and hold for control of the brightness, color and saturation
-• Pull-down to refresh and see the status at a glance
-• Guided setup helps you discover and connect to your Philips Hue bridge
-• Separate categories for different types of actions
-• Add and remove buttons to your liking
-• Currently limited to control of the Philips Hue bridge on the same local network
+* Toggle lights, rooms, groups, zones and apply scenes via the edge panel
+* Press and hold for control of the brightness, color and saturation
+* Pull-down to refresh and see the status at a glance
+* Guided setup helps you discover and connect to your Philips Hue bridge
+* Separate categories for different types of actions
+* Add and remove buttons to your liking
+* Currently limited to control of the Philips Hue bridge on the same local network
