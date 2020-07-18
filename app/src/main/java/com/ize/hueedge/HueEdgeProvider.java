@@ -934,8 +934,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             ex.printStackTrace();
         }
 
-        String toastString = "Loading successful";
-        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        /*String toastString = "Loading successful";
+        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();*/
     }
 
     public static boolean deleteAllConfiguration(Context ctx){

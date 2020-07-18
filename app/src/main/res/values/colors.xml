@@ -8,7 +8,7 @@
     <color name="content_view_background">#664C4C4C</color>
 
     <color name="navigation_bar_color_setup">#353535</color>
-    <color name="navigation_bar_color_edit">1e1e1e</color>
+    <color name="navigation_bar_color_edit">#1E1E1E</color>
 
     <color name="on_button_unfocused_color">#E5E5E5</color>
     <color name="on_button_unfocused_stroke_color">#808080</color>
