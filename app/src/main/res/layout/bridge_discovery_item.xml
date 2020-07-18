@@ -8,10 +8,10 @@
         android:id="@+id/bridge_ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:layout_marginLeft="@dimen/curved_edge_margin"
+        android:layout_marginRight="@dimen/curved_edge_margin"
+        android:paddingTop="@dimen/discovery_item_texts_padding_top_bottom"
+        android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white" />
 
@@ -19,8 +19,8 @@
         android:id="@+id/bridge_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:paddingBottom="8dp"
+        android:layout_marginLeft="@dimen/curved_edge_margin"
+        android:layout_marginRight="@dimen/curved_edge_margin"
+        android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
         android:textColor="@color/white" />
 </LinearLayout>

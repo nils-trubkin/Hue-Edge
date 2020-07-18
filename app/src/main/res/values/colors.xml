@@ -2,11 +2,39 @@
 <resources>
     <color name="colorPrimary">#252525</color>
     <color name="colorPrimaryDark">#1E1E1E</color>
-    <color name="colorAccent">#fafafa</color>
+    <color name="colorAccent">#FAFAFA</color>
     <color name="white">#FAFAFA</color>
     <color name="black">#252525</color>
     <color name="help_view_grey">#7FFAFAFA</color>
     <color name="content_view_background">#664C4C4C</color>
 
     <color name="navigation_bar_color_setup">#353535</color>
+    <color name="navigation_bar_color_edit">1e1e1e</color>
+
+    <color name="on_button_unfocused_color">#E5E5E5</color>
+    <color name="on_button_unfocused_stroke_color">#808080</color>
+    <color name="on_button_press_color">#A5A5A5</color>
+    <color name="on_button_press_stroke_color">#808080</color>
+    <color name="off_button_unfocused_color">#404040</color>
+    <color name="off_button_unfocused_stroke_color">#606060</color>
+    <color name="off_button_press_color">#606060</color>
+    <color name="off_button_press_stroke_color">#606060</color>
+    <color name="delete_button_unfocused_color">@color/white</color>
+    <color name="delete_button_press_color">#BABABA</color>
+    <color name="delete_button_minus_color">#FF0000</color>
+    <color name="add_button_unfocused_color">#50252525</color>
+    <color name="add_button_press_color">#65656565</color>
+
+    <color name="setup_button_unfocused_color">@color/white</color>
+    <color name="setup_button_press_color">#BABABA</color>
+
+    <color name="discovery_list_color">#50FAFAFA</color>
+    <color name="category_unselected_gray">#99FAFAFA</color>
+    <color name="category_selected_blue">#2187F3</color>
+
+    <color name="category_top_line_gray">#33FAFAFA</color>
+
+    <color name="blurry_background_under_layer">#1E1E1E</color>
+    <color name="blurry_background_over_layer">#7F666666</color>
+
 </resources>

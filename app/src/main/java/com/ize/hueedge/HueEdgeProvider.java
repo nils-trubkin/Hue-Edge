@@ -305,7 +305,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 R.layout.help_view);
         for( int button : btnCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
-            helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
+            helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
         }
         for (int line : btnCategoryLineArr){
             helpView.setInt(line, "setBackgroundResource", 0);
@@ -321,7 +321,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             }
             int currentButton = btnCategoryArr[bridge.getCurrentCategory().ordinal()];
             int currentLine = btnCategoryLineArr[bridge.getCurrentCategory().ordinal()];
-            helpView.setTextColor(currentButton, Color.parseColor("#2187F3"));
+            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
             helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
         }
         return helpView;
@@ -393,7 +393,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         }
         for( int button : btnSlidersCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
-            helpView.setTextColor(button, Color.parseColor("#99FAFAFA"));
+            helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
         }
         for (int line : btnSlidersCategoryLineArr){
             helpView.setInt(line, "setBackgroundResource", 0);
@@ -402,7 +402,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         if(currentSlidersCategory != null){
             int currentButton = btnSlidersCategoryArr[currentSlidersCategory.ordinal()];
             int currentLine = btnSlidersCategoryLineArr[currentSlidersCategory.ordinal()];
-            helpView.setTextColor(currentButton, Color.parseColor("#2187F3"));
+            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
             helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
         }
         return helpView;

@@ -42,7 +42,7 @@ public class EditActivity extends AppCompatActivity {
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setNavigationBarColor(Color.rgb(30,30,30));
+        window.setNavigationBarColor(ctx.getColor(R.color.navigation_bar_color_edit));
 
         //UI elements
         GridView mListView = findViewById(R.id.gridView);

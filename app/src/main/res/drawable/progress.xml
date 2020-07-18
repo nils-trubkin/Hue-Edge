@@ -12,14 +12,14 @@
         android:useLevel="false">
 
         <size
-            android:width="50dp"
-            android:height="50dp" />
+            android:width="@dimen/resource_button_dimen"
+            android:height="@dimen/resource_button_dimen" />
 
         <gradient
             android:type="sweep"
             android:useLevel="false"
-            android:startColor="#FAFAFA"
-            android:endColor="#CC252525"
+            android:startColor="@color/on_button_unfocused_color"
+            android:endColor="@color/off_button_unfocused_color"
             android:angle="0"/>
 
     </shape>

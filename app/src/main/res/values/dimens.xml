@@ -8,6 +8,8 @@
     <dimen name="resource_btn_text_size_symbol">@dimen/_6sdp</dimen>
     <dimen name="resource_btn_text_size_scene">@dimen/_4sdp</dimen>
     <dimen name="resource_btn_text_text_size">@dimen/_10sdp</dimen>
+    <dimen name="refresh_area_height">70dp</dimen>
+    <dimen name="resource_btn_stroke_width">1dp</dimen>
 
     <!-- help view -->
     <dimen name="category_view_root_padding_top">15dp</dimen>
@@ -44,6 +46,9 @@
     <dimen name="setup_pushlink_image_dimen">200dp</dimen>
     <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
     <dimen name="setup_big_logo_height">400dp</dimen>
+    <dimen name="discovery_item_texts_padding_top_bottom">8dp</dimen>
+
+    <!-- bridge discovery -->
     <dimen name="setup_big_logo_text_size">56sp</dimen>
 
     <!-- sliders -->

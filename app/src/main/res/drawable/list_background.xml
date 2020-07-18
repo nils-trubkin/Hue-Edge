@@ -3,7 +3,7 @@
     <item android:state_pressed="true" >
         <shape android:shape="rectangle"  >
             <corners android:radius="20dip" />
-            <solid android:color="#50FAFAFA"/>
+            <solid android:color="@color/discovery_list_color"/>
         </shape>
     </item>
 </layer-list>

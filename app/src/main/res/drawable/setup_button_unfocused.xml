@@ -3,8 +3,7 @@
     <item android:state_pressed="true" >
         <shape android:shape="rectangle"  >
             <corners android:radius="1000dip" />
-            <solid android:color="#FAFAFA"/>
-            <stroke android:width="1dip" android:color="#FAFAFA" />
+            <solid android:color="@color/setup_button_unfocused_color"/>
         </shape>
     </item>
 </layer-list>

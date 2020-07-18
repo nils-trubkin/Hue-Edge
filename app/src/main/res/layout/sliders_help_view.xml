@@ -12,7 +12,7 @@
         android:layout_height="@dimen/category_view_top_line_height"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/category_view_top_line_margin_bottom"
-        android:background="#33FAFAFA"
+        android:background="@color/category_top_line_gray"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
@@ -32,7 +32,7 @@
             android:text="@string/button_sliders_help_1_text"
             android:textAlignment="textStart"
             android:textAllCaps="false"
-            android:textColor="#99FAFAFA"
+            android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
         <ImageView
@@ -62,7 +62,7 @@
             android:text="@string/button_sliders_help_2_text"
             android:textAlignment="textStart"
             android:textAllCaps="false"
-            android:textColor="#99FAFAFA"
+            android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
         <ImageView
@@ -91,7 +91,7 @@
             android:text="@string/button_sliders_help_3_text"
             android:textAlignment="textStart"
             android:textAllCaps="false"
-            android:textColor="#99FAFAFA"
+            android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
         <ImageView
@@ -120,7 +120,7 @@
             android:text="@string/button_back_text"
             android:textAlignment="textStart"
             android:textAllCaps="false"
-            android:textColor="#99FAFAFA"
+            android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
     </LinearLayout>
