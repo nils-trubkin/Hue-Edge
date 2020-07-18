@@ -61,10 +61,10 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setTextColor(btnColor);
         gridBtn.setBackgroundResource(btnResource);
         if(resource.getCategory().equals("scenes")){
-            gridBtn.setTextSize(10);
+            gridBtn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
         }
         else {
-            gridBtn.setTextSize(14);
+            gridBtn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
         }
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);

@@ -112,9 +112,9 @@ public class EditActivity extends AppCompatActivity {
                     Button btn = findViewById(HueEdgeProvider.btnArr[i]);
                     btn.setText(resource.getBtnText(ctx));
                     if (resource.getCategory().equals("scenes")) {
-                        btn.setTextSize(10);
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
                     } else {
-                        btn.setTextSize(14);
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                     }
                     btn.setTextColor(resource.getBtnTextColor(ctx));
                     btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
@@ -134,9 +134,9 @@ public class EditActivity extends AppCompatActivity {
                     });
                     btnDelete.setVisibility(View.VISIBLE);
                     if (resource.getCategory().equals("scenes")) {
-                        btn.setTextSize(10);
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
                     } else {
-                        btn.setTextSize(14);
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                     }
                 } else {
                     TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);

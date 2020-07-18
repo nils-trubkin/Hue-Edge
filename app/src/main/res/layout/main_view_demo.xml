@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="NestedWeights">
+
+    <ImageView
+        android:id="@+id/main_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/content_view_background"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/refreshArea"
+            android:layout_width="match_parent"
+            android:layout_height="70dp" />
+
+        <LinearLayout
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero"
+            android:layout_weight="1"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:id="@+id/extraColumn"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="@dimen/zero"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn6"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/on_symbol"
+                            android:textAlignment="center"
+                            android:textColor="@color/black" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar6"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn6text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Upstairs"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn7"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="Dimmed"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/black"
+                            android:textSize="10sp" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar7"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn7text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Desk lamp"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn8"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="Scene"
+                            android:textAlignment="center"
+                            android:textAllCaps="false"
+                            android:textColor="@color/black"
+                            android:textSize="10sp" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar8"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn8text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Living room"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn9"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="+"
+                            android:textAlignment="center"
+                            android:textColor="@color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar9"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn9text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn10"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/add_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="+"
+                            android:textAlignment="center"
+                            android:textColor="@color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar10"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn10text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/mainColumn"
+                style="?android:attr/buttonBarStyle"
+                android:layout_width="@dimen/zero"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn1"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/on_symbol"
+                            android:textAlignment="center"
+                            android:textColor="@color/black" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar1"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn1text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Downstairs"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn2"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/off_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/off_symbol"
+                            android:textAlignment="center"
+                            android:textColor="@color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar2"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn2text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Kitchen"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn3"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/off_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/off_symbol"
+                            android:textAlignment="center"
+                            android:textColor="@color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar3"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn3text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Bedroom"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn4"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/large_minus"
+                            android:textAlignment="center"
+                            android:textColor="@color/black" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar4"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn4text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Office"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/zero"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btn5"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:background="@drawable/on_button_background"
+                            android:hyphenationFrequency="full"
+                            android:padding="@dimen/resource_button_padding"
+                            android:text="@string/large_minus"
+                            android:textAlignment="center"
+                            android:textColor="@color/black" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar5"
+                            android:layout_width="@dimen/resource_button_dimen"
+                            android:layout_height="@dimen/resource_button_dimen"
+                            android:layout_gravity="center"
+                            android:indeterminateDrawable="@drawable/progress"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/btn5text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="Living room"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/resource_btn_text_text_size" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnEdit"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="@dimen/resource_button_dimen"
+            android:layout_height="@dimen/resource_button_dimen"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/button_edit_text"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

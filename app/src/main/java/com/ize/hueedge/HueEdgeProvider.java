@@ -243,7 +243,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_no_bridge);
+                    R.layout.main_view_demo);//R.layout.main_view_no_bridge); //TODO rebind ////////////////////////////////////////////////////////////
             return contentView;
         }
 
@@ -775,9 +775,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 resource.getBtnBackgroundResource(ctx));
                         if (resource.getCategory().equals("scenes")) {
-                            contentView.setFloat(btnArr[i], "setTextSize", 10);
+                            contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
                         } else {
-                            contentView.setFloat(btnArr[i], "setTextSize", 14);
+                            contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
