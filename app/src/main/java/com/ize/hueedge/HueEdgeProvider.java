@@ -215,7 +215,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     //Samsung SDK
     @Override
     public void onDisabled(Context ctx) {
-        // TODO Auto-generated method stub
         Log.d(TAG, "onDisabled()");
         super.onDisabled(ctx);
     }
@@ -242,7 +241,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO rebind ////////////////////////////////////////////////////////////
+                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
             return contentView;
         }
 
@@ -818,7 +817,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         editor.putString(ctx.getResources().getString(R.string.current_sliders_category_config_file), currentSlidersCategory);
         editor.putString(ctx.getResources().getString(R.string.sliders_resource_config_file), slidersResource);
         editor.putString(ctx.getResources().getString(R.string.sliders_active_config_file), slidersActive);
-        editor.apply(); //TODO may use commit to write at once
+        editor.apply();
     }
 
     public static void loadCurrentCategory(Context ctx) {
@@ -838,7 +837,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             String toastString = "Config file not found";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             Log.e(TAG, toastString);
-            //TODO remove toast
         }
     }*/
 
@@ -873,10 +871,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             recoveryOutputStream.flush();
             recoveryOutputStream.close();
         } catch (Exception ex) {
+            Log.e(TAG,"Failed to save configuration");
             ex.printStackTrace();
-            String toastString = ex.toString();
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            //TODO remove toast
         }
     }
 
@@ -893,11 +889,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         try {
             configInputStream = new ObjectInputStream(new FileInputStream(configFile));
         } catch (FileNotFoundException ex){
-            String toastString = "Config file not found";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            Log.e(TAG, toastString);
-            //TODO remove toast
+            Log.e(TAG, "Config file not found");
         } catch (IOException ex) {
+            Log.e(TAG, "IOException");
             ex.printStackTrace();
         }
 
@@ -906,15 +900,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             bridge = (HueBridge) Objects.requireNonNull(configInputStream).readObject();
             HueBridge.setInstance(bridge);
         } catch (NullPointerException ex){
-            String toastString = "Config file not found";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            Log.e(TAG, toastString);
-            //TODO remove toast
+            Log.e(TAG, "Config file not found");
         }
 
         // Catch old version
         catch (InvalidClassException ex){
-            String toastString = "Config file is old version, updating";
+            String toastString = "Config file is old version, attempting to update";
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             Log.e(TAG, toastString);
 
@@ -934,19 +925,13 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 bridge.requestHueState(ctx);
                 Log.i(TAG,"Recovery successful");
             } catch (FileNotFoundException ex2){
-                toastString = "Recovery file not found";
-                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-                Log.e(TAG, toastString);
-                //TODO remove toast
+                Log.e(TAG, "Recovery file not found");
             } catch (ClassCastException | ClassNotFoundException | IOException | JSONException ex2){
                 ex2.printStackTrace();
             }
         } catch (Exception ex) {
             Log.e(TAG, "Failed to load configuration for other reason");
             ex.printStackTrace();
-            String toastString = "Failed to load configuration for other reason";
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-            //TODO remove toast
         }
 
         String toastString = "Loading successful";
@@ -960,11 +945,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         }
         catch (NullPointerException ex) {
             Log.e(TAG, "deleteAllConfig could not find configuration");
-            ex.printStackTrace();
-            String toastString = ex.toString();
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             return false;
-            //TODO remove toast
         }
         return file.delete();
     }

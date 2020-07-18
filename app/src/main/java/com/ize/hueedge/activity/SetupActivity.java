@@ -175,7 +175,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
      */
     public void startBridgeDiscovery() {
         Log.i(TAG, "startBridgeDiscovery()");
-        HueBridge.deleteInstance(this); //TODO Is this necessary
         stopBridgeDiscovery();
         bridgeDiscovery = new BridgeDiscoveryImpl();
         // ALL Include [UPNP, IPSCAN, NUPNP, MDNS] but in some nets UPNP, NUPNP and MDNS is not working properly
@@ -343,7 +342,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             updateUI(UIState.Final);
         }
         else if (view == customButton) {
-            //TODO Set the category to something that is not NO_BRIDGE
+            HueEdgeProvider.saveAllConfiguration(ctx);
             updateUI(UIState.Final);
         }
         else if (view == finishButton) {

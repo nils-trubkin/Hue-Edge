@@ -101,13 +101,15 @@ public class HueBridge implements Serializable {
         SUCCESS = res.getString(R.string.hue_api_success);
     }
 
-    //Delete the instance TODO Fix toast
+    //Delete the instance
     public static synchronized void deleteInstance(Context ctx) {
         Log.i(TAG, "Deleting instance of HueBridge");
         instance = null;
         boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
-        String toastString = deleted ? "Configuration was deleted" : "Configuration was not deleted";
-        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        if (deleted) {
+            String toastString = "Configuration was deleted";
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+        }
     }
 
     //Get instance of instantiated HueBridge
