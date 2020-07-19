@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.ize.hueedge.activity.SetupActivity;
 import com.ize.hueedge.service.LongClickBrightnessSliderService;
 import com.ize.hueedge.service.LongClickColorSliderService;
 import com.ize.hueedge.service.LongClickSaturationSliderService;
@@ -205,7 +206,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     //Samsung SDK
     @Override
     public void onEnabled(Context ctx) {
-        // TODO run setup;
+        startSetupActivity(ctx);
         Log.d(TAG, "onEnabled()");
         super.onEnabled(ctx);
     }
@@ -433,13 +434,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(editIntent);
     }
-/*
+
     private void startSetupActivity(Context ctx){
-        Intent setupIntent = new Intent(Intent.ACTION_MAIN);
-        setupIntent.addCategory( Intent.CATEGORY_DEFAULT);
+        Intent setupIntent = new Intent(ctx, SetupActivity.class);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(setupIntent);
-    }*/
+    }
 
     //Button handler
     private void performRemoteClick(Context ctx, Intent intent) {
@@ -518,7 +518,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 case R.id.btnEdit:
                     //loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
                     startEditActivity(ctx);
-                    //startSetupActivity(ctx);
                     break;
                 default:
                     break;

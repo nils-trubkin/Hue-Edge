@@ -51,6 +51,13 @@
     <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
     <dimen name="setup_big_logo_height">400dp</dimen>
     <dimen name="discovery_item_texts_padding_top_bottom">8dp</dimen>
+    <dimen name="about_right_margin">40dp</dimen>
+    <dimen name="about_top_margin">50dp</dimen>
+    <dimen name="about_button_width">100dp</dimen>
+    <dimen name="about_window_margin_top">30dp</dimen>
+    <dimen name="about_window_margin_bottom">100dp</dimen>
+    <dimen name="about_window_margin_left_right">@dimen/curved_edge_margin</dimen>
+    <dimen name="about_text_text_size">18sp</dimen>
 
     <!-- bridge discovery -->
     <dimen name="setup_big_logo_text_size">56sp</dimen>

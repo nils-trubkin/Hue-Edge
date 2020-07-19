@@ -1,6 +1,8 @@
 package com.ize.hueedge.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -78,6 +81,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient int requestAmount;
     private transient Timer timer;
     private transient sendAuthRequestTask<Object> backgroundAuthRequestTask;
+    private transient boolean aboutDisplayed = false;
 
     // UI elements
     private transient TextView statusTextView;
@@ -93,6 +97,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient Button removeButton;
     private transient Button yesButton;
     private transient Button noButton;
+    private transient LinearLayout aboutLayout;
+    private transient Button aboutButton;
+    private transient Button contactMe;
+    private transient Button support;
 
     enum UIState {
         Welcome,
@@ -142,6 +150,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         yesButton.setOnClickListener(this);
         noButton = findViewById(R.id.no_button);
         noButton.setOnClickListener(this);
+        aboutLayout = findViewById(R.id.about_layout);
+        aboutButton = findViewById(R.id.about_button);
+        aboutButton.setOnClickListener(this);
+        contactMe = findViewById(R.id.contact_me);
+        contactMe.setOnClickListener(this);
+        support = findViewById(R.id.support);
+        support.setOnClickListener(this);
         InitSdk.setApplicationContext(getApplicationContext());
         Persistence.setStorageLocation(getFilesDir().getAbsolutePath(), Build.ID);
         HueLog.setConsoleLogLevel(HueLog.LogLevel.DEBUG); //TODO remove debug
@@ -358,6 +373,33 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         else if (view == noButton) {
             updateUI(UIState.Final);
         }
+        else if (view == aboutButton){
+            if (!aboutDisplayed){
+                aboutLayout.setVisibility(View.VISIBLE);
+                aboutButton.setText(ctx.getString(R.string.about_button_close_text));
+                aboutDisplayed = true;
+            }
+            else{
+                aboutLayout.setVisibility(View.GONE);
+                aboutButton.setText(ctx.getString(R.string.about_button_text));
+                aboutDisplayed = false;
+            }
+        }
+        else if (view == contactMe){
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{ctx.getString(R.string.email)});
+            //email.putExtra(Intent.EXTRA_SUBJECT, "");
+            //email.putExtra(Intent.EXTRA_TEXT, "");
+
+            //need this to prompts email client only
+            email.setType("message/rfc822");
+            startActivity(Intent.createChooser(email, "Choose an Email client :"));
+        }
+        else if (view == support){
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(ctx.getString(R.string.paypal_url)));
+            startActivity(i);
+        }
     }
 
     private void updateUI(final UIState state) {
@@ -379,6 +421,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 removeButton.setVisibility(View.GONE);
                 yesButton.setVisibility(View.GONE);
                 noButton.setVisibility(View.GONE);
+                aboutLayout.setVisibility(View.GONE);
+                aboutButton.setText(ctx.getString(R.string.about_button_text));
 
                 switch (state) {
                     case Welcome:

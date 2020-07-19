@@ -59,7 +59,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/on_symbol"
                             android:textAlignment="center"
                             android:textColor="@color/black" />
@@ -103,8 +102,7 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
-                            android:text="Dimmed"
+                            android:text="Dim"
                             android:textAlignment="center"
                             android:textAllCaps="false"
                             android:textColor="@color/black"
@@ -149,7 +147,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="Scene"
                             android:textAlignment="center"
                             android:textAllCaps="false"
@@ -195,7 +192,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="+"
                             android:textAlignment="center"
                             android:textColor="@color/white" />
@@ -238,7 +234,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="+"
                             android:textAlignment="center"
                             android:textColor="@color/white" />
@@ -292,7 +287,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/on_symbol"
                             android:textAlignment="center"
                             android:textColor="@color/black" />
@@ -336,7 +330,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/off_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/off_symbol"
                             android:textAlignment="center"
                             android:textColor="@color/white" />
@@ -380,7 +373,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/off_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/off_symbol"
                             android:textAlignment="center"
                             android:textColor="@color/white" />
@@ -424,7 +416,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/large_minus"
                             android:textAlignment="center"
                             android:textColor="@color/black" />
@@ -468,7 +459,6 @@
                             android:layout_gravity="center"
                             android:background="@drawable/on_button_background"
                             android:hyphenationFrequency="full"
-                            android:padding="@dimen/resource_button_padding"
                             android:text="@string/large_minus"
                             android:textAlignment="center"
                             android:textColor="@color/black" />

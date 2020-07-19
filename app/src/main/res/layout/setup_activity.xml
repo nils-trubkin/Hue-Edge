@@ -8,6 +8,18 @@
     android:background="@color/blurry_background_under_layer"
     tools:context=".activity.SetupActivity">
 
+    <Button
+        android:id="@+id/about_button"
+        android:layout_width="@dimen/about_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/about_top_margin"
+        android:layout_marginEnd="@dimen/about_right_margin"
+        android:background="@drawable/setup_button_background"
+        android:text="@string/about_button_text"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size" />
+
     <ImageView
         android:id="@+id/backgroundView"
         android:layout_width="fill_parent"
@@ -195,6 +207,60 @@
             android:textAllCaps="false"
             android:textSize="@dimen/setup_button_text_size"
             android:visibility="gone" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/about_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/about_window_margin_top"
+        android:layout_marginBottom="@dimen/about_window_margin_bottom"
+        android:background="@drawable/about_background"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:text="@string/edge_hue_name"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_big_logo_text_size"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/about_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/about_window_margin_left_right"
+            android:layout_marginTop="@dimen/about_window_margin_top"
+            android:layout_marginRight="@dimen/about_window_margin_left_right"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/about_text_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/about_text_text_size" />
+
+        <Button
+            android:id="@+id/contact_me"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/about_btn_contact_me"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size" />
+
+        <Button
+            android:id="@+id/support"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/about_btn_support"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size" />
 
     </LinearLayout>
 
