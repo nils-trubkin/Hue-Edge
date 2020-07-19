@@ -1,5 +1,7 @@
 package com.ize.hueedge.activity;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ize.hueedge.DragEventListener;
 import com.ize.hueedge.HueEdgeProvider;
 import com.ize.hueedge.HueBridge;
 import com.ize.hueedge.R;
@@ -99,69 +102,8 @@ public class EditActivity extends AppCompatActivity {
                 ctx.startActivity(setupIntent);
             }
         });
-        for (int i = 0; i < 10; i++) {
-            if (contents.containsKey(currentCategory)) {
-                final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
-                boolean slotIsFilled = false;
-                try {
-                    slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
-                } catch (NullPointerException ex) {
-                    Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
-                    ex.printStackTrace();
-                }
-                if (slotIsFilled) {
-                    BridgeResource resource;
-                    try {
-                        resource = Objects.requireNonNull(currentCategoryContents).get(i);
-                    } catch (NullPointerException ex) {
-                        Log.e(TAG, "Failed to load filled slot");
-                        ex.printStackTrace();
-                        break;
-                    }
-                    assert resource != null;
-                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
-                    tw.setText(resource.getName(ctx));
-                    Button btn = findViewById(HueEdgeProvider.btnArr[i]);
-                    btn.setText(resource.getBtnText(ctx));
-                    if (resource.getCategory().equals("scenes")) {
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
-                    } else {
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                    }
-                    btn.setTextColor(resource.getBtnTextColor(ctx));
-                    btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
-                    final int finalI = i;
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            clearSlot(finalI);
-                        }
-                    });
-                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-                    btnDelete.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            clearSlot(finalI);
-                        }
-                    });
-                    btnDelete.setVisibility(View.VISIBLE);
-                    if (resource.getCategory().equals("scenes")) {
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
-                    } else {
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                    }
-                } else {
-                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
-                    tw.setText("");
-                    Button btn = findViewById(HueEdgeProvider.btnArr[i]);
-                    btn.setText("");
-                    btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                    btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-                    btnDelete.setVisibility(View.GONE);
-                }
-            }
-        }
+
+        panelUpdate();
 
         ArrayList<BridgeResource> resourceList = new ArrayList<>();
         HashMap<String, BridgeResource> map = null;
@@ -221,6 +163,108 @@ public class EditActivity extends AppCompatActivity {
         });*/
     }
 
+    public void panelUpdate(){
+        for (int i = 0; i < 10; i++) {
+            if (contents.containsKey(currentCategory)) {
+                final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
+                boolean slotIsFilled = false;
+                try {
+                    slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                } catch (NullPointerException ex) {
+                    Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
+                    ex.printStackTrace();
+                }
+                if (slotIsFilled) {
+                    final BridgeResource resource;
+                    try {
+                        resource = Objects.requireNonNull(currentCategoryContents).get(i);
+                    } catch (NullPointerException ex) {
+                        Log.e(TAG, "Failed to load filled slot");
+                        ex.printStackTrace();
+                        break;
+                    }
+                    assert resource != null;
+                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
+                    tw.setText(resource.getName(ctx));
+                    final Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+                    btn.setText(resource.getBtnText(ctx));
+                    if (resource.getCategory().equals("scenes")) {
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
+                    } else {
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                    }
+                    btn.setTextColor(resource.getBtnTextColor(ctx));
+                    btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
+                    final int finalI = i;
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clearSlot(finalI);
+                        }
+                    });
+                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+                    btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clearSlot(finalI);
+                        }
+                    });
+                    btnDelete.setVisibility(View.VISIBLE);
+                    if (resource.getCategory().equals("scenes")) {
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
+                    } else {
+                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                    }
+                    btn.setOnDragListener(null);
+                    // Sets a long click listener for the ImageView using an anonymous listener object that
+                    // implements the OnLongClickListener interface
+                    btn.setOnLongClickListener(new View.OnLongClickListener() {
+
+                        @Override
+                        public boolean onLongClick(View v) {
+
+                            // Create a new ClipData.
+                            // This is done in two steps to provide clarity. The convenience method
+                            // ClipData.newPlainText() can create a plain text ClipData in one step.
+                            ClipData.Item item = new ClipData.Item((Intent) v.getTag());
+                            // Create a new ClipData using the tag as a label, the plain text MIME type, and
+                            // the already-created item. This will create a new ClipDescription object within the
+                            // ClipData, and set its MIME type entry to "text/plain"
+                            ClipData dragData = new ClipData(
+                                    resource.getName(ctx),
+                                    new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                                    item);
+
+                            // Instantiates the drag shadow builder.
+                            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                            clearSlot(finalI);
+                            // Starts the drag
+                            return v.startDragAndDrop(dragData,  // the data to be dragged
+                                    myShadow,  // the drag shadow builder
+                                    resource,      // pass resource
+                                    0          // flags (not currently used, set to 0)
+                            );
+                        }
+                    });
+                } else {
+                    TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
+                    tw.setText("");
+                    Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+                    btn.setText("");
+                    btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                    btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+                    Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+                    btnDelete.setVisibility(View.GONE);
+
+                    // Creates a new drag event listener
+                    DragEventListener dragListen = new DragEventListener(ctx, i);
+                    // Sets the drag event listener for the View
+                    btn.setOnDragListener(dragListen);
+                }
+            }
+        }
+    }
+
     public void clearSlot (int position) {
         final HashMap<Integer, BridgeResource> currentCategoryContents;
         try {
@@ -240,5 +284,9 @@ public class EditActivity extends AppCompatActivity {
         btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
         Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
         btnDelete.setVisibility(View.GONE);
+        // Creates a new drag event listener
+        DragEventListener dragListen = new DragEventListener(ctx, position);
+        // Sets the drag event listener for the View
+        btn.setOnDragListener(dragListen);
     }
 }

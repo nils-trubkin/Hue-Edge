@@ -1,6 +1,9 @@
 package com.ize.hueedge.adapter;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,10 +43,10 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         LayoutInflater inflater = LayoutInflater.from(ctx);
         convertView = inflater.inflate(mResource, parent, false);
 
-        Button gridBtn = convertView.findViewById(R.id.gridBtn);
+        final Button gridBtn = convertView.findViewById(R.id.gridBtn);
         TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
 
-        BridgeResource resource;
+        final BridgeResource resource;
         try {
             resource = Objects.requireNonNull(getItem(position));
         }
@@ -53,10 +56,10 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
             return convertView;
         }
 
-        String name = resource.getName(ctx);
+        final String name = resource.getName(ctx);
         String btnText = resource.getBtnText(ctx);
         int btnColor = resource.getBtnTextColor(ctx);
-        int btnResource = resource.getBtnBackgroundResource(ctx);
+        final int btnResource = resource.getBtnBackgroundResource(ctx);
         gridBtn.setText(btnText);
         gridBtn.setTextColor(btnColor);
         gridBtn.setBackgroundResource(btnResource);
@@ -128,7 +131,37 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 }
             }
         });
+        // Sets a long click listener for the ImageView using an anonymous listener object that
+        // implements the OnLongClickListener interface
+        gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
 
+            @Override
+            public boolean onLongClick(View v) {
+
+                // Create a new ClipData.
+                // This is done in two steps to provide clarity. The convenience method
+                // ClipData.newPlainText() can create a plain text ClipData in one step.
+                ClipData.Item item = new ClipData.Item((Intent) v.getTag());
+                // Create a new ClipData using the tag as a label, the plain text MIME type, and
+                // the already-created item. This will create a new ClipDescription object within the
+                // ClipData, and set its MIME type entry to "text/plain"
+                ClipData dragData = new ClipData(
+                        name,
+                        new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                        item);
+
+                // Instantiates the drag shadow builder.
+                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+
+                // Starts the drag
+
+                return v.startDragAndDrop(dragData,  // the data to be dragged
+                        myShadow,  // the drag shadow builder
+                        resource,      // pass resource
+                        0          // flags (not currently used, set to 0)
+                );
+            }
+        });
         return convertView;
     }
 }

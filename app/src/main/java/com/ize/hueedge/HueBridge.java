@@ -304,6 +304,34 @@ public class HueBridge implements Serializable {
         return -1;
     }
 
+    public int addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br, int index){
+        Log.d(TAG, "addToCurrentCategory()");
+        HueBridge bridge;
+        try{
+            bridge = Objects.requireNonNull(getInstance(ctx));
+        } catch (NullPointerException ex){
+            Log.e(TAG, "Tried to add to current category but no instance of HueBridge was found");
+            ex.printStackTrace();
+            return -1;
+        }
+        if (bridge.getContents().containsKey(category)) {
+            HashMap<Integer, BridgeResource> categoryContents = bridge.getContents().get(category);
+            boolean slotIsEmpty = false;
+            try {
+                slotIsEmpty = !Objects.requireNonNull(categoryContents).containsKey(index);
+            } catch (NullPointerException ex) {
+                Log.e(TAG, "Failed to get current category contents");
+                ex.printStackTrace();
+            }
+            if (slotIsEmpty) {
+                categoryContents.put(index, br);
+                Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + br.toString());
+                return index;
+            }
+        }
+        return -1;
+    }
+
     public void setHueBrightness(Context context, BridgeResource br, int value) {
         String category = br.getCategory();
         if (category.equals(SCENES)) {

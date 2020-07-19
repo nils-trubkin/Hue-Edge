@@ -8,6 +8,18 @@
     android:background="@color/blurry_background_under_layer"
     tools:context=".activity.SetupActivity">
 
+    <Button
+        android:id="@+id/about_button"
+        android:layout_width="@dimen/about_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/about_top_margin"
+        android:layout_marginEnd="@dimen/about_right_margin"
+        android:background="@drawable/setup_button_background"
+        android:text="@string/about_button_text"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size" />
+
     <ImageView
         android:id="@+id/backgroundView"
         android:layout_width="fill_parent"
@@ -276,7 +288,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/about_text_view"
@@ -379,17 +391,5 @@
             android:textSize="@dimen/setup_button_text_size" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/about_button"
-        android:layout_width="@dimen/about_button_width"
-        android:layout_height="@dimen/setup_button_height"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/about_top_margin"
-        android:layout_marginEnd="@dimen/about_right_margin"
-        android:background="@drawable/setup_button_background"
-        android:text="@string/about_button_text"
-        android:textAllCaps="false"
-        android:textSize="@dimen/setup_button_text_size" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
