@@ -32,6 +32,10 @@ public class EditActivity extends AppCompatActivity {
     private HueEdgeProvider.menuCategory currentCategory;
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents;
 
+    public HueEdgeProvider.menuCategory getCurrentCategory() {
+        return currentCategory;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +156,7 @@ public class EditActivity extends AppCompatActivity {
 
         ArrayList<BridgeResource> resourceList = new ArrayList<>();
         HashMap<String, BridgeResource> map = null;
-        switch (bridge.getCurrentCategory()) {
+        switch (currentCategory) {
             case QUICK_ACCESS:
                 map = bridge.getLights();
                 for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
@@ -187,7 +191,7 @@ public class EditActivity extends AppCompatActivity {
                 Log.w(TAG, "Unknown category!");
                 break;
         }
-        if(!bridge.getCurrentCategory().equals(HueEdgeProvider.menuCategory.QUICK_ACCESS)){
+        if(!currentCategory.equals(HueEdgeProvider.menuCategory.QUICK_ACCESS)){
             for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
                 resourceList.add(entry.getValue());
             }

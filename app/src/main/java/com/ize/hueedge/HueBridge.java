@@ -274,9 +274,8 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public int addToCurrentCategory(Context ctx, BridgeResource br){
+    public int addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br){
         Log.d(TAG, "addToCurrentCategory()");
-        HueEdgeProvider.menuCategory currentCategory = getCurrentCategory();
         HueBridge bridge;
         try{
             bridge = Objects.requireNonNull(getInstance(ctx));
@@ -285,18 +284,18 @@ public class HueBridge implements Serializable {
             ex.printStackTrace();
             return -1;
         }
-        if (bridge.getContents().containsKey(currentCategory)) {
-            HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
+        if (bridge.getContents().containsKey(category)) {
+            HashMap<Integer, BridgeResource> categoryContents = bridge.getContents().get(category);
             for (int i = 0; i < 10; i++) {
                 boolean slotIsEmpty = false;
                 try {
-                    slotIsEmpty = !Objects.requireNonNull(currentCategoryContents).containsKey(i);
+                    slotIsEmpty = !Objects.requireNonNull(categoryContents).containsKey(i);
                 } catch (NullPointerException ex) {
                     Log.e(TAG, "Failed to get current category contents");
                     ex.printStackTrace();
                 }
                 if (slotIsEmpty) {
-                    currentCategoryContents.put(i, br);
+                    categoryContents.put(i, br);
                     Log.d(TAG, "addToCurrentCategory put at: " + i + " values is " + br.toString());
                     return i;
                 }

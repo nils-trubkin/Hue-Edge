@@ -88,14 +88,15 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                     ex.printStackTrace();
                     return;
                 }
-                final int position = bridge.addToCurrentCategory(ctx, br);
+                final EditActivity instance = (EditActivity) ctx;
+                HueEdgeProvider.menuCategory currentCategory = instance.getCurrentCategory();
+                final int position = bridge.addToCategory(ctx, currentCategory, br);
                 if (position == -1){
                     String toastString = ctx.getString(R.string.toast_add_over_ten_buttons);
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
                 else {
                     HueEdgeProvider.saveAllConfiguration(ctx);
-                    final EditActivity instance = (EditActivity) ctx;
                     TextView tw = instance.findViewById(HueEdgeProvider.btnTextArr[position]);
                     tw.setText(br.getName(ctx));
                     Button btn = instance.findViewById(HueEdgeProvider.btnArr[position]);
