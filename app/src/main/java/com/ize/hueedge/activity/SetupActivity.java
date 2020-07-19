@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,10 +16,12 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -81,7 +84,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient int requestAmount;
     private transient Timer timer;
     private transient sendAuthRequestTask<Object> backgroundAuthRequestTask;
-    private transient boolean aboutDisplayed = false;
 
     // UI elements
     private transient TextView statusTextView;
@@ -90,6 +92,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient ProgressBar progressBar;
     private transient Button bridgeDiscoveryButton;
     private transient Button cheatButton;
+    private transient Button manualIp;
+    private transient Button manualIpConfirm;
+    private transient Button manualIpHelp;
+    private transient Button manualIpBack;
+    private transient LinearLayout helpLayout;
+    private transient Button helpCloseButton;
+    private transient EditText ipField;
     private transient Button bridgeDiscoveryCancelButton;
     private transient Button quickButton;
     private transient Button customButton;
@@ -99,11 +108,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient Button noButton;
     private transient LinearLayout aboutLayout;
     private transient Button aboutButton;
+    private transient Button aboutCloseButton;
     private transient Button contactMe;
     private transient Button support;
 
     enum UIState {
         Welcome,
+        ManualSetup,
         Search,
         Results,
         Connecting,
@@ -136,6 +147,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         bridgeDiscoveryButton.setOnClickListener(this);
         cheatButton = findViewById(R.id.cheat_button);
         cheatButton.setOnClickListener(this);
+        manualIp = findViewById(R.id.manual_ip);
+        manualIp.setOnClickListener(this);
+        manualIpConfirm = findViewById(R.id.manual_ip_confirm);
+        manualIpConfirm.setOnClickListener(this);
+        manualIpHelp = findViewById(R.id.manual_ip_help);
+        manualIpHelp.setOnClickListener(this);
+        manualIpBack = findViewById(R.id.manual_ip_back);
+        manualIpBack.setOnClickListener(this);
+        helpLayout = findViewById(R.id.help_layout);
+        helpCloseButton = findViewById(R.id.close_help);
+        helpCloseButton.setOnClickListener(this);
+        ipField = findViewById(R.id.ip_field);
         bridgeDiscoveryCancelButton = findViewById(R.id.bridge_discovery_cancel_button);
         bridgeDiscoveryCancelButton.setOnClickListener(this);
         quickButton = findViewById(R.id.quick_setup_button);
@@ -153,6 +176,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         aboutLayout = findViewById(R.id.about_layout);
         aboutButton = findViewById(R.id.about_button);
         aboutButton.setOnClickListener(this);
+        aboutCloseButton = findViewById(R.id.about_close_button);
+        aboutCloseButton.setOnClickListener(this);
         contactMe = findViewById(R.id.contact_me);
         contactMe.setOnClickListener(this);
         support = findViewById(R.id.support);
@@ -221,9 +246,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         bridgeDiscoveryListView.setAdapter(new BridgeDiscoveryResultAdapter(getApplicationContext(), results));
                         bridgeDiscoveryResults = results;
                         Log.i(TAG, "Bridge discovery found " + results.size() + " bridge(s) in the network");
-
-                        updateUI(UIState.Results);
-
+                        if(results.size() == 0)
+                            updateUI(UIState.Error);
+                        else
+                            updateUI(UIState.Results);
                     } else if (returnCode == BridgeDiscovery.ReturnCode.STOPPED) {
                         Log.i(TAG, "Bridge discovery stopped");
                         updateUI(UIState.Welcome);
@@ -259,10 +285,12 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
         final String bridgeIp = bridgeDiscoveryResults.get(i).getIp();
         Log.i(TAG, "Selected Bridge " + bridgeIp);
-        //connectToBridge(bridgeIp);
+        connectToBridge(bridgeIp);
+    }
+
+    private void connectToBridge(final String bridgeIp){
         Log.d(TAG, "Sending request for this devicetype: " + "HueEdge#" + android.os.Build.MODEL);
         final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
         assert job != null;
@@ -274,10 +302,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void run() {
                 handler.post(new Runnable() {
-                                        public void run() {
+                    public void run() {
                         try {
                             backgroundAuthRequestTask = new sendAuthRequestTask<>((SetupActivity) ctx);
-                            // PerformBackgroundTask this class is the class that extends AsynchTask
+                            // PerformBackgroundTask this class is the class that extends AsyncTask
                             backgroundAuthRequestTask.execute(job, bridgeIp);
                         } catch (Exception ex) {
                             Log.e(TAG, "Could not start background auth request async task");
@@ -348,6 +376,28 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "getInstance() returns cheat bridge:" + HueBridge.getInstance(ctx));
             updateUI(UIState.Settings);
         }
+        else if (view == manualIp) {
+            updateUI(UIState.ManualSetup);
+        }
+        else if (view == manualIpConfirm) {
+            String ip = ipField.getText().toString();
+            if (Patterns.IP_ADDRESS.matcher(ip).matches())
+                connectToBridge(ip);
+            else {
+                String toastString = ctx.getString(R.string.toast_ip_mistake);
+                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            }
+        }
+        else if (view == manualIpHelp) {
+            helpLayout.setVisibility(View.VISIBLE);
+            aboutLayout.setVisibility(View.GONE);
+        }
+        else if (view == manualIpBack) {
+            updateUI(UIState.Welcome);
+        }
+        else if (view == helpCloseButton) {
+            helpLayout.setVisibility(View.GONE);
+        }
         else if (view == bridgeDiscoveryCancelButton) {
             stopBridgeDiscovery();
             requestAmount = -1;
@@ -374,16 +424,11 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             updateUI(UIState.Final);
         }
         else if (view == aboutButton){
-            if (!aboutDisplayed){
-                aboutLayout.setVisibility(View.VISIBLE);
-                aboutButton.setText(ctx.getString(R.string.about_button_close_text));
-                aboutDisplayed = true;
-            }
-            else{
-                aboutLayout.setVisibility(View.GONE);
-                aboutButton.setText(ctx.getString(R.string.about_button_text));
-                aboutDisplayed = false;
-            }
+            aboutLayout.setVisibility(View.VISIBLE);
+            helpLayout.setVisibility(View.GONE);
+        }
+        else if (view == aboutCloseButton){
+            aboutLayout.setVisibility(View.GONE);
         }
         else if (view == contactMe){
             Intent email = new Intent(Intent.ACTION_SEND);
@@ -414,6 +459,11 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 progressBar.setVisibility(View.GONE);
                 bridgeDiscoveryButton.setVisibility(View.GONE);
                 cheatButton.setVisibility(View.GONE);
+                manualIp.setVisibility(View.GONE);
+                manualIpConfirm.setVisibility(View.GONE);
+                manualIpHelp.setVisibility(View.GONE);
+                manualIpBack.setVisibility(View.GONE);
+                ipField.setVisibility(View.GONE);
                 bridgeDiscoveryCancelButton.setVisibility(View.GONE);
                 quickButton.setVisibility(View.GONE);
                 customButton.setVisibility(View.GONE);
@@ -423,6 +473,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 noButton.setVisibility(View.GONE);
                 aboutLayout.setVisibility(View.GONE);
                 aboutButton.setText(ctx.getString(R.string.about_button_text));
+                helpLayout.setVisibility(View.GONE);
 
                 switch (state) {
                     case Welcome:
@@ -430,6 +481,14 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         bridgeDiscoveryButton.setText(getResources().getText(R.string.fragment_welcome_button));
                         statusTextView.setText(getResources().getString(R.string.fragment_welcome_label));
                         cheatButton.setVisibility(View.VISIBLE);
+                        manualIp.setVisibility(View.VISIBLE);
+                        break;
+                    case ManualSetup:
+                        statusTextView.setText(getResources().getString(R.string.fragment_manual_label));
+                        manualIpConfirm.setVisibility(View.VISIBLE);
+                        manualIpHelp.setVisibility(View.VISIBLE);
+                        manualIpBack.setVisibility(View.VISIBLE);
+                        ipField.setVisibility(View.VISIBLE);
                         break;
                     case Search:
                         bridgeDiscoveryCancelButton.setVisibility(View.VISIBLE);
@@ -477,6 +536,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     case Not_supported:
                         statusTextView.setText(getResources().getString(R.string.fragment_not_supported_label));
                         break;
+                    default:
+                        Log.e(TAG, "Unknown UI fragment");
                 }
             }
         });

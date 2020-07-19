@@ -1,6 +1,7 @@
 package com.ize.hueedge.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -87,9 +88,17 @@ public class EditActivity extends AppCompatActivity {
         catch (NullPointerException ex){
             Log.e(TAG, "Trying to enter edit activity but there is no instance of HueBridge");
             ex.printStackTrace();
+            return;
         }
-        hueStatus.setText(ip);
-
+        hueStatus.setText(ctx.getString(R.string.hue_status, ip));
+        hueStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent setupIntent = new Intent(ctx, SetupActivity.class);
+                setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(setupIntent);
+            }
+        });
         for (int i = 0; i < 10; i++) {
             if (contents.containsKey(currentCategory)) {
                 final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);

@@ -397,7 +397,7 @@ public class HueBridge implements Serializable {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    //Create a JsonObject to send to hue bridge
+    //Create a JsonObject to send to Hue Bridge
     public static JSONObject createJsonOnObject(String k, Object v) {
         try {
             return new JSONObject().put(k, v);

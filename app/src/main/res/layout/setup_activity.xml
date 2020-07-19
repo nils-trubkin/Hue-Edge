@@ -8,18 +8,6 @@
     android:background="@color/blurry_background_under_layer"
     tools:context=".activity.SetupActivity">
 
-    <Button
-        android:id="@+id/about_button"
-        android:layout_width="@dimen/about_button_width"
-        android:layout_height="@dimen/setup_button_height"
-        android:layout_gravity="end"
-        android:layout_marginTop="@dimen/about_top_margin"
-        android:layout_marginEnd="@dimen/about_right_margin"
-        android:background="@drawable/setup_button_background"
-        android:text="@string/about_button_text"
-        android:textAllCaps="false"
-        android:textSize="@dimen/setup_button_text_size" />
-
     <ImageView
         android:id="@+id/backgroundView"
         android:layout_width="fill_parent"
@@ -75,6 +63,21 @@
             android:textColor="@color/white"
             android:textSize="@dimen/setup_status_text_size"
             tools:text="@string/fragment_auth_label" />
+
+        <EditText
+            android:id="@+id/ip_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="ipAddress, ip"
+            android:background="@drawable/setup_button_background"
+            android:digits="0123456789."
+            android:elegantTextHeight="true"
+            android:ems="10"
+            android:hint="@string/fragment_manual_ip_field"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:visibility="gone" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -122,7 +125,56 @@
             android:background="@drawable/setup_button_background"
             android:text="@string/fragment_welcome_button_cheat"
             android:textAllCaps="false"
+            android:textColor="#FF0000"
             android:textSize="@dimen/setup_button_text_size" />
+
+        <Button
+            android:id="@+id/manual_ip"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button_manual_ip"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/manual_ip_confirm"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button_manual_ip_confirm"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/manual_ip_help"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button_manual_ip_help"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/manual_ip_back"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/setup_button_margin_top"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/fragment_welcome_button_manual_ip_back"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/bridge_discovery_cancel_button"
@@ -224,7 +276,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/about_text_view"
@@ -262,6 +314,82 @@
             android:textAllCaps="false"
             android:textSize="@dimen/setup_button_text_size" />
 
+        <Button
+            android:id="@+id/about_close_button"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/ip_help_close_button_margin_top_bottom"
+            android:layout_marginBottom="@dimen/ip_help_close_button_margin_top_bottom"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/close_about_text"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size" />
+
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/help_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/help_window_margin_top"
+        android:layout_marginBottom="@dimen/about_window_margin_bottom"
+        android:background="@drawable/about_background"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:text="@string/edge_hue_name"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_big_logo_text_size"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/help_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/about_window_margin_left_right"
+            android:layout_marginTop="@dimen/about_window_margin_top"
+            android:layout_marginRight="@dimen/about_window_margin_left_right"
+            android:layout_marginBottom="@dimen/about_window_margin_top"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/manual_ip_help_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/about_text_text_size" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ip_help_description"
+            app:srcCompat="@drawable/manual_ip_help_graphic" />
+
+        <Button
+            android:id="@+id/close_help"
+            android:layout_width="@dimen/about_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/ip_help_close_button_margin_top_bottom"
+            android:layout_marginBottom="@dimen/ip_help_close_button_margin_top_bottom"
+            android:background="@drawable/setup_button_background"
+            android:text="@string/close_help_text"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/about_button"
+        android:layout_width="@dimen/about_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/about_top_margin"
+        android:layout_marginEnd="@dimen/about_right_margin"
+        android:background="@drawable/setup_button_background"
+        android:text="@string/about_button_text"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
