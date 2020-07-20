@@ -31,7 +31,8 @@ public class DragEventListener implements View.OnDragListener {
 
         // Defines a variable to store the action type for the incoming event
         final int action = event.getAction();
-
+        EditActivity instance = (EditActivity) ctx;
+        BridgeResource br;
         // Handles each of the expected events
         switch(action) {
 
@@ -42,6 +43,7 @@ public class DragEventListener implements View.OnDragListener {
 
                     // Invalidate the view to force a redraw in the new tint
                     v.invalidate();
+
 
                     // returns true to indicate that the View can accept the dragged data.
                     return true;
@@ -54,7 +56,8 @@ public class DragEventListener implements View.OnDragListener {
 
             case DragEvent.ACTION_DRAG_ENTERED:
 
-                // Invalidate the view to force a redraw in the new tint
+                br = (BridgeResource) event.getLocalState();
+                instance.displaySlotAsFull(index, br);
                 v.invalidate();
 
                 return true;
@@ -67,6 +70,7 @@ public class DragEventListener implements View.OnDragListener {
             case DragEvent.ACTION_DRAG_EXITED:
 
                 // Invalidate the view to force a redraw in the new tint
+                instance.panelUpdateIndex(index);
                 v.invalidate();
 
                 return true;
@@ -74,7 +78,16 @@ public class DragEventListener implements View.OnDragListener {
             case DragEvent.ACTION_DROP:
 
                 // Gets the item containing the dragged data
-                BridgeResource br = (BridgeResource) event.getLocalState();
+                // Gets the item containing the dragged data
+                ClipData.Item item = event.getClipData().getItemAt(0);
+
+                // Gets the text data from the item.
+                int dragData = Integer.parseInt((String) item.getText());
+
+                if (dragData >= 0){
+                    instance.clearSlot(dragData);
+                }
+                br = (BridgeResource) event.getLocalState();
                 HueBridge bridge;
                 try {
                     bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
@@ -83,10 +96,9 @@ public class DragEventListener implements View.OnDragListener {
                     ex.printStackTrace();
                     return false;
                 }
-                EditActivity instance = (EditActivity) ctx;
-                bridge.addToCategory(ctx, instance.getCurrentCategory(), br, index);
-                instance.panelUpdate();
 
+                bridge.addToCategory(ctx, instance.getCurrentCategory(), br, index);
+                instance.panelUpdateIndex(index);
                 // Invalidates the view to force a redraw
                 v.invalidate();
 
