@@ -1,4 +1,4 @@
-package com.ize.hueedge.activity;
+package com.nilstrubkin.hueedge.activity;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -17,12 +17,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ize.hueedge.DragEventListener;
-import com.ize.hueedge.HueEdgeProvider;
-import com.ize.hueedge.HueBridge;
-import com.ize.hueedge.R;
-import com.ize.hueedge.BridgeResource;
-import com.ize.hueedge.adapter.ResourceArrayAdapter;
+import com.nilstrubkin.hueedge.DragEventListener;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
+import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.R;
+import com.nilstrubkin.hueedge.BridgeResource;
+import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -301,7 +301,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void displaySlotAsEmpty (Button btn, Button btnDelete, TextView tw) {
-        tw.setText("-----------------------");
+        tw.setText("");
         btn.setText("");
         btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
         btnDelete.setVisibility(View.GONE);

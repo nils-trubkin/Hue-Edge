@@ -1,4 +1,4 @@
-package com.ize.hueedge;
+package com.nilstrubkin.hueedge;
 
 import android.content.Context;
 import android.content.res.Resources;

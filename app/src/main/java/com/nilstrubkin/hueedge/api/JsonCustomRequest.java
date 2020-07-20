@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ize.hueedge.api;
+package com.nilstrubkin.hueedge.api;
 
 import androidx.annotation.Nullable;
 

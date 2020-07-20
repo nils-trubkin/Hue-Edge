@@ -1,4 +1,4 @@
-package com.ize.hueedge.activity;
+package com.nilstrubkin.hueedge.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,12 +29,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.ize.hueedge.HueEdgeProvider;
-import com.ize.hueedge.HueBridge;
-import com.ize.hueedge.R;
-import com.ize.hueedge.adapter.BridgeDiscoveryResultAdapter;
-import com.ize.hueedge.api.JsonCustomRequest;
-import com.ize.hueedge.api.RequestQueueSingleton;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
+import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.R;
+import com.nilstrubkin.hueedge.adapter.BridgeDiscoveryResultAdapter;
+import com.nilstrubkin.hueedge.api.JsonCustomRequest;
+import com.nilstrubkin.hueedge.api.RequestQueueSingleton;
 import com.philips.lighting.hue.sdk.wrapper.HueLog;
 import com.philips.lighting.hue.sdk.wrapper.Persistence;
 import com.philips.lighting.hue.sdk.wrapper.discovery.BridgeDiscovery;

@@ -1,4 +1,4 @@
-package com.ize.hueedge.adapter;
+package com.nilstrubkin.hueedge.adapter;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -15,11 +15,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.ize.hueedge.HueBridge;
-import com.ize.hueedge.HueEdgeProvider;
-import com.ize.hueedge.R;
-import com.ize.hueedge.BridgeResource;
-import com.ize.hueedge.activity.EditActivity;
+import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
+import com.nilstrubkin.hueedge.R;
+import com.nilstrubkin.hueedge.BridgeResource;
+import com.nilstrubkin.hueedge.activity.EditActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;

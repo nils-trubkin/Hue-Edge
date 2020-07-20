@@ -1,4 +1,4 @@
-package com.ize.hueedge.api;
+package com.nilstrubkin.hueedge.api;
 
 import android.content.Context;
 

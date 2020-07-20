@@ -1,4 +1,4 @@
-package com.ize.hueedge;
+package com.nilstrubkin.hueedge;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,8 +11,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.ize.hueedge.api.JsonCustomRequest;
-import com.ize.hueedge.api.RequestQueueSingleton;
+import com.nilstrubkin.hueedge.api.JsonCustomRequest;
+import com.nilstrubkin.hueedge.api.RequestQueueSingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;

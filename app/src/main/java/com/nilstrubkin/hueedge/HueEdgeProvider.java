@@ -1,4 +1,4 @@
-package com.ize.hueedge;
+package com.nilstrubkin.hueedge;
 
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -12,10 +12,10 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import com.ize.hueedge.activity.SetupActivity;
-import com.ize.hueedge.service.LongClickBrightnessSliderService;
-import com.ize.hueedge.service.LongClickColorSliderService;
-import com.ize.hueedge.service.LongClickSaturationSliderService;
+import com.nilstrubkin.hueedge.activity.SetupActivity;
+import com.nilstrubkin.hueedge.service.LongClickBrightnessSliderService;
+import com.nilstrubkin.hueedge.service.LongClickColorSliderService;
+import com.nilstrubkin.hueedge.service.LongClickSaturationSliderService;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -41,11 +41,11 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
 
-    private static final String ACTION_REMOTE_LONG_CLICK = "com.ize.hueedge.ACTION_REMOTE_LONG_CLICK";
-    private static final String ACTION_REMOTE_CLICK = "com.ize.hueedge.ACTION_REMOTE_CLICK";
-    private static final String ACTION_PULL_TO_REFRESH = "com.ize.hueedge.ACTION_PULL_TO_REFRESH";
-    protected static final String ACTION_RECEIVE_HUE_STATE = "com.ize.hueedge.ACTION_RECEIVE_HUE_STATE";
-    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.ize.hueedge.ACTION_RECEIVE_HUE_REPLY";
+    private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
+    private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
+    private static final String ACTION_PULL_TO_REFRESH = "com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH";
+    protected static final String ACTION_RECEIVE_HUE_STATE = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE";
+    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY";
     private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
     private String LIGHTS;
@@ -242,7 +242,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_demo); // R.layout.main_view_no_bridge); TODO demo
+                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
             return contentView;
         }
 

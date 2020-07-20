@@ -1,4 +1,4 @@
-package com.ize.hueedge;
+package com.nilstrubkin.hueedge;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 
-import com.ize.hueedge.activity.EditActivity;
+import com.nilstrubkin.hueedge.activity.EditActivity;
 
 import java.util.Objects;
 

@@ -18,7 +18,7 @@
 
 
     <!-- Strings used for fragments for navigation -->
-    <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup\nLet\'s connect to your Philips Hue Bridge</string>
+    <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup\n\nLet\'s connect to your Philips Hue Bridge</string>
     <string name="fragment_manual_label">Please enter the IP address of your Philips Hue Bridge</string>
     <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
     <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
@@ -55,7 +55,7 @@
     <string name="list_view_ip_label">IP: %1$s</string>
     <string name="list_view_id_label">ID: %1$s</string>
 
-    <string name="no_config">NO CONFIG</string>
+    <string name="no_config">NO BRIDGE CONFIGURED</string>
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s</string>
 
