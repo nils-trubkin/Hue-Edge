@@ -57,7 +57,7 @@ import java.util.TimerTask;
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
 
-    private transient static final int REQUEST_AMOUNT = 10;
+    private transient static final int REQUEST_AMOUNT = 60;
 
     /*
 
@@ -264,13 +264,15 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     static private void sendAuthRequest(SetupActivity ins, JSONObject job, String bridgeIp){
         if(ins.requestAmount == 0){
-            ins.updateUI(UIState.Error);
             ins.timer.cancel();
+            ins.progressBar.clearAnimation();
+            ins.updateUI(UIState.Error);
             return;
         }
         else if(ins.requestAmount == -1){
-            ins.updateUI(UIState.Results);
             ins.timer.cancel();
+            ins.progressBar.clearAnimation();
+            ins.updateUI(UIState.Results);
             return;
         }
         ins.statusTextView.setText(ins.getResources().getString(R.string.fragment_auth_label, ins.requestAmount));
@@ -366,7 +368,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         if (view == bridgeDiscoveryButton) {
             startBridgeDiscovery();
         }
-        else if (view == cheatButton) {
+        /*else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
             HueBridge.getInstance(
                     ctx,
@@ -375,7 +377,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     .requestHueState(this);
             Log.d(TAG, "getInstance() returns cheat bridge:" + HueBridge.getInstance(ctx));
             updateUI(UIState.Settings);
-        }
+        }*/
         else if (view == manualIp) {
             updateUI(UIState.ManualSetup);
         }
@@ -480,7 +482,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         bridgeDiscoveryButton.setVisibility(View.VISIBLE);
                         bridgeDiscoveryButton.setText(getResources().getText(R.string.fragment_welcome_button));
                         statusTextView.setText(getResources().getString(R.string.fragment_welcome_label));
-                        cheatButton.setVisibility(View.VISIBLE);
+                        //cheatButton.setVisibility(View.VISIBLE);
                         manualIp.setVisibility(View.VISIBLE);
                         break;
                     case ManualSetup:
@@ -509,7 +511,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         bridgeDiscoveryButton.setVisibility(View.VISIBLE);
                         bridgeDiscoveryButton.setText(getResources().getText(R.string.fragment_error_button));
                         statusTextView.setText(getResources().getString(R.string.fragment_error_label));
-                        cheatButton.setVisibility(View.VISIBLE);
+                        //cheatButton.setVisibility(View.VISIBLE);
                         break;
                     case Auth:
                         statusTextView.setText(getResources().getString(R.string.fragment_auth_label));

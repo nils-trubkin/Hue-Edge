@@ -85,7 +85,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        String ip = null;
+        String ip;
         try {
             ip = Objects.requireNonNull(HueBridge.getInstance(ctx)).getIp();
         }
@@ -180,6 +180,10 @@ public class EditActivity extends AppCompatActivity {
                 Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
                 ex.printStackTrace();
             }
+            TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
+            final Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+            Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+
             if (slotIsFilled) {
                 final BridgeResource resource;
                 try {
@@ -192,14 +196,12 @@ public class EditActivity extends AppCompatActivity {
                 assert resource != null;
                 displaySlotAsFull(i, resource);
                 final int finalI = i;
-                final Button btn = findViewById(HueEdgeProvider.btnArr[i]);
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         clearSlot(finalI);
                     }
                 });
-                Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
                 btnDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -213,7 +215,6 @@ public class EditActivity extends AppCompatActivity {
                     btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                 }
                 btn.setOnDragListener(null);
-                TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
                 tw.setOnDragListener(null);
                 // Sets a long click listener for the ImageView using an anonymous listener object that
                 // implements the OnLongClickListener interface
@@ -259,24 +260,14 @@ public class EditActivity extends AppCompatActivity {
                                     resource,      // pass resource
                                     0          // flags (not currently used, set to 0)
                             );
-                        } else {
-                            return false;
                         }
+                        else
+                            return false;
                     }
                 });
             } else {
-                TextView tw = findViewById(HueEdgeProvider.btnTextArr[i]);
-                tw.setText("-----------------------");
-                Button btn = findViewById(HueEdgeProvider.btnArr[i]);
-                btn.setText("");
-                btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-                Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-                btnDelete.setVisibility(View.GONE);
-
-                // Creates a new drag event listener
+                displaySlotAsEmpty(btn, btnDelete, tw);
                 DragEventListener dragListen = new DragEventListener(ctx, i);
-                // Sets the drag event listener for the View
                 btn.setOnDragListener(dragListen);
                 tw.setOnDragListener(dragListen);
                 btn.setOnTouchListener(null);
@@ -296,24 +287,23 @@ public class EditActivity extends AppCompatActivity {
         }
         currentCategoryContents.remove(position);
         HueEdgeProvider.saveAllConfiguration(ctx);
-        displaySlotAsEmpty(position);
         Button btn = findViewById(HueEdgeProvider.btnArr[position]);
+        TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
+        Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
+        displaySlotAsEmpty(btn, btnDelete, tw);
         // Creates a new drag event listener
         DragEventListener dragListen = new DragEventListener(ctx, position);
         // Sets the drag event listener for the View
         btn.setOnDragListener(dragListen);
-        TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
+
         tw.setOnDragListener(dragListen);
         btn.setOnTouchListener(null);
     }
 
-    public void displaySlotAsEmpty (int position) {
-        TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
-        tw.setText("---------------");
-        Button btn = findViewById(HueEdgeProvider.btnArr[position]);
+    public void displaySlotAsEmpty (Button btn, Button btnDelete, TextView tw) {
+        tw.setText("-----------------------");
         btn.setText("");
         btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
-        Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
         btnDelete.setVisibility(View.GONE);
     }
 

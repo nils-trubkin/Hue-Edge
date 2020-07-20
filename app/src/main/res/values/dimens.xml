@@ -57,6 +57,7 @@
     <dimen name="about_window_margin_top">30dp</dimen>
     <dimen name="about_window_margin_bottom">100dp</dimen>
     <dimen name="about_window_margin_left_right">@dimen/curved_edge_margin</dimen>
+    <dimen name="about_text_margin_top">70dp</dimen>
     <dimen name="about_text_text_size">18sp</dimen>
     <dimen name="help_window_margin_top">100dp</dimen>
     <dimen name="ip_help_close_button_margin_top_bottom">20dp</dimen>

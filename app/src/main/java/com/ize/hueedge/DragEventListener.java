@@ -9,15 +9,13 @@ import android.view.View;
 
 import com.ize.hueedge.activity.EditActivity;
 
-import java.lang.reflect.Array;
-import java.util.Collections;
 import java.util.Objects;
 
 public class DragEventListener implements View.OnDragListener {
 
-    private transient static final String TAG = DragEventListener.class.getSimpleName();
-    private transient Context ctx;
-    private transient final int index;
+    private final transient static  String TAG = DragEventListener.class.getSimpleName();
+    private final transient Context ctx;
+    private final transient int index;
 
     public DragEventListener (Context ctx, int index){
         super();
@@ -129,4 +127,4 @@ public class DragEventListener implements View.OnDragListener {
 
         return false;
     }
-};
+}

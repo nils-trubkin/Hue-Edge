@@ -277,7 +277,7 @@
     <LinearLayout
         android:id="@+id/about_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/about_window_margin_top"
         android:layout_marginBottom="@dimen/about_window_margin_bottom"
         android:background="@drawable/about_background"
@@ -295,7 +295,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/about_window_margin_left_right"
-            android:layout_marginTop="@dimen/about_window_margin_top"
+            android:layout_marginTop="@dimen/about_text_margin_top"
             android:layout_marginRight="@dimen/about_window_margin_left_right"
             android:fontFamily="sans-serif-light"
             android:gravity="center"

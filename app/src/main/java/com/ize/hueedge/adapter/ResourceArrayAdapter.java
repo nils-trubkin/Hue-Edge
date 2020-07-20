@@ -3,7 +3,6 @@ package com.ize.hueedge.adapter;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -147,9 +146,9 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                             resource,      // pass resource
                             0          // flags (not currently used, set to 0)
                     );
-                } else {
-                    return false;
                 }
+                else
+                    return false;
             }
         });
             // Sets a long click listener for the ImageView using an anonymous listener object that
