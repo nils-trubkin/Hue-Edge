@@ -4,7 +4,7 @@
 
 ### Android ###
 # Built application files
-#*.apk
+*.apk
 *.ap_
 *.aab
 
@@ -18,7 +18,7 @@
 bin/
 gen/
 out/
-#release/
+release/
 
 # Gradle files
 .gradle/
