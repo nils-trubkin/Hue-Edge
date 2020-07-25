@@ -1,11 +1,17 @@
 package com.nilstrubkin.hueedge;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.net.DhcpInfo;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -22,19 +28,35 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeoutException;
 
 import static android.content.Context.NSD_SERVICE;
 
 public class DiscoveryEngine {
 
     private transient static final String TAG = DiscoveryEngine.class.getSimpleName();
-    private final Executor executor;
-    private final Handler resultHandler;
+
+    public transient static final int REQUEST_AMOUNT = 10;
+
+    private transient final Executor executor;
+    private transient final Handler resultHandler;
+
+    int requestAmount; //Requests to send
     //parser TODO
 
     public DiscoveryEngine(Executor executor, Handler resultHandler){
@@ -42,13 +64,177 @@ public class DiscoveryEngine {
         this.resultHandler = resultHandler;
     }
 
-    public void initializeSynchronousDnsSDDiscovery(
-            final Context ctx,
-            final DiscoveryCallback<DiscoveryEntry> callback){
-        Log.d(TAG, "Initialize mDNS discovery...");
-        executor.execute(new Runnable() {
+    public interface DiscoveryCallback<T> {
+        void onComplete(Result<T> result);
+    }
+
+    private void notifyResult(
+            final Result<DiscoveryEntry> result,
+            final DiscoveryCallback<DiscoveryEntry> callback
+    ) {
+        resultHandler.post(new Runnable() {
             @Override
             public void run() {
+                if (Thread.currentThread().isInterrupted())
+                    return;
+                callback.onComplete(result);
+            }
+        });
+    }
+
+    private void notifyAuthResult(
+            final Result<AuthEntry> result,
+            final DiscoveryCallback<AuthEntry> callback
+    ) {
+        resultHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (Thread.currentThread().isInterrupted())
+                    return;
+                callback.onComplete(result);
+            }
+        });
+    }
+
+    public void connectToBridge(
+            final Context ctx,
+            final ExecutorService executorService,
+            final DiscoveryCallback<AuthEntry> callback,
+            final String bridgeIp,
+            final TextView statusTextView,
+            final ProgressBar progressBar){
+        Log.d(TAG, "Sending request for this devicetype: " + "HueEdge#" + android.os.Build.MODEL);
+        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
+        assert job != null;
+        requestAmount = REQUEST_AMOUNT; //Requests to send
+        final Timer timer = new Timer();
+        TimerTask periodicalAuthTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
+                    timer.cancel();
+                    return;
+                }
+                executorService.submit(new Runnable() {
+                    public void run() {
+                        if (Thread.currentThread().isInterrupted())
+                            return;
+                        try {
+                            if (requestAmount == 0) {
+                                Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
+                                notifyAuthResult(errorResult, callback);
+                                timer.cancel();
+                            }
+                            else {
+                                statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, requestAmount));
+                                sendAuthRequest(ctx, bridgeIp, callback);
+                            }
+                        } catch (Exception ex) {
+                            Log.e(TAG, "Could not start background auth request task");
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
+        };
+        progressBar.setMax(10000);
+        SetupActivity.ProgressBarAnimation anim = new SetupActivity.ProgressBarAnimation(progressBar, 0, progressBar.getMax());
+        anim.setDuration(1000 * REQUEST_AMOUNT);
+        progressBar.startAnimation(anim);
+        timer.schedule(periodicalAuthTask, 0, 1000); //execute every second
+    }
+
+    private void sendAuthRequest(
+            Context ctx,
+            final String ip,
+            final DiscoveryCallback<AuthEntry> callback){
+        /*if(ins.requestAmount == 0){
+            ins.timer.cancel();
+            ins.progressBar.clearAnimation();
+            ins.updateUI(SetupActivity.UIState.Error);
+            return;
+        }
+        else if(ins.requestAmount == -1){
+            ins.timer.cancel();
+            ins.progressBar.clearAnimation();
+            ins.updateUI(SetupActivity.UIState.Results);
+            return;
+        }*/
+
+        //ins.progressBar.incrementProgressBy(ins.progressBar.getMax() / REQUEST_AMOUNT);
+        Log.d(TAG, "requestAmount = " + requestAmount);
+        JsonCustomRequest jcr = getJsonAuthRequest(ctx, ip, callback);
+        Log.d(TAG, "changeHueState postRequest created for this ip " + ip);
+        // Add the request to the RequestQueue.
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jcr);
+        requestAmount--;
+    }
+
+    private JsonCustomRequest getJsonAuthRequest(
+            Context ctx,
+            final String ip,
+            final DiscoveryCallback<AuthEntry> callback){
+        final SetupActivity ins = (SetupActivity) ctx;
+        Log.d(TAG, "getJsonAuthRequest for this device: " + "HueEdge#" + android.os.Build.MODEL);
+        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
+        return new JsonCustomRequest(Request.Method.POST, "http://" + ip + "/api", job,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, "Auth request responds " + response.toString());
+                        Iterator<String> responseKeys; // iterator for response JSONObject
+                        String responseKey; // index for response JSONObject
+                        try {
+                            JSONObject jsonResponse = response.getJSONObject(0);
+                            responseKeys = jsonResponse.keys();
+                            if(responseKeys.hasNext()) {
+                                responseKey = responseKeys.next();
+                                if(responseKey.equals("success")){  //response key should be success
+                                    JSONObject usernameContainer = (JSONObject) jsonResponse.get("success");    // this should be JSONObject with username field
+                                    if(usernameContainer.keys().next().equals("username")) {
+                                        String username = usernameContainer.getString("username");
+                                        Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
+                                        AuthEntry authEntry = new AuthEntry(ip, username);
+                                        Result<AuthEntry> result = new Result.Success<>(authEntry);
+                                        notifyAuthResult(result, callback);
+                                        return;
+                                    }
+                                }
+                            }
+                            Log.e(TAG, "Unsuccessful! Check reply");
+                        } catch (JSONException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.toString());
+                    }
+                }
+        );
+    }
+
+    public void initializeFullDiscovery(
+            final Context ctx,
+            final ExecutorService executorService,
+            final DiscoveryCallback<DiscoveryEntry> callback){
+        initializeSynchronousDnsSDDiscovery(ctx, executorService, callback);
+        initializeSynchronousNUPNPDiscovery(ctx, executorService, callback);
+        initializeSynchronousUPNPDiscovery(executorService, callback);
+        initializeIpScan(ctx, executorService, callback);
+        initializeTest(executorService);
+    }
+
+    private void initializeSynchronousDnsSDDiscovery(
+            final Context ctx,
+            final ExecutorService executorService,
+            final DiscoveryCallback<DiscoveryEntry> callback){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Initializing mDNS discovery...");
                 final String SERVICE_TYPE = "_hue._tcp.";
                 final NsdManager nsdManager = (NsdManager) ctx.getSystemService(NSD_SERVICE);
                 NsdManager.DiscoveryListener discoveryListener =
@@ -58,6 +244,48 @@ public class DiscoveryEngine {
             }
         });
     }
+
+    private void initializeTest(ExecutorService executorService){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    try {
+                        Thread.sleep(1000);
+                        Log.d(TAG,"Executing");
+                        if (Thread.currentThread().isInterrupted()){
+                            Log.d(TAG,"interrupted if ex");
+                            break;
+                        }
+                    } catch (InterruptedException e) {
+                        Log.d(TAG,"interrupted ex");
+                        return;
+                    }
+
+                }
+            }
+        });
+    }
+
+    public Runnable testRunnable = new Runnable() {
+        @Override
+        public void run() {
+            while (true){
+                try {
+                    Thread.sleep(1000);
+                    Log.d(TAG,"Executing");
+                    if(Thread.currentThread().isInterrupted()){
+                        Log.d(TAG,"interrupted if ex");
+                        break;
+                    }
+                } catch (InterruptedException e) {
+                    Log.d(TAG,"interrupted ex");
+                    return;
+                }
+
+            }
+        }
+    };
 
     private NsdManager.DiscoveryListener initializeDnsSDDiscoveryListener(
             final NsdManager nsdManager,
@@ -72,6 +300,10 @@ public class DiscoveryEngine {
             }
             @Override
             public void onServiceFound(NsdServiceInfo service) {
+                if (Thread.currentThread().isInterrupted()) {
+                    nsdManager.stopServiceDiscovery(this);
+                    return;
+                }
                 // A service was found! Do something with it.
                 Log.d(TAG, "Service discovery success " + service);
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
@@ -99,7 +331,7 @@ public class DiscoveryEngine {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
                 Log.e(TAG, "Discovery failed: Error code:" + errorCode);
-                nsdManager.stopServiceDiscovery(this);
+                //nsdManager.stopServiceDiscovery(this);
             }
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
@@ -117,15 +349,18 @@ public class DiscoveryEngine {
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
                 // Called when the resolve fails. Use the error code to debug.
                 Log.e(TAG, "Resolve failed: " + errorCode);
-                Result<DiscoveryEntry> errorResult = new Result.Error<>(errorCode);
+                Resources.NotFoundException e = new Resources.NotFoundException("Error code: " + errorCode);
+                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
                 notifyResult(errorResult, callback);
             }
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+                if (Thread.currentThread().isInterrupted())
+                    return;
+                Log.d(TAG, "mDNS Resolve Succeeded. " + serviceInfo);
                 InetAddress host = serviceInfo.getHost();
                 try {
-                    parseDescriptionXml(host.getHostAddress(), callback);
+                    parseDescriptionXml(host, callback);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
@@ -135,13 +370,14 @@ public class DiscoveryEngine {
         };
     }
 
-    public void initializeSynchronousNUPNPDiscovery(
+    private void initializeSynchronousNUPNPDiscovery(
             final Context ctx,
+            final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
-        executor.execute(new Runnable() {
+        executorService.submit(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "Initialize NUPnP discovery...");
+                Log.d(TAG, "Initializing NUPnP discovery...");
                 String portal = "https://discovery.meethue.com";
                 JsonCustomRequest jcr = getJsonNUPNP(portal, callback);
                 RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jcr);
@@ -161,6 +397,7 @@ public class DiscoveryEngine {
                             try {
                                 JSONObject job = response.getJSONObject(i);
                                 String ip = job.getString("internalipaddress");
+                                Log.d(TAG, "NUPnP discovered a bridge: " + ip);
                                 parseDescriptionXml(ip, callback);
                                 /*Result<DiscoveryEntry> result = new Result.Success<>(entry);
                                 notifyResult(result, callback);*/
@@ -181,23 +418,193 @@ public class DiscoveryEngine {
         );
     }
 
-    public interface DiscoveryCallback<T> {
-        void onComplete(Result<T> result);
-    }
-
-    private void notifyResult(
-            final Result<DiscoveryEntry> result,
-            final DiscoveryCallback<DiscoveryEntry> callback
-    ) {
-        resultHandler.post(new Runnable() {
+    private void initializeSynchronousUPNPDiscovery(
+            final ExecutorService executorService,
+            final DiscoveryCallback<DiscoveryEntry> callback) {
+        executorService.submit(new Runnable() {
             @Override
             public void run() {
-                callback.onComplete(result);
+                Log.d(TAG, "Initializing UPnP discovery...");
+                try {
+                    byte[] sendData;
+                    final byte[] receiveData = new byte[1024];
+                    final int timeout = 5000; // 5 seconds according to Hue Bridge best practice
+
+                    /* our M-SEARCH data as a byte array */
+                    String MSEARCH = "M-SEARCH * HTTP/1.1\r\n" +
+                            "HOST: 239.255.255.250:1900\r\n" +
+                            "MAN: \"ssdp:discover\"\r\n" +
+                            "MX: 10\r\n" +
+                            "ST: ssdp:all\r\n" +  // Use this for all UPnP Devices
+                            "\r\n";
+                    sendData = MSEARCH.getBytes();
+
+                    /* create a packet from our data destined for 239.255.255.250:1900 */
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("239.255.255.250"), 1900);
+
+                    /* send packet to the socket we're creating */
+                    final DatagramSocket clientSocket = new DatagramSocket();
+                    clientSocket.setSoTimeout(timeout);
+                    clientSocket.send(sendPacket);
+
+                    /* recieve response and store in our receivePacket */
+                    final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+                    ArrayList<InetAddress> ipList = new ArrayList<>();
+                    long timeStart = System.currentTimeMillis();
+                    while (System.currentTimeMillis() - timeStart < timeout) {
+                        try {
+                            if (Thread.currentThread().isInterrupted()) {
+                                clientSocket.close();
+                                return;
+                            }
+                            clientSocket.receive(receivePacket);
+                            InetAddress ip = receivePacket.getAddress();
+                            if (!ipList.contains(ip)) {
+                                /* get the response as a string */
+                                String response = new String(receivePacket.getData());
+                                if (response.contains("IpBridge")) {
+                                    ipList.add(receivePacket.getAddress());
+                                    Log.d(TAG, "UPnP discovered bridge: " + ip.getHostAddress());
+                                    parseDescriptionXml(ip, callback);
+                                }
+                            }
+                        } catch (SocketTimeoutException e) {
+                            Log.d(TAG, "SocketTimeoutException, closing socket.");
+                            /* close the socket */
+                            clientSocket.close();
+                            return;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                            notifyResult(errorResult, callback);
+                        }
+                    }
+                    Log.d(TAG, "5 seconds passed, closing socket.");
+                    clientSocket.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                    notifyResult(errorResult, callback);
+                }
+                Log.d(TAG, "Done");
             }
         });
     }
 
-    private void parseDescriptionXml(String address, final DiscoveryCallback<DiscoveryEntry> callback) throws IOException {
+    private void initializeIpScan(
+            final Context ctx,
+            final ExecutorService executorService,
+            final DiscoveryCallback<DiscoveryEntry> callback){
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Initializing IP scan...");
+                WifiManager wifiManager = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+                int gateway = wifiManager.getDhcpInfo().gateway;
+                try {
+                    InetAddress inetAddress = InetAddress.getByAddress(extractBytes(dhcpInfo.ipAddress));
+                    NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
+                    for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                        /* not an IPv6 */
+                        if (!address.toString().contains(":")) {
+                            short netPrefix = address.getNetworkPrefixLength();
+                            //Log.d(TAG, address.toString());
+                            checkHosts(gateway, netPrefix, callback);
+                        }
+                    }
+                } catch (IOException e) {
+                    Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                    notifyResult(errorResult, callback);
+                }
+            }
+        });
+    }
+
+    private void checkHosts(int gateway, int prefix, final DiscoveryCallback<DiscoveryEntry> callback) {
+        final int clients = (int) (Math.pow(2, 32 - prefix) - 2);
+        Log.d(TAG, "Clients size: " + clients);
+        int netmask = generateMaskFromPrefix(prefix);
+        final int subnetAddress = getSubnetAddress(gateway, netmask);
+        Log.d(TAG, "Netmask is: " + getStringIpAddress(netmask));
+        Log.d(TAG, "Gateway is: " + getStringIpAddress(gateway));
+        Log.d(TAG, "subnetAddress is: " + getStringIpAddress(subnetAddress));
+        try {
+            int timeout = 5;
+            for (int i = 1; i <= clients; i++) {
+                if (Thread.currentThread().isInterrupted())
+                    return;
+                String host = getStringIpAddress(subnetAddress + swap(i));
+                if (InetAddress.getByName(host).isReachable(timeout)) {
+                    Log.d(TAG, "checkHosts() :: " + host + " is reachable");
+                    try {
+                        Log.d(TAG, "IP Scan discovered host: " + host);
+                        parseDescriptionXml(host, callback);
+                    } catch (IOException e) {
+                        Log.d(TAG,"Could not get description.xml from: " + host);
+                        Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                        notifyResult(errorResult, callback);
+                    }
+                }
+            }
+        } catch (UnknownHostException e) {
+            Log.d(TAG, "checkHosts() :: UnknownHostException e : "+e);
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            Log.d(TAG, "checkHosts() :: IOException e : "+e);
+            e.printStackTrace();
+        }
+    }
+
+    public int generateMaskFromPrefix(int prefix) {
+        int netmask = 0;
+        for (int i = 0; i < 32; i++){
+            netmask <<= 1;
+            if (i < prefix)
+                netmask++;
+        }
+        return swap(netmask);
+    }
+
+    public int swap (int value) {
+        int b1 = value & 0xff;
+        int b2 = (value >>  8) & 0xff;
+        int b3 = (value >> 16) & 0xff;
+        int b4 = (value >> 24) & 0xff;
+
+        return b1 << 24 | b2 << 16 | b3 << 8 | b4;
+    }
+
+    private byte[] extractBytes(int address){
+        byte[] result = new byte[4];
+        for (int i = 0; i < 4; i++){
+            result[i] = (byte) (address >> (i * 8) & 0xff);
+        }
+        return result;
+    }
+
+    private int getSubnetAddress(int gateway, int netmask) {
+        return gateway & netmask;
+    }
+
+    private String getStringIpAddress(int address){
+        return String.format(
+                Locale.ENGLISH,
+                "%d.%d.%d.%d",
+                (address & 0xff),
+                (address >> 8 & 0xff),
+                (address >> 16 & 0xff),
+                (address >> 24 & 0xff));
+    }
+
+    private void parseDescriptionXml(InetAddress address, final DiscoveryCallback<DiscoveryEntry> callback) throws IOException {
+        parseDescriptionXml(address.getHostAddress(), callback);
+    }
+
+    private void parseDescriptionXml(final String address, final DiscoveryCallback<DiscoveryEntry> callback) throws IOException {
         final URL url = new URL("http://" + address + "/description.xml");
         executor.execute(new Runnable() {
             @Override
@@ -207,7 +614,13 @@ public class DiscoveryEngine {
                     parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
                     parser.setInput(in, null);
                     parser.nextTag();
-                    Result<DiscoveryEntry> result = new Result.Success<>(readXml(parser));
+                    DiscoveryEntry de = readXml(parser);
+                    if (Thread.currentThread().isInterrupted()){
+                        in.close();
+                        return;
+                    }
+                    de.ip = address;
+                    Result<DiscoveryEntry> result = new Result.Success<>(de);
                     in.close();
                     notifyResult(result, callback);
                 } catch (Exception e){
@@ -221,6 +634,8 @@ public class DiscoveryEngine {
     private DiscoveryEntry readXml(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, "root");
         while (parser.next() != XmlPullParser.END_TAG) {
+            if (Thread.currentThread().isInterrupted())
+                return null;
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
@@ -237,8 +652,8 @@ public class DiscoveryEngine {
 
     private DiscoveryEntry readEntry(XmlPullParser parser) throws XmlPullParserException, IOException {
         parser.require(XmlPullParser.START_TAG, null, "device");
-        String friendlyName = null;
         String modelDescription = null;
+        String friendlyName = null;
         String serialNumber = null;
         String logoUrl = null; //TODO
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -257,7 +672,7 @@ public class DiscoveryEngine {
             }
         }
         if(modelDescription.contains("Philips hue"))
-            return new DiscoveryEntry(friendlyName, modelDescription, serialNumber, logoUrl);
+            return new DiscoveryEntry(friendlyName, serialNumber, logoUrl);
         else
             return null;
     }

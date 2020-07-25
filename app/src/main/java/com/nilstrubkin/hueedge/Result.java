@@ -13,14 +13,9 @@ public abstract class Result<T> {
 
     public static final class Error<T> extends Result<T> {
         public Exception exception;
-        public int errorCode;
 
         public Error(Exception exception) {
             this.exception = exception;
-        }
-
-        public Error(int errorCode) {
-            this.errorCode = errorCode;
         }
     }
 }

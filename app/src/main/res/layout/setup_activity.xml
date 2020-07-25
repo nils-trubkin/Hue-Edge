@@ -55,15 +55,19 @@
         app:layout_anchor="@+id/backgroundView"
         app:layout_anchorGravity="bottom|center">
 
-        <ImageView
-            android:id="@+id/pushlink_image"
-            android:layout_width="@dimen/setup_pushlink_image_dimen"
-            android:layout_height="@dimen/setup_pushlink_image_dimen"
-            android:contentDescription="@string/pushlink_image_description"
-            android:scaleType="fitXY"
-            android:translationX="@dimen/setup_pushlink_image_translation_x"
-            android:visibility="visible"
-            app:srcCompat="@drawable/pushlink_image" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setup_root_layout_height"
+        android:layout_marginLeft="@dimen/curved_edge_margin"
+        android:layout_marginRight="@dimen/curved_edge_margin"
+        android:layout_marginBottom="@dimen/curved_edge_margin"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_anchor="@+id/backgroundView"
+        app:layout_anchorGravity="bottom|center">
 
         <TextView
             android:id="@+id/status_text"
@@ -75,6 +79,14 @@
             android:textColor="@color/white"
             android:textSize="@dimen/setup_status_text_size"
             tools:text="@string/fragment_auth_label" />
+
+        <ListView
+            android:id="@+id/bridge_discovery_result_list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setup_discovery_results_height"
+            android:background="@drawable/list_background"
+            android:divider="@null"
+            android:visibility="visible" />
 
         <EditText
             android:id="@+id/ip_field"
@@ -90,25 +102,16 @@
             android:textAlignment="center"
             android:visibility="gone" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/setup_root_layout_height"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:padding="@dimen/curved_edge_margin"
-        app:layout_anchor="@+id/backgroundView"
-        app:layout_anchorGravity="bottom|center">
-
-        <ListView
-            android:id="@+id/bridge_discovery_result_list"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/setup_discovery_results_height"
-            android:background="@drawable/list_background"
-            android:divider="@null"
-            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/pushlink_image"
+            android:layout_width="@dimen/setup_pushlink_image_dimen"
+            android:layout_height="@dimen/setup_pushlink_image_dimen"
+            android:layout_gravity="center"
+            android:contentDescription="@string/pushlink_image_description"
+            android:scaleType="fitXY"
+            android:translationX="@dimen/setup_pushlink_image_translation_x"
+            android:visibility="visible"
+            app:srcCompat="@drawable/pushlink_image" />
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -288,7 +291,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/about_text_view"

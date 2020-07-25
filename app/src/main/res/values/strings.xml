@@ -21,6 +21,7 @@
     <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup\n\nLet\'s connect to your Philips Hue Bridge</string>
     <string name="fragment_manual_label">Please enter the IP address of your Philips Hue Bridge</string>
     <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
+    <string name="fragment_results_label">Please select your Hue Bridge</string>
     <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
     <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\nTry the manual IP setup\n\nIf you believe this is a bug please report</string>
     <string name="fragment_auth_label">Press the link button to authenticate\n\n%1$d</string>
