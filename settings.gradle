@@ -1,3 +1,2 @@
-include ':huesdk'
 rootProject.name='HueEdge'
 include ':app'

@@ -46,18 +46,6 @@
         android:textSize="@dimen/setup_big_logo_text_size" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/setup_root_layout_height"
-        android:layout_marginLeft="@dimen/curved_edge_margin"
-        android:layout_marginRight="@dimen/curved_edge_margin"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_anchor="@+id/backgroundView"
-        app:layout_anchorGravity="bottom|center">
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/setup_root_layout_height"
@@ -84,6 +72,7 @@
             android:id="@+id/bridge_discovery_result_list"
             android:layout_width="match_parent"
             android:layout_height="@dimen/setup_discovery_results_height"
+            android:layout_marginBottom="@dimen/setup_discovery_results_margin_bottom"
             android:background="@drawable/list_background"
             android:divider="@null"
             android:visibility="visible" />

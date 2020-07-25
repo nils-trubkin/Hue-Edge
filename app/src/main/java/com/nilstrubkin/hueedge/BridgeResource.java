@@ -66,8 +66,8 @@ public class BridgeResource implements Serializable {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
+                return "";
             }
-            assert bridge != null;
             try {
                 if (bridge.getSceneGroup(this).equals("0")) {
                     return "All";
@@ -86,8 +86,8 @@ public class BridgeResource implements Serializable {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
+                return "";
             }
-            assert bridge != null;
             return  bridge.getState().
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
@@ -108,8 +108,8 @@ public class BridgeResource implements Serializable {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
+                return 0;
             }
-            assert bridge != null;
             if (getActionRead().equals("any_on")){
                 if (bridge.getState().
                         getJSONObject(getCategory()).
@@ -140,13 +140,13 @@ public class BridgeResource implements Serializable {
         try {
             if (category.equals("scenes") || category.equals("groups")) {
                 Log.e(TAG,"You shouldn't use this!");
-                return 65536;
+                return 0;
             }
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
+                return 0;
             }
-            assert bridge != null;
             return  (bridge.getState().
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
@@ -155,7 +155,7 @@ public class BridgeResource implements Serializable {
         } catch (JSONException ex) {
             Log.e(TAG, "JSONException");
             ex.printStackTrace();
-            return 65536;
+            return 0;
         }
     }
 
@@ -168,8 +168,8 @@ public class BridgeResource implements Serializable {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
+                return 255;
             }
-            assert bridge != null;
             return  (bridge.getState().
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
@@ -188,8 +188,8 @@ public class BridgeResource implements Serializable {
                 HueBridge bridge = HueBridge.getInstance(ctx);
                 if(bridge == null){
                     Log.wtf(TAG, "bridge == null");
+                    return "";
                 }
-                assert bridge != null;
                 return  bridge.getState().
                         getJSONObject(getCategory()).
                         getJSONObject(getId()).

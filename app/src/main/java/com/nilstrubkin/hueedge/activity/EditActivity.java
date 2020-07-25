@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -72,15 +73,13 @@ public class EditActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                assert HueBridge.getInstance(ctx) != null;
                 if(HueBridge.getInstance(ctx) != null){
                     HueEdgeProvider.saveAllConfiguration(ctx);
                     String toastString = ctx.getString(R.string.toast_saved);
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
-                else{
+                else
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
-                }
                 finish();
             }
         });
@@ -187,13 +186,12 @@ public class EditActivity extends AppCompatActivity {
             if (slotIsFilled) {
                 final BridgeResource resource;
                 try {
-                    resource = Objects.requireNonNull(currentCategoryContents).get(i);
+                    resource = Objects.requireNonNull(currentCategoryContents.get(i));
                 } catch (NullPointerException ex) {
                     Log.e(TAG, "Failed to load filled slot");
                     ex.printStackTrace();
                     return;
                 }
-                assert resource != null;
                 displaySlotAsFull(i, resource);
                 final int finalI = i;
                 btn.setOnClickListener(new View.OnClickListener() {
@@ -245,26 +243,49 @@ public class EditActivity extends AppCompatActivity {
                         );
                     }
                 });*/
-                btn.setOnTouchListener(new View.OnTouchListener(){
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                            ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
-                            ClipData dragData = new ClipData(
-                                    resource.getName(ctx),
-                                    new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
-                                    item);
-                            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
-                            return v.startDragAndDrop(dragData,  // the data to be dragged
-                                    myShadow,  // the drag shadow builder
-                                    resource,      // pass resource
-                                    0          // flags (not currently used, set to 0)
-                            );
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                    btn.setOnTouchListener(new View.OnTouchListener(){
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
+                                ClipData dragData = new ClipData(
+                                        resource.getName(ctx),
+                                        new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                                        item);
+                                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                                return v.startDragAndDrop(dragData,  // the data to be dragged
+                                        myShadow,  // the drag shadow builder
+                                        resource,      // pass resource
+                                        0          // flags (not currently used, set to 0)
+                                );
+                            }
+                            else
+                                return false;
                         }
-                        else
-                            return false;
-                    }
-                });
+                    });
+                } else{
+                    btn.setOnTouchListener(new View.OnTouchListener(){
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
+                                ClipData dragData = new ClipData(
+                                        resource.getName(ctx),
+                                        new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                                        item);
+                                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                                return v.startDrag(dragData,  // the data to be dragged
+                                        myShadow,  // the drag shadow builder
+                                        resource,      // pass resource
+                                        0          // flags (not currently used, set to 0)
+                                );
+                            }
+                            else
+                                return false;
+                        }
+                    });
+                }
             } else {
                 displaySlotAsEmpty(btn, btnDelete, tw);
                 DragEventListener dragListen = new DragEventListener(ctx, i);

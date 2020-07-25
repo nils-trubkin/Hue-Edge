@@ -108,7 +108,7 @@ public class HueBridge implements Serializable {
         boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
         if (deleted) {
             String toastString = ctx.getString(R.string.toast_configuration_deleted);
-            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -399,8 +399,13 @@ public class HueBridge implements Serializable {
     //Set given pair to resourceUrl
     public void setHueState(Context context, final String resourceUrl, final String key, final Object value) {
         Log.d(TAG, "setHueState()");
-        JSONObject j = createJsonOnObject(key, value);
-        assert j != null;
+        JSONObject j;
+        try {
+            j = Objects.requireNonNull(createJsonOnObject(key, value));
+        } catch (NullPointerException ex) {
+            Log.e(TAG, "Could not create the object");
+            return;
+        }
         JsonCustomRequest jcr = getJsonCustomRequest(context, j, resourceUrl);
         Log.d(TAG, "changeHueState putRequest created for this url\n" + resourceUrl);
         // Add the request to the RequestQueue.
@@ -443,14 +448,13 @@ public class HueBridge implements Serializable {
                         setState(response);
                         HueBridge bridge;
                         try {
-                            bridge = HueBridge.getInstance(ctx);
+                            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
                         }
                         catch (NullPointerException ex){
                             Log.e(TAG, "HueBridge.getInstance() == null");
                             ex.printStackTrace();
                             return;
                         }
-                        assert bridge != null;
                         bridge.refreshAllHashMaps();
                         try {
                             bridge.getStateIntent(ctx).send();
@@ -513,9 +517,11 @@ public class HueBridge implements Serializable {
                                     responseState = responseValue.getString(resourceUrl + "/" + requestKey); //get response for request
                                 }
                             }
-                            assert requestedState != null;
-                            if (responseState != null) {
-                                success = requestedState.equals(responseState);
+                            try {
+                                success = Objects.equals(requestedState, responseState);
+                            } catch (NullPointerException ex){
+                                Log.e(TAG, "NullPointerException");
+                                return;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -523,14 +529,14 @@ public class HueBridge implements Serializable {
                         if (success) {
                             Log.d(TAG, "changeHueState successful");
                             try {
-                                assert bridge != null;
-                                bridge.getReplyIntent(ctx).send();
+                                Objects.requireNonNull(bridge).getReplyIntent(ctx).send();
                             } catch (PendingIntent.CanceledException e) {
                                 e.printStackTrace();
+                            } catch (NullPointerException ex){
+                                Log.e(TAG, "NullPointerException");
                             }
-                        } else {
+                        } else
                             Log.e(TAG, "changeHueState unsuccessful");
-                        }
                     }
                 },
                 new Response.ErrorListener() {

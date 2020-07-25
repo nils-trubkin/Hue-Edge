@@ -5,18 +5,14 @@ import android.content.res.Resources;
 import android.net.DhcpInfo;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.api.JsonCustomRequest;
 import com.nilstrubkin.hueedge.api.RequestQueueSingleton;
 
@@ -39,6 +35,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
@@ -100,24 +97,21 @@ public class DiscoveryEngine {
             final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<AuthEntry> callback,
-            final String bridgeIp,
-            final TextView statusTextView,
-            final ProgressBar progressBar){
-        Log.d(TAG, "Sending request for this devicetype: " + "HueEdge#" + android.os.Build.MODEL);
-        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
-        assert job != null;
+            final String bridgeIp){
         requestAmount = REQUEST_AMOUNT; //Requests to send
         final Timer timer = new Timer();
         TimerTask periodicalAuthTask = new TimerTask() {
             @Override
             public void run() {
                 if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
+                    Log.e(TAG, "Connect to bridge: isInterrupted: " + executorService.isShutdown());
+                    Log.e(TAG, "Connect to bridge: isShutdown(): " + executorService.isShutdown());
                     timer.cancel();
                     return;
                 }
                 executorService.submit(new Runnable() {
                     public void run() {
-                        if (Thread.currentThread().isInterrupted())
+                        if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
                             return;
                         try {
                             if (requestAmount == 0) {
@@ -126,7 +120,6 @@ public class DiscoveryEngine {
                                 timer.cancel();
                             }
                             else {
-                                statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, requestAmount));
                                 sendAuthRequest(ctx, bridgeIp, callback);
                             }
                         } catch (Exception ex) {
@@ -137,10 +130,6 @@ public class DiscoveryEngine {
                 });
             }
         };
-        progressBar.setMax(10000);
-        SetupActivity.ProgressBarAnimation anim = new SetupActivity.ProgressBarAnimation(progressBar, 0, progressBar.getMax());
-        anim.setDuration(1000 * REQUEST_AMOUNT);
-        progressBar.startAnimation(anim);
         timer.schedule(periodicalAuthTask, 0, 1000); //execute every second
     }
 
@@ -148,33 +137,16 @@ public class DiscoveryEngine {
             Context ctx,
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
-        /*if(ins.requestAmount == 0){
-            ins.timer.cancel();
-            ins.progressBar.clearAnimation();
-            ins.updateUI(SetupActivity.UIState.Error);
-            return;
-        }
-        else if(ins.requestAmount == -1){
-            ins.timer.cancel();
-            ins.progressBar.clearAnimation();
-            ins.updateUI(SetupActivity.UIState.Results);
-            return;
-        }*/
-
-        //ins.progressBar.incrementProgressBy(ins.progressBar.getMax() / REQUEST_AMOUNT);
         Log.d(TAG, "requestAmount = " + requestAmount);
-        JsonCustomRequest jcr = getJsonAuthRequest(ctx, ip, callback);
+        JsonCustomRequest jcr = getJsonAuthRequest(ip, callback);
         Log.d(TAG, "changeHueState postRequest created for this ip " + ip);
-        // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jcr);
         requestAmount--;
     }
 
     private JsonCustomRequest getJsonAuthRequest(
-            Context ctx,
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
-        final SetupActivity ins = (SetupActivity) ctx;
         Log.d(TAG, "getJsonAuthRequest for this device: " + "HueEdge#" + android.os.Build.MODEL);
         final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
         return new JsonCustomRequest(Request.Method.POST, "http://" + ip + "/api", job,
@@ -238,14 +210,14 @@ public class DiscoveryEngine {
                 final String SERVICE_TYPE = "_hue._tcp.";
                 final NsdManager nsdManager = (NsdManager) ctx.getSystemService(NSD_SERVICE);
                 NsdManager.DiscoveryListener discoveryListener =
-                        initializeDnsSDDiscoveryListener(nsdManager, SERVICE_TYPE, callback);
+                        initializeDnsSDDiscoveryListener(nsdManager, callback);
                 nsdManager.discoverServices(
                         SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
             }
         });
     }
 
-    private void initializeTest(ExecutorService executorService){
+    private void initializeTest(final ExecutorService executorService){
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -254,11 +226,15 @@ public class DiscoveryEngine {
                         Thread.sleep(1000);
                         Log.d(TAG,"Executing");
                         if (Thread.currentThread().isInterrupted()){
-                            Log.d(TAG,"interrupted if ex");
+                            Log.e(TAG,"Testing! Thread.currentThread().isInterrupted()");
+                            break;
+                        }
+                        if (executorService.isShutdown()){
+                            Log.e(TAG,"Testing! executorService.isShutdown()");
                             break;
                         }
                     } catch (InterruptedException e) {
-                        Log.d(TAG,"interrupted ex");
+                        Log.e(TAG,"Testing! InterruptedException");
                         return;
                     }
 
@@ -267,29 +243,8 @@ public class DiscoveryEngine {
         });
     }
 
-    public Runnable testRunnable = new Runnable() {
-        @Override
-        public void run() {
-            while (true){
-                try {
-                    Thread.sleep(1000);
-                    Log.d(TAG,"Executing");
-                    if(Thread.currentThread().isInterrupted()){
-                        Log.d(TAG,"interrupted if ex");
-                        break;
-                    }
-                } catch (InterruptedException e) {
-                    Log.d(TAG,"interrupted ex");
-                    return;
-                }
-
-            }
-        }
-    };
-
     private NsdManager.DiscoveryListener initializeDnsSDDiscoveryListener(
             final NsdManager nsdManager,
-            final String SERVICE_TYPE,
             final DiscoveryCallback<DiscoveryEntry> callback) {
         // Instantiate a new DiscoveryListener
         return new NsdManager.DiscoveryListener() {
@@ -306,7 +261,7 @@ public class DiscoveryEngine {
                 }
                 // A service was found! Do something with it.
                 Log.d(TAG, "Service discovery success " + service);
-                if (!service.getServiceType().equals(SERVICE_TYPE)) {
+                if (!service.getServiceType().equals("_hue._tcp.")) {
                     // Service type is the string containing the protocol and
                     // transport layer for this service.
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
@@ -392,7 +347,6 @@ public class DiscoveryEngine {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, "Request responds " + response.toString());
-                        Iterator<String> responseKeys; // iterator for response JSONArray
                         for (int i = 0; i < response.length(); i++){
                             try {
                                 JSONObject job = response.getJSONObject(i);
@@ -454,7 +408,7 @@ public class DiscoveryEngine {
                     long timeStart = System.currentTimeMillis();
                     while (System.currentTimeMillis() - timeStart < timeout) {
                         try {
-                            if (Thread.currentThread().isInterrupted()) {
+                            if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
                                 clientSocket.close();
                                 return;
                             }
@@ -619,7 +573,13 @@ public class DiscoveryEngine {
                         in.close();
                         return;
                     }
-                    de.ip = address;
+                    try {
+                        Objects.requireNonNull(de).ip = address;
+                    }
+                    catch (NullPointerException ex){
+                        Log.e(TAG, "Failed to notify result. DiscoveryEntry is null.");
+                        ex.printStackTrace();
+                    }
                     Result<DiscoveryEntry> result = new Result.Success<>(de);
                     in.close();
                     notifyResult(result, callback);
@@ -661,17 +621,29 @@ public class DiscoveryEngine {
                 continue;
             }
             String name = parser.getName();
-            if (name.equals("friendlyName")) {
-                friendlyName = readField(parser, "friendlyName");
-            } else if (name.equals("modelDescription")) {
-                modelDescription = readField(parser, "modelDescription");
-            } else if (name.equals("serialNumber")) {
-                serialNumber = readField(parser, "serialNumber");
-            } else {
-                skip(parser);
+            switch (name) {
+                case "friendlyName":
+                    friendlyName = readField(parser, "friendlyName");
+                    break;
+                case "modelDescription":
+                    modelDescription = readField(parser, "modelDescription");
+                    break;
+                case "serialNumber":
+                    serialNumber = readField(parser, "serialNumber");
+                    break;
+                default:
+                    skip(parser);
+                    break;
             }
         }
-        if(modelDescription.contains("Philips hue"))
+        boolean confirmedHue = false;
+        try {
+            confirmedHue = Objects.requireNonNull(modelDescription).contains("Philips hue");
+        } catch (NullPointerException ex){
+            Log.e(TAG, "Not a Philips Hue description.xml");
+            ex.printStackTrace();
+        }
+        if(confirmedHue)
             return new DiscoveryEntry(friendlyName, serialNumber, logoUrl);
         else
             return null;

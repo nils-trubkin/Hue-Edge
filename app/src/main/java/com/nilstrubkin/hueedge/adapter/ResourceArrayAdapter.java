@@ -3,6 +3,7 @@ package com.nilstrubkin.hueedge.adapter;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -131,26 +132,47 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 }
             }
         });
-        gridBtn.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    ClipData.Item item = new ClipData.Item(String.valueOf(-1));
-                    ClipData dragData = new ClipData(
-                            name,
-                            new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
-                            item);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
-                    return v.startDragAndDrop(dragData,  // the data to be dragged
-                            myShadow,  // the drag shadow builder
-                            resource,      // pass resource
-                            0          // flags (not currently used, set to 0)
-                    );
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            gridBtn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        ClipData.Item item = new ClipData.Item(String.valueOf(-1));
+                        ClipData dragData = new ClipData(
+                                name,
+                                new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                                item);
+                        View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+                        return v.startDragAndDrop(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                resource,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
+                    } else
+                        return false;
                 }
-                else
-                    return false;
-            }
-        });
+            });
+        } else {
+            gridBtn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        ClipData.Item item = new ClipData.Item(String.valueOf(-1));
+                        ClipData dragData = new ClipData(
+                                name,
+                                new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                                item);
+                        View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+                        return v.startDrag(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                resource,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
+                    } else
+                        return false;
+                }
+            });
+        }
             // Sets a long click listener for the ImageView using an anonymous listener object that
         // implements the OnLongClickListener interface
         /*gridBtn.setOnLongClickListener(new View.OnLongClickListener() {

@@ -763,8 +763,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         BridgeResource resource = currentCategoryContents.get(i);
                         if (resource == null) {
                             Log.wtf(TAG, "resource == null");
+                            return;
                         }
-                        assert resource != null;
                         contentView.setViewVisibility(progressBarArr[i], View.GONE);
                         contentView.setTextViewText(btnTextArr[i], resource.getName(ctx));
                         contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
