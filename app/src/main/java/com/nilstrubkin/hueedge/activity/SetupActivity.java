@@ -372,6 +372,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         }
         else if (view == aboutCloseButton){
             aboutLayout.setVisibility(View.GONE);
+            aboutButton.setVisibility(View.VISIBLE);
         }
         else if (view == contactMe){
             Intent email = new Intent(Intent.ACTION_SEND);
@@ -417,7 +418,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 yesButton.setVisibility(View.GONE);
                 noButton.setVisibility(View.GONE);
                 aboutLayout.setVisibility(View.GONE);
-                aboutButton.setText(ctx.getString(R.string.about_button_text));
+                aboutButton.setVisibility(View.VISIBLE);
                 helpLayout.setVisibility(View.GONE);
 
                 switch (state) {
