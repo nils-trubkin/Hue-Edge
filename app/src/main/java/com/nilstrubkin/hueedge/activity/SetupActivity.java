@@ -308,8 +308,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         }
         else if (view == manualIpConfirm) {
             String ip = ipField.getText().toString();
-            if (Patterns.IP_ADDRESS.matcher(ip).matches())
+            if (Patterns.IP_ADDRESS.matcher(ip).matches()) {
+                Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
+                discoveryEngine = new DiscoveryEngine(executor, mainThreadHandler);
+                executorService = Executors.newFixedThreadPool(4);
                 discoveryEngine.connectToBridge(ctx, executorService, bridgeAuthCallback, ip);
+                updateUI(UIState.Auth);
+            }
             else {
                 String toastString = ctx.getString(R.string.toast_ip_mistake);
                 Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
