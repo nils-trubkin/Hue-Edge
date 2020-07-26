@@ -59,6 +59,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -101,6 +102,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -143,6 +145,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -185,6 +188,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -227,6 +231,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -280,6 +285,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -322,6 +328,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -364,6 +371,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -406,6 +414,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
@@ -448,6 +457,7 @@
                             android:layout_height="@dimen/resource_button_dimen"
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
+                            android:fontFamily="@font/roboto"
                             android:hyphenationFrequency="full"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />

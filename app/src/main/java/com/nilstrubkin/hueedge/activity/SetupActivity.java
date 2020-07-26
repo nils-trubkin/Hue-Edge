@@ -25,13 +25,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.HandlerCompat;
 
-import com.nilstrubkin.hueedge.AuthEntry;
-import com.nilstrubkin.hueedge.DiscoveryEngine;
-import com.nilstrubkin.hueedge.DiscoveryEntry;
+import com.nilstrubkin.hueedge.discovery.AuthEntry;
+import com.nilstrubkin.hueedge.discovery.DiscoveryEngine;
+import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.Result;
+import com.nilstrubkin.hueedge.discovery.Result;
 import com.nilstrubkin.hueedge.adapter.BridgeDiscoveryResultAdapter;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.look.Slook;
@@ -39,6 +39,7 @@ import com.samsung.android.sdk.look.Slook;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -328,6 +329,17 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             stopBridgeDiscovery();
         }
         else if (view == quickButton) {
+            try{
+                HueBridge hueBridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+                if (hueBridge.getLights().isEmpty()) {
+                    String toastString = ctx.getString(R.string.toast_no_lights);
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            } catch (NullPointerException ex){
+                Log.e(TAG, "Tried to perfrom quick setup but no HueBridge instance found");
+                updateUI(UIState.Error);
+            }
             HueEdgeProvider.quickSetup(this);
             updateUI(UIState.Final);
         }
@@ -349,6 +361,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             updateUI(UIState.Final);
         }
         else if (view == aboutButton){
+            aboutButton.setVisibility(View.GONE);
             aboutLayout.setVisibility(View.VISIBLE);
             helpLayout.setVisibility(View.GONE);
         }
@@ -379,7 +392,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 Log.i(TAG, "Status: " + state.toString());
 
                 Animation anim;
-                final int searchTimeout = 10 * 1000; // 30 seconds TODO
+                final int searchTimeout = 30 * 1000;
                 bridgeDiscoveryListView.setVisibility(View.GONE);
                 statusTextView.setVisibility(View.VISIBLE);
                 pushlinkImage.setVisibility(View.GONE);
@@ -448,9 +461,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         break;
                     case Results:
                         bridgeDiscoveryButton.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.VISIBLE);
                         bridgeDiscoveryListView.setVisibility(View.VISIBLE);
-                        progressBar.clearAnimation();
-                        progressBar.setVisibility(View.GONE);
                         statusTextView.setText(getResources().getString(R.string.fragment_results_label));
                         break;
                     case Connecting:

@@ -1,4 +1,4 @@
-package com.nilstrubkin.hueedge;
+package com.nilstrubkin.hueedge.discovery;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,6 +13,7 @@ import android.util.Xml;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.api.JsonCustomRequest;
 import com.nilstrubkin.hueedge.api.RequestQueueSingleton;
 
@@ -48,13 +49,12 @@ public class DiscoveryEngine {
 
     private transient static final String TAG = DiscoveryEngine.class.getSimpleName();
 
-    public transient static final int REQUEST_AMOUNT = 10;
+    public transient static final int REQUEST_AMOUNT = 60;
 
     private transient final Executor executor;
     private transient final Handler resultHandler;
 
     int requestAmount; //Requests to send
-    //parser TODO
 
     public DiscoveryEngine(Executor executor, Handler resultHandler){
         this.executor = executor;
@@ -615,7 +615,7 @@ public class DiscoveryEngine {
         String modelDescription = null;
         String friendlyName = null;
         String serialNumber = null;
-        String logoUrl = null; //TODO
+        //String logoUrl = null; //TODO
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -644,7 +644,7 @@ public class DiscoveryEngine {
             ex.printStackTrace();
         }
         if(confirmedHue)
-            return new DiscoveryEntry(friendlyName, serialNumber, logoUrl);
+            return new DiscoveryEntry(friendlyName, serialNumber/*, logoUrl*/);
         else
             return null;
     }

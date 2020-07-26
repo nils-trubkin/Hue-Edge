@@ -11,6 +11,7 @@
         android:layout_width="@dimen/resource_button_dimen"
         android:layout_height="@dimen/resource_button_dimen"
         android:background="@drawable/add_button_background"
+        android:fontFamily="@font/roboto"
         android:hyphenationFrequency="full"
         android:includeFontPadding="false"
         android:padding="@dimen/resource_button_padding"

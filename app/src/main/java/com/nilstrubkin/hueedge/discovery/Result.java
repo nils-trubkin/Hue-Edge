@@ -1,4 +1,4 @@
-package com.nilstrubkin.hueedge;
+package com.nilstrubkin.hueedge.discovery;
 
 public abstract class Result<T> {
     private Result() {}

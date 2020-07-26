@@ -4,7 +4,7 @@
     description="@string/edge_hue_description"
     previewImage="@drawable/panel_preview_image"
     permitVisibilityChanged="true"
-    configure="com.nilstrubkin.hueedge.activity.SetupActivity"
+    configure="com.nilstrubkin.hueedge.activity.EditActivity"
     cocktailWidth="550"
     launchOnClick="com.nilstrubkin.hueedge.activity.SetupActivity">
 </cocktail-provider>

@@ -25,9 +25,9 @@
     <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
     <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\nTry the manual IP setup\n\nIf you believe this is a bug please report</string>
     <string name="fragment_auth_label">Press the link button to authenticate\n\n%1$d</string>
-    <string name="fragment_settings_label">Connection successful!\n\nQuick setup or leave the button order to you?\n\nYou can always edit the buttons later</string>
-    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use\n\nRemoving a bridge removes button order</string>
-    <string name="fragment_confirmation_label">Are you sure?</string>
+    <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
+    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use</string>
+    <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
     <string name="fragment_welcome_button">Search for bridge</string>
     <string name="fragment_welcome_button_cheat">Debug</string>
     <string name="fragment_welcome_button_manual_ip">Manual IP setup</string>
@@ -39,7 +39,7 @@
     <string name="fragment_error_button">Re-run bridge discovery</string>
     <string name="fragment_result_button">Re-run bridge discovery</string>
     <string name="fragment_settings_button_quick">Quick setup</string>
-    <string name="fragment_settings_button_custom">Customize myself</string>
+    <string name="fragment_settings_button_custom">Leave empty</string>
     <string name="fragment_final_button_finish">Finish</string>
     <string name="fragment_final_button_remove">Remove configuration</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
@@ -55,9 +55,9 @@
 
     <string name="list_view_id_label">ID: %1$s</string>
 
-    <string name="no_config">NO BRIDGE CONFIGURED</string>
+    <string name="no_config">No bridge configured\nPress here to setup</string>
     <string name="button_save_text">Save</string>
-    <string name="hue_status">Hue Bridge configured\nIP: %1$s</string>
+    <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
 
     <string name="preference_file_key">HueEdgeConfig</string>
     <string name="recovery_file_key">HueEdgeRecovery</string>
@@ -101,6 +101,7 @@
     <string name="toast_configuration_deleted">Configuration was deleted</string>
     <string name="toast_old_version_updating">Config file is old version, attempting to update</string>
     <string name="toast_ip_mistake">Please enter the IP address e.g. 192.168.1.10</string>
+    <string name="toast_no_lights">Still downloading, wait one moment please</string>
 
     <string name="email">hueedgepanel@gmail.com</string>
     <string name="paypal_url">https://paypal.me/NilsTrubkin?locale.x=en_US</string>

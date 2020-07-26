@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.nilstrubkin.hueedge.DiscoveryEntry;
+import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 import com.nilstrubkin.hueedge.R;
 
 import java.util.List;

@@ -145,7 +145,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         if (HueBridge.getInstance(ctx) == null) {
             bridgeConfigured = false;
             panelUpdate(ctx);
-            return;
         }
         else
             bridgeConfigured = true;
@@ -243,11 +242,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
                     R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
+            contentView.setOnClickPendingIntent(R.id.configureButton,
+                    getClickIntent(ctx, R.id.configureButton, 1));
             return contentView;
         }
 
-        contentView = new RemoteViews(ctx.getPackageName(),
-                R.layout.main_view);
+        contentView = new RemoteViews(ctx.getPackageName(), R.layout.main_view);
 
         int i = 0;
         for ( int button : btnArr ){
@@ -428,14 +428,14 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     }
 
     //Enter the edit activity to customize buttons
-    private void startEditActivity(Context ctx){
+    private static void startEditActivity(Context ctx){
         Intent editIntent = new Intent(Intent.ACTION_EDIT);
         editIntent.addCategory( Intent.CATEGORY_DEFAULT);
         editIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(editIntent);
     }
 
-    private void startSetupActivity(Context ctx){
+    public static void startSetupActivity(Context ctx){
         Intent setupIntent = new Intent(ctx, SetupActivity.class);
         setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(setupIntent);
@@ -443,13 +443,18 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
     //Button handler
     private void performRemoteClick(Context ctx, Intent intent) {
-        if(!bridgeConfigured)
-            return;
 
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
         //String toastString = "Clicked id " + id + ", key " + key;
         //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+
+        if (id == R.id.configureButton)
+            startSetupActivity(ctx);
+
+        if(!bridgeConfigured)
+            return;
+
         HueBridge bridge;
         try {
             bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
