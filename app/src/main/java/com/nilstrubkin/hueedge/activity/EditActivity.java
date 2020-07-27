@@ -26,6 +26,7 @@ import com.nilstrubkin.hueedge.BridgeResource;
 import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +64,7 @@ public class EditActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
 
-        HueBridge bridge;
+        final HueBridge bridge;
         try {
             bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
         } catch (NullPointerException ex){
@@ -110,25 +111,25 @@ public class EditActivity extends AppCompatActivity {
 
         panelUpdate();
 
-        ArrayList<BridgeResource> resourceList = new ArrayList<>();
+        ArrayList<BridgeResource> resources = new ArrayList<>();
         HashMap<String, BridgeResource> map = null;
         switch (currentCategory) {
             case QUICK_ACCESS:
                 map = bridge.getLights();
                 for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                    resourceList.add(entry.getValue());
+                    resources.add(entry.getValue());
                 }
                 map = bridge.getRooms();
                 for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                    resourceList.add(entry.getValue());
+                    resources.add(entry.getValue());
                 }
                 map = bridge.getZones();
                 for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                    resourceList.add(entry.getValue());
+                    resources.add(entry.getValue());
                 }
                 map = bridge.getScenes();
                 for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                    resourceList.add(entry.getValue());
+                    resources.add(entry.getValue());
                 }
                 break;
             case LIGHTS:
@@ -149,10 +150,20 @@ public class EditActivity extends AppCompatActivity {
         }
         if(!currentCategory.equals(HueEdgeProvider.menuCategory.QUICK_ACCESS)){
             for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resourceList.add(entry.getValue());
+                resources.add(entry.getValue());
             }
         }
-        ResourceArrayAdapter adapter = new ResourceArrayAdapter(this, R.layout.edit_activity_adapter_view_layout, resourceList);
+        if(!currentCategory.equals(HueEdgeProvider.menuCategory.SCENES)){
+            resources.add(new BridgeResource("0", "All", "groups", "any_on","on"));
+        }
+        ResourceArrayAdapter adapter = new ResourceArrayAdapter(
+                this, R.layout.edit_activity_adapter_view_layout, resources);
+        adapter.sort(new Comparator<BridgeResource>() {
+            @Override
+            public int compare(BridgeResource br1, BridgeResource br2) {
+                return br1.compareTo(br2);
+            }
+        });
         mListView.setAdapter(adapter);
 
         /*Toolbar toolbar = findViewById(R.id.toolbar);
@@ -163,7 +174,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        .setAction("Action", null).show(); //TODO snackbar
             }
         });*/
     }
@@ -225,7 +236,7 @@ public class EditActivity extends AppCompatActivity {
                         if (event.getAction() == MotionEvent.ACTION_DOWN) {
                             ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
                             ClipData dragData = new ClipData(
-                                    resource.getName(ctx),
+                                    resource.getName(),
                                     new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
                                     item);
                             View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
@@ -290,7 +301,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void displaySlotAsFull (int position, BridgeResource resource) {
         TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
-        tw.setText(resource.getName(ctx));
+        tw.setText(resource.getName());
         final Button btn = findViewById(HueEdgeProvider.btnArr[position]);
         btn.setText(resource.getBtnText(ctx));
         if (resource.getCategory().equals("scenes")) {

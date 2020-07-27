@@ -12,15 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.BridgeResource;
-import com.nilstrubkin.hueedge.activity.EditActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -57,7 +54,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
             return convertView;
         }
 
-        final String name = resource.getName(ctx);
+        final String name = resource.getName();
         String btnText = resource.getBtnText(ctx);
         int btnColor = resource.getBtnTextColor(ctx);
         final int btnResource = resource.getBtnBackgroundResource(ctx);
@@ -72,7 +69,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         }
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);
-        gridBtn.setOnClickListener(new View.OnClickListener() {
+        /*gridBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BridgeResource br;
@@ -102,7 +99,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 else {
                     HueEdgeProvider.saveAllConfiguration(ctx);
                     TextView tw = instance.findViewById(HueEdgeProvider.btnTextArr[position]);
-                    tw.setText(br.getName(ctx));
+                    tw.setText(br.getName());
                     Button btn = instance.findViewById(HueEdgeProvider.btnArr[position]);
                     btn.setText(br.getBtnText(ctx));
                     if(br.getCategory().equals("scenes")){
@@ -127,11 +124,11 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                             instance.clearSlot(position);
                         }
                     });
-                    String toastString = ctx.getString(R.string.toast_adding, br.getName(ctx));
+                    String toastString = ctx.getString(R.string.toast_adding, br.getName());
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                 }
             }
-        });
+        });*/
             gridBtn.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {

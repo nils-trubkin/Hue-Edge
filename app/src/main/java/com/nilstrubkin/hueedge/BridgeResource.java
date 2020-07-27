@@ -10,12 +10,13 @@ import org.json.JSONException;
 
 import java.io.Serializable;
 
-public class BridgeResource implements Serializable {
+public class BridgeResource implements Serializable, Comparable<BridgeResource> {
 
     private static final String TAG = BridgeResource.class.getSimpleName();
 
     //private transient final Context ctx;
     private final String id;
+    private final String name;
     private final String category;
     private final String actionRead;
     private final String actionWrite;
@@ -23,8 +24,9 @@ public class BridgeResource implements Serializable {
     private final String actionColor;
     private final String actionSaturation;
 
-    public BridgeResource(String id, String category, String actionRead, String actionWrite){
+    public BridgeResource(String id, String name, String category, String actionRead, String actionWrite){
         this.id = id;
+        this.name = name;
         this.category = category;
         this.actionRead = actionRead;
         this.actionWrite = actionWrite;
@@ -61,7 +63,10 @@ public class BridgeResource implements Serializable {
         return actionSaturation;
     }
 
-    public String getName(Context ctx){
+    public String getName(){
+        return name;
+    }
+    /*public String getName(Context ctx){
         if (category.equals("scenes")) {
             HueBridge bridge = HueBridge.getInstance(ctx);
             if(bridge == null){
@@ -97,7 +102,7 @@ public class BridgeResource implements Serializable {
             ex.printStackTrace();
             return "Not reachable";
         }
-    }
+    }*/
 
     private int getState(Context ctx){
         try {
@@ -253,5 +258,10 @@ public class BridgeResource implements Serializable {
             return "/" + "groups" + "/" + 0 + "/action";
         }
         return "/" + getCategory() + "/" + getId() + "/action";
+    }
+
+    @Override
+    public int compareTo(BridgeResource bridgeResource) {
+        return this.name.compareTo(bridgeResource.name);
     }
 }

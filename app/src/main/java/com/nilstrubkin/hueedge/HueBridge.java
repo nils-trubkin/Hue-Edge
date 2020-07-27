@@ -46,6 +46,7 @@ public class HueBridge implements Serializable {
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
             new HashMap<>();
 
+    final String NAME;
     final String LIGHTS;
     final String GROUPS;
     final String SCENES;
@@ -75,18 +76,24 @@ public class HueBridge implements Serializable {
                         Objects.requireNonNull(userName);
 
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
-        getContents().
-                put(HueEdgeProvider.menuCategory.QUICK_ACCESS, new HashMap<Integer, BridgeResource>());
-        getContents().
-                put(HueEdgeProvider.menuCategory.LIGHTS, new HashMap<Integer, BridgeResource>());
-        getContents().
-                put(HueEdgeProvider.menuCategory.ROOMS, new HashMap<Integer, BridgeResource>());
-        getContents().
-                put(HueEdgeProvider.menuCategory.ZONES, new HashMap<Integer, BridgeResource>());
-        getContents().
-                put(HueEdgeProvider.menuCategory.SCENES, new HashMap<Integer, BridgeResource>());
+        getContents().put(
+                HueEdgeProvider.menuCategory.QUICK_ACCESS,
+                new HashMap<Integer, BridgeResource>());
+        getContents().put(
+                HueEdgeProvider.menuCategory.LIGHTS,
+                new HashMap<Integer, BridgeResource>());
+        getContents().put(
+                HueEdgeProvider.menuCategory.ROOMS,
+                new HashMap<Integer, BridgeResource>());
+        getContents().put(
+                HueEdgeProvider.menuCategory.ZONES,
+                new HashMap<Integer, BridgeResource>());
+        getContents().put(
+                HueEdgeProvider.menuCategory.SCENES,
+                new HashMap<Integer, BridgeResource>());
 
         Resources res = ctx.getResources();
+        NAME = res.getString(R.string.hue_api_name);
         LIGHTS = res.getString(R.string.hue_api_lights);
         GROUPS = res.getString(R.string.hue_api_groups);
         SCENES = res.getString(R.string.hue_api_scenes);
@@ -165,6 +172,18 @@ public class HueBridge implements Serializable {
         this.state = state.toString();
     }
 
+    public void setState0(JSONObject state) {
+        try {
+            JSONObject currentGroups = getState().getJSONObject(GROUPS);
+            currentGroups.put("0", state);
+            setState(stateJson.put(GROUPS, currentGroups));
+            this.state = stateJson.toString();
+        } catch (JSONException ex) {
+            Log.e(TAG, "Could not append groups 0. No groups in stateJson.");
+            ex.printStackTrace();
+        }
+    }
+
     public void setStateJson(JSONObject stateJson) {
         this.stateJson = stateJson;
     }
@@ -209,59 +228,60 @@ public class HueBridge implements Serializable {
         return scenes;
     }
 
-    public String getSceneGroup(BridgeResource br) {
-        try {
-            return getState().
-                    getJSONObject(SCENES).
-                    getJSONObject(br.getId()).
-                    getString(GROUP);
-        } catch (JSONException e) {
-            Log.e(TAG, "Can't getSceneGroup()");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private void refreshAllHashMaps() {
-        Iterator<String> keys = getState().keys();
-        while (keys.hasNext()) { // iterate over categories
-            String key = keys.next();
-            if (key.equals(LIGHTS) ||
-                    key.equals(GROUPS) ||
-                    key.equals(SCENES)) {
+        Iterator<String> categories = getState().keys();
+        while (categories.hasNext()) { // iterate over categories
+            String category = categories.next();
+            if (category.equals(LIGHTS) ||
+                    category.equals(GROUPS) ||
+                    category.equals(SCENES)) {
                 try {
-                    JSONObject resources = getState().getJSONObject(key); // get all res. in category
-                    Iterator<String> resourcesKeys = resources.keys();
-                    while (resourcesKeys.hasNext()) {    // iterate over one res. at a time
-                        String resourcesKey = resourcesKeys.next();
-                        JSONObject resource = resources.getJSONObject(resourcesKey);
-                        if (key.equals(LIGHTS)) {
+                    JSONObject resources = getState().getJSONObject(category); // get all res. in category
+                    Iterator<String> resourcesIds = resources.keys();
+                    while (resourcesIds.hasNext()) {    // iterate over one res. at a time
+                        String resourceId = resourcesIds.next();
+                        JSONObject resource = resources.getJSONObject(resourceId);
+                        if (category.equals(LIGHTS)) {
+                            String name = resource.getString(NAME);
                             BridgeResource br = new BridgeResource(
-                                    resourcesKey,
-                                    key,
+                                    resourceId,
+                                    name,
+                                    category,
                                     ON,
                                     ON);
-                            getLights().put(resourcesKey, br);
-                        } else if (key.equals(GROUPS)) {
+                            getLights().put(resourceId, br);
+                        } else if (category.equals(GROUPS)) {
+                            String name = resource.getString(NAME);
                             BridgeResource br = new BridgeResource(
-                                    resourcesKey,
-                                    key,
+                                    resourceId,
+                                    name,
+                                    category,
                                     ANY_ON,
                                     ON);
                             if (resource.getString(TYPE).equals(ROOM))
-                                getRooms().put(resourcesKey, br);
+                                getRooms().put(resourceId, br);
                             else if (resource.getString(TYPE).equals(ZONE))
-                                getZones().put(resourcesKey, br);
+                                getZones().put(resourceId, br);
                         } else { // key.equals(SCENES)
                             Iterator<String> sceneKeys = resource.keys();
                             while (sceneKeys.hasNext()) {
-                                if (sceneKeys.next().equals(GROUP)) {
+                                if (sceneKeys.next().equals(GROUP)) { //TODO look into this
+                                    String groupId = resource.getString(GROUP);
+                                    String name;
+                                    if(groupId.equals("0"))
+                                        name = "All";
+                                    else
+                                        name = getState().
+                                            getJSONObject(GROUPS).
+                                            getJSONObject(groupId).
+                                            getString(NAME);
                                     BridgeResource br = new BridgeResource(
-                                            resourcesKey,
-                                            key,
+                                            resourceId,
+                                            name,
+                                            category,
                                             SCENE,
                                             SCENE);
-                                    getScenes().put(resourcesKey, br);
+                                    getScenes().put(resourceId, br);
                                 }
                             }
                         }
@@ -274,7 +294,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public int addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br){
+    /*public int addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br){
         Log.d(TAG, "addToCurrentCategory()");
         HueBridge bridge;
         try{
@@ -302,7 +322,7 @@ public class HueBridge implements Serializable {
             }
         }
         return -1;
-    }
+    }*/
 
     public void addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br, int index){
         Log.d(TAG, "addToCurrentCategory()");
@@ -420,6 +440,14 @@ public class HueBridge implements Serializable {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    //Construct intent for incoming state JsonObject
+    private PendingIntent getState0Intent(Context context) {
+        Intent stateIntent = new Intent(context, HueEdgeProvider.class);
+        stateIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_STATE_0);
+        return PendingIntent.getBroadcast(context, 1, stateIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     //Construct intent for incoming reply JsonArray
     private PendingIntent getReplyIntent(Context context) {
         Intent replyIntent = new Intent(context, HueEdgeProvider.class);
@@ -446,18 +474,9 @@ public class HueBridge implements Serializable {
                     @Override
                     public void onResponse(JSONObject response) {
                         setState(response);
-                        HueBridge bridge;
+                        refreshAllHashMaps();
                         try {
-                            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                        }
-                        catch (NullPointerException ex){
-                            Log.e(TAG, "HueBridge.getInstance() == null");
-                            ex.printStackTrace();
-                            return;
-                        }
-                        bridge.refreshAllHashMaps();
-                        try {
-                            bridge.getStateIntent(ctx).send();
+                            getStateIntent(ctx).send();
                         } catch (PendingIntent.CanceledException e) {
                             e.printStackTrace();
                         }
@@ -472,6 +491,32 @@ public class HueBridge implements Serializable {
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jor);
         Log.d(TAG, "Request for Hue state sent to queue");
+    }
+
+    // Philips hides group 0 in reply, have to request separately...
+    public void requestHueState0(final Context ctx) {
+        JsonObjectRequest jor = new JsonObjectRequest(url + "/groups/0", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        setState0(response);
+                        refreshAllHashMaps();
+                        try {
+                            getState0Intent(ctx).send();
+                        } catch (PendingIntent.CanceledException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, error.toString());
+                    }
+                });
+        // Add the request to the RequestQueue.
+        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jor);
+        Log.d(TAG, "Request for Hue state 0 sent to queue");
     }
 
     //PUT method

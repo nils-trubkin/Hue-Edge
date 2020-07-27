@@ -79,6 +79,7 @@
     <string name="remote_list_item_title3">Saturation #</string>
     <string name="remote_list_item_clicked">Item no.%d clicked</string-->
 
+    <string name="hue_api_name">name</string>
     <string name="hue_api_lights">lights</string>
     <string name="hue_api_groups">groups</string>
     <string name="hue_api_scenes">scenes</string>
@@ -99,7 +100,7 @@
     <string name="toast_sliders_not_available">Sliders not available for scenes</string>
     <string name="toast_adding">Adding: "%1$s"</string>
     <string name="toast_configuration_deleted">Configuration was deleted</string>
-    <string name="toast_old_version_updating">Config file is old version, attempting to update</string>
+    <string name="toast_old_version">App updated, please re-configure</string>
     <string name="toast_ip_mistake">Please enter the IP address e.g. 192.168.1.10</string>
     <string name="toast_no_lights">Still downloading, wait one moment please</string>
 
