@@ -686,7 +686,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 break;
             Log.d(TAG, "quickSetup for lights on id: " + entry.getKey());
             lightsContents.put(buttonIndex++, entry.getValue());
-            if(qaButtonIndex < 2) {
+            if(qaButtonIndex < 3) {
                 quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
@@ -700,7 +700,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 break;
             Log.d(TAG, "quickSetup for rooms on id: " + entry.getKey());
             roomsContents.put(buttonIndex++, entry.getValue());
-            if(qaButtonIndex < 4) {
+            if(qaButtonIndex < 5) {
                 quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
@@ -714,7 +714,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 break;
             Log.d(TAG, "quickSetup for zones on id: " + entry.getKey());
             zonesContents.put(buttonIndex++, entry.getValue());
-            if(qaButtonIndex < 6) {
+            if(qaButtonIndex < 7) {
                 quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
@@ -728,7 +728,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 break;
             Log.d(TAG, "quickSetup for scenes on id: " + entry.getKey());
             scenesContents.put(buttonIndex++, entry.getValue());
-            if(qaButtonIndex < 8) {
+            if(qaButtonIndex < 9) {
                 quickAccessContents.put(qaButtonIndex++, entry.getValue());
             }
         }
