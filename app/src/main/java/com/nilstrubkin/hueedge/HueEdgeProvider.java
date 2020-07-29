@@ -4,9 +4,13 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -59,12 +63,18 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     //Array of references to category buttons underlines
     public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
             R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
+    //Array of references to button texts (text on the button itself)
+    public static final int[] btnTopTextArr = {R.id.btn1topText, R.id.btn2topText, R.id.btn3topText, R.id.btn4topText, R.id.btn5topText,
+            R.id.btn6topText, R.id.btn7topText, R.id.btn8topText, R.id.btn9topText, R.id.btn10topText};
     //Array of references to button texts (text under the button itself)
     public static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
     //Array of references to delete buttons in Edit activity
     public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
             R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
+    //Array of references to delete buttons top texts in Edit activity
+    public static final int[] btnDeleteTopTextArr = {R.id.btn1deleteTopText, R.id.btn2deleteTopText, R.id.btn3deleteTopText, R.id.btn4deleteTopText, R.id.btn5deleteTopText,
+            R.id.btn6deleteTopText, R.id.btn7deleteTopText, R.id.btn8deleteTopText, R.id.btn9deleteTopText, R.id.btn10deleteTopText};
     //Array of references to category buttons
     public static final int[] btnSlidersCategoryArr = {R.id.btnSlidersCategory1, R.id.btnSlidersCategory2,
             R.id.btnSlidersCategory3};
@@ -178,7 +188,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
                 String toastString = ctx.getString(R.string.toast_refreshing);
-                Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
             case ACTION_RECEIVE_HUE_REPLY:
                 try {
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx);
@@ -227,8 +237,16 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
     @Override
     public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
-        Log.d(TAG, "onVisibilityChanged()");
+        Log.d(TAG, "onVisibilityChanged(): " + visibility);
         super.onVisibilityChanged(ctx, cocktailId, visibility);
+        if(bridgeConfigured && visibility == 1) {
+            PendingIntent pendingIntent = getRefreshIntent(ctx);
+            try {
+                pendingIntent.send();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     //Create the content view, right panel. Used for buttons
@@ -425,6 +443,14 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         clickIntent.putExtra("key", key);
         return PendingIntent.getBroadcast(ctx, id, clickIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    //Get the intent for refreshing with pull-down
+    private static PendingIntent getRefreshIntent(Context ctx){
+        Intent refreshIntent = new Intent(ctx, HueEdgeProvider.class);
+        refreshIntent.setAction(ACTION_PULL_TO_REFRESH);
+        return PendingIntent.getBroadcast(ctx, 0xff,
+                refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //Enter the edit activity to customize buttons
@@ -765,20 +791,18 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         }
                         contentView.setViewVisibility(progressBarArr[i], View.GONE);
                         contentView.setTextViewText(btnTextArr[i], resource.getName());
-                        contentView.setTextViewText(btnArr[i], resource.getBtnText(ctx));
-                        contentView.setTextColor(btnArr[i], resource.getBtnTextColor(ctx));
+                        contentView.setTextViewText(btnTopTextArr[i], resource.getBtnText(ctx));
+                        contentView.setTextColor(btnTopTextArr[i], resource.getBtnTextColor(ctx));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 resource.getBtnBackgroundResource(ctx));
-                        if (resource.getCategory().equals("scenes")) {
-                            contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
-                        } else {
-                            contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                        }
+                        //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_DIP, resource.getBtnTextSize(ctx));
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
-                        contentView.setTextViewText(btnArr[i], ctx.getResources().getString(R.string.plus_symbol));
-                        contentView.setFloat(btnArr[i], "setTextSize", ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                        contentView.setTextColor(btnArr[i], (ContextCompat.getColor(ctx, R.color.white)));
+                        contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
+                        //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_DIP, ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                        contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
                     }
@@ -794,9 +818,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
 
         //Set pull refresh
-        Intent refreshIntent = new Intent(ctx, HueEdgeProvider.class);
-        refreshIntent.setAction(ACTION_PULL_TO_REFRESH);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(ctx, 0xff, refreshIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = getRefreshIntent(ctx);
         SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);

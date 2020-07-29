@@ -232,6 +232,13 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
         }
     }
 
+    public float getBtnTextSize(Context ctx){
+        if (this.getCategory().equals("scenes"))
+            return ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene);
+        else
+            return ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol);
+    }
+
     public int getBtnTextColor(Context ctx){
         if (category.equals("scenes"))
             return ContextCompat.getColor(ctx, R.color.black);

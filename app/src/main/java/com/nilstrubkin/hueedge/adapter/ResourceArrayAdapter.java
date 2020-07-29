@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,8 @@ import androidx.annotation.NonNull;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.BridgeResource;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -43,7 +46,8 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         convertView = inflater.inflate(mResource, parent, false);
 
         final Button gridBtn = convertView.findViewById(R.id.gridBtn);
-        TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
+        final TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
+        final TextView gridBtnTopText = convertView.findViewById(R.id.gridBtnTopText);
 
         final BridgeResource resource;
         try {
@@ -56,18 +60,13 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         }
 
         final String name = resource.getName();
-        String btnText = resource.getBtnText(ctx);
-        int btnColor = resource.getBtnTextColor(ctx);
+        final String btnText = resource.getBtnText(ctx);
+        final float btnTextSize = resource.getBtnTextSize(ctx);
+        final int btnColor = resource.getBtnTextColor(ctx);
         final int btnResource = resource.getBtnBackgroundResource(ctx);
-        gridBtn.setText(btnText);
-        gridBtn.setTextColor(btnColor);
-        gridBtn.setBackgroundResource(btnResource);
-        if(resource.getCategory().equals("scenes")){
-            gridBtn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
-        }
-        else {
-            gridBtn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-        }
+        gridBtnTopText.setText(btnText);
+        gridBtnTopText.setTextColor(btnColor);
+        gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, btnTextSize);
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);
         /*gridBtn.setOnClickListener(new View.OnClickListener() {

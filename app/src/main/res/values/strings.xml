@@ -55,7 +55,7 @@
 
     <string name="list_view_id_label">ID: %1$s</string>
 
-    <string name="no_config">No bridge configured\nPress here to setup</string>
+    <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
 

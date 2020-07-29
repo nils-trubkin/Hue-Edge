@@ -60,9 +60,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn6topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar6"
@@ -103,9 +117,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn7topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar7"
@@ -146,9 +174,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn8topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar8"
@@ -189,9 +231,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn9topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar9"
@@ -232,9 +288,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn10topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar10"
@@ -286,9 +356,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn1topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar1"
@@ -329,9 +413,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn2topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar2"
@@ -372,9 +470,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn3topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar3"
@@ -415,9 +527,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn4topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar4"
@@ -458,9 +584,23 @@
                             android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
                             android:fontFamily="@font/roboto"
+                            android:gravity="center"
                             android:hyphenationFrequency="full"
+                            android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/btn5topText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:hyphenationFrequency="none"
+                            android:includeFontPadding="true"
+                            android:maxWidth="@dimen/resource_button_dimen"
+                            android:padding="@dimen/resource_button_padding"
+                            android:textAlignment="center"
+                            android:textStyle="bold" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar5"

@@ -7,6 +7,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
+import android.widget.Button;
 
 import com.nilstrubkin.hueedge.activity.EditActivity;
 
@@ -38,7 +39,7 @@ public class DragEventListener implements View.OnDragListener {
         switch(action) {
 
             case DragEvent.ACTION_DRAG_STARTED:
-                vibrator.vibrate(10);
+                vibrator.vibrate(1);
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
 
@@ -56,7 +57,7 @@ public class DragEventListener implements View.OnDragListener {
                 return false;
 
             case DragEvent.ACTION_DRAG_ENTERED:
-
+                vibrator.vibrate(1);
                 br = (BridgeResource) event.getLocalState();
                 instance.displaySlotAsFull(index, br);
                 v.invalidate();
