@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.nilstrubkin.hueedge">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.samsung.android.providers.context.permission.WRITE_USE_APP_FEATURE_SURVEY" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -50,7 +51,6 @@
                 <action android:name="com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK" />
                 <action android:name="com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH" />
                 <action android:name="com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE" />
-                <action android:name="com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE_0" />
                 <action android:name="com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY" />
             </intent-filter>
 

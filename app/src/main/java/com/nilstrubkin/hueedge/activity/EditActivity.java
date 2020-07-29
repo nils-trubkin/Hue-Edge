@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +37,7 @@ public class EditActivity extends AppCompatActivity {
     private static final String TAG = EditActivity.class.getSimpleName();
     private final Context ctx = this;
 
+    private Vibrator vibrator;
     private HueEdgeProvider.menuCategory currentCategory;
     private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents;
 
@@ -72,7 +74,7 @@ public class EditActivity extends AppCompatActivity {
             ex.printStackTrace();
             return;
         }
-
+        vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
         currentCategory = bridge.getCurrentCategory();
         contents = bridge.getContents();
 
@@ -230,36 +232,33 @@ public class EditActivity extends AppCompatActivity {
                 }
                 btn.setOnDragListener(null);
                 tw.setOnDragListener(null);
-                btn.setOnTouchListener(new View.OnTouchListener(){
+                btn.setOnLongClickListener(new View.OnLongClickListener(){
                     @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                            ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
-                            ClipData dragData = new ClipData(
-                                    resource.getName(),
-                                    new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
-                                    item);
-                            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
-                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                                return v.startDragAndDrop(dragData,  // the data to be dragged
-                                        myShadow,  // the drag shadow builder
-                                        resource,      // pass resource
-                                        0          // flags (not currently used, set to 0)
-                                );
-                            else
-                                return v.startDrag(dragData,  // the data to be dragged
-                                        myShadow,  // the drag shadow builder
-                                        resource,      // pass resource
-                                        0          // flags (not currently used, set to 0)
-                                );
-                        }
+                    public boolean onLongClick(View v) {
+                        ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
+                        ClipData dragData = new ClipData(
+                                resource.getName(),
+                                new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                                item);
+                        View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                            return v.startDragAndDrop(dragData,  // the data to be dragged
+                                    myShadow,  // the drag shadow builder
+                                    resource,      // pass resource
+                                    0          // flags (not currently used, set to 0)
+                            );
                         else
-                            return false;
+                            //noinspection deprecation
+                            return v.startDrag(dragData,  // the data to be dragged
+                                    myShadow,  // the drag shadow builder
+                                    resource,      // pass resource
+                                    0          // flags (not currently used, set to 0)
+                            );
                     }
                 });
             } else {
                 displaySlotAsEmpty(btn, btnDelete, tw);
-                DragEventListener dragListen = new DragEventListener(ctx, i);
+                DragEventListener dragListen = new DragEventListener(ctx, i, vibrator);
                 btn.setOnDragListener(dragListen);
                 tw.setOnDragListener(dragListen);
                 btn.setOnTouchListener(null);
@@ -284,7 +283,7 @@ public class EditActivity extends AppCompatActivity {
         Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
         displaySlotAsEmpty(btn, btnDelete, tw);
         // Creates a new drag event listener
-        DragEventListener dragListen = new DragEventListener(ctx, position);
+        DragEventListener dragListen = new DragEventListener(ctx, position, vibrator);
         // Sets the drag event listener for the View
         btn.setOnDragListener(dragListen);
 

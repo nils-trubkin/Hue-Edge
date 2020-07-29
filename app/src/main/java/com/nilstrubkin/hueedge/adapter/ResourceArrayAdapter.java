@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.os.Build;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -129,30 +130,28 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 }
             }
         });*/
-            gridBtn.setOnTouchListener(new View.OnTouchListener() {
+            gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        ClipData.Item item = new ClipData.Item(String.valueOf(-1));
-                        ClipData dragData = new ClipData(
-                                name,
-                                new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
-                                item);
-                        View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
-                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                            return v.startDragAndDrop(dragData,  // the data to be dragged
-                                    myShadow,  // the drag shadow builder
-                                    resource,      // pass resource
-                                    0          // flags (not currently used, set to 0)
-                            );
-                        else
-                            return v.startDrag(dragData,  // the data to be dragged
-                                    myShadow,  // the drag shadow builder
-                                    resource,      // pass resource
-                                    0          // flags (not currently used, set to 0)
-                            );
-                    } else
-                        return false;
+                public boolean onLongClick(View v) {
+                    ClipData.Item item = new ClipData.Item(String.valueOf(-1));
+                    ClipData dragData = new ClipData(
+                            name,
+                            new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                            item);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        return v.startDragAndDrop(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                resource,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
+                    else
+                        //noinspection deprecation
+                        return v.startDrag(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                resource,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
                 }
             });
         return convertView;

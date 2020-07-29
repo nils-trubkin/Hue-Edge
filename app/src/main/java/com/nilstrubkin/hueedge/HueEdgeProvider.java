@@ -45,7 +45,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
     private static final String ACTION_PULL_TO_REFRESH = "com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH";
     protected static final String ACTION_RECEIVE_HUE_STATE = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE";
-    protected static final String ACTION_RECEIVE_HUE_STATE_0 = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE_0";
     protected static final String ACTION_RECEIVE_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY";
     private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
@@ -136,7 +135,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     //This method is called for every broadcast and before each of the other callback methods.
     //Samsung SDK
     @Override
-    public void onReceive(Context ctx, Intent intent) {
+    public void onReceive(final Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
 
@@ -194,14 +193,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 panelUpdate(ctx);
                 break;
             case ACTION_RECEIVE_HUE_STATE:
-                try {
-                    Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState0(ctx);
-                } catch (NullPointerException ex){
-                    Log.e(TAG,"Received a state, tried to request state 0 but there is no instance of HueBridge present");
-                    ex.printStackTrace();
-                }
-                break;
-            case ACTION_RECEIVE_HUE_STATE_0:
                 saveAllConfiguration(ctx);
                 panelUpdate(ctx);
                 break;
@@ -627,14 +618,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 return;
             }
         }
-
-        contentView = createSlidersContentView(ctx);
-        helpView = createSlidersHelpView(ctx);
-
-        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
-        cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
-        cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+        panelUpdate(ctx);
     }
 
     //The initial setup of the buttons
@@ -746,7 +730,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
             final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
             final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
-            cocktailManager.setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, null);
             cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
             return;
         }
@@ -856,8 +839,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     }*/
 
     public static void saveAllConfiguration(Context ctx) {
-        //saveCurrentCategory(ctx);
-
+        long timestamp = System.currentTimeMillis();
+        Log.e(TAG,"Starting saving all config...");
         File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
         try {
@@ -889,6 +872,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             Log.e(TAG,"Failed to save configuration");
             ex.printStackTrace();
         }
+        Log.e(TAG,"Starting saving all config took time: " + (System.currentTimeMillis() - timestamp));
     }
 
     @SuppressWarnings("unchecked")

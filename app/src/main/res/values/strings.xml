@@ -45,7 +45,7 @@
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
-    <string name="about_button_text">About</string>
+    <string name="about_button_text">About / Donate</string>
     <string name="close_about_text">Close about</string>
     <string name="close_help_text">Close help</string>
     <string name="about_text_text">Hue edge v 1.0\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal\n\n</string>

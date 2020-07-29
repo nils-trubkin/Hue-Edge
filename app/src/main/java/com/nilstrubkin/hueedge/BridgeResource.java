@@ -143,7 +143,7 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
 
     public int getColor(Context ctx){
         try {
-            if (category.equals("scenes") || category.equals("groups")) {
+            if (category.equals("scenes")) {
                 Log.e(TAG,"You shouldn't use this!");
                 return 0;
             }
@@ -152,11 +152,18 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
                 Log.wtf(TAG, "bridge == null");
                 return 0;
             }
-            return  (bridge.getState().
+            if (category.equals("groups")){
+                return  bridge.getState().
+                        getJSONObject(getCategory()).
+                        getJSONObject(getId()).
+                        getJSONObject("action").
+                        getInt(getColorAction());
+            }
+            return  bridge.getState().
                     getJSONObject(getCategory()).
                     getJSONObject(getId()).
                     getJSONObject("state").
-                    getInt(getColorAction()));
+                    getInt(getColorAction());
         } catch (JSONException ex) {
             Log.e(TAG, "JSONException");
             ex.printStackTrace();
@@ -166,7 +173,7 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
 
     public int getSaturation(Context ctx){
         try {
-            if (category.equals("scenes") || category.equals("groups")) {
+            if (category.equals("scenes")) {
                 Log.e(TAG,"You shouldn't use this!");
                 return 255;
             }
@@ -174,6 +181,13 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
             if(bridge == null){
                 Log.wtf(TAG, "bridge == null");
                 return 255;
+            }
+            if (category.equals("groups")){
+                return  bridge.getState().
+                        getJSONObject(getCategory()).
+                        getJSONObject(getId()).
+                        getJSONObject("action").
+                        getInt(getSaturationAction());
             }
             return  (bridge.getState().
                     getJSONObject(getCategory()).

@@ -3,6 +3,7 @@ package com.nilstrubkin.hueedge;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -16,11 +17,13 @@ public class DragEventListener implements View.OnDragListener {
     private final transient static  String TAG = DragEventListener.class.getSimpleName();
     private final transient Context ctx;
     private final transient int index;
+    private final transient Vibrator vibrator;
 
-    public DragEventListener (Context ctx, int index){
+    public DragEventListener (Context ctx, int index, Vibrator vibrator){
         super();
         this.ctx = ctx;
         this.index = index;
+        this.vibrator = vibrator;
     }
 
     // This is the method that the system calls when it dispatches a drag event to the
@@ -35,7 +38,7 @@ public class DragEventListener implements View.OnDragListener {
         switch(action) {
 
             case DragEvent.ACTION_DRAG_STARTED:
-
+                vibrator.vibrate(10);
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
 

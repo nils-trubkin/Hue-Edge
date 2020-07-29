@@ -34,6 +34,9 @@ public class HueBridge implements Serializable {
     private transient JSONObject stateJson;
     private String state;
 
+    private transient JSONObject tempState;
+    private transient JSONObject tempState0;
+
     private HueEdgeProvider.menuCategory currentCategory = HueEdgeProvider.menuCategory.QUICK_ACCESS;
     private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
@@ -172,7 +175,7 @@ public class HueBridge implements Serializable {
         this.state = state.toString();
     }
 
-    public void setState0(JSONObject state) {
+    /*public void setState0(JSONObject state) {
         try {
             JSONObject currentGroups = getState().getJSONObject(GROUPS);
             currentGroups.put("0", state);
@@ -182,6 +185,38 @@ public class HueBridge implements Serializable {
             Log.e(TAG, "Could not append groups 0. No groups in stateJson.");
             ex.printStackTrace();
         }
+    }*/
+
+    private void notifyState(Context ctx, JSONObject state){
+        tempState = state;
+        mergeState(ctx);
+    }
+
+    private void notifyState0(Context ctx, JSONObject state0){
+        tempState0 = state0;
+        mergeState(ctx);
+    }
+
+    private void mergeState(Context ctx){
+        if(tempState != null && tempState0 != null)
+            try {
+                long timestamp = System.currentTimeMillis();
+                Log.e(TAG,"Starting to merge json...");
+                JSONObject currentGroups = tempState.getJSONObject(GROUPS);
+                currentGroups.put("0", tempState0);
+                setState(tempState.put(GROUPS, currentGroups));
+                Log.e(TAG,"Merging took time: " + (System.currentTimeMillis() - timestamp));
+                timestamp = System.currentTimeMillis();
+                Log.e(TAG,"Starting to refresh hashmaps");
+                refreshAllHashMaps();
+                Log.e(TAG,"Refresh of hashmaps took time: " + (System.currentTimeMillis() - timestamp));
+                getStateIntent(ctx).send();
+            } catch (JSONException ex) {
+                Log.e(TAG, "Could not merge states. No groups in stateJson.");
+                ex.printStackTrace();
+            } catch (PendingIntent.CanceledException ex) {
+                ex.printStackTrace();
+            }
     }
 
     public void setStateJson(JSONObject stateJson) {
@@ -390,6 +425,8 @@ public class HueBridge implements Serializable {
     }
 
     public void toggleHueState(Context context, BridgeResource br){
+        long timestamp = System.currentTimeMillis();
+        Log.e(TAG, "Starting toggleHueState...");
         String id = br.getId();
         String category = br.getCategory();
         Log.d(TAG, "toggleHueState() for: " + category + " " + id);
@@ -414,6 +451,7 @@ public class HueBridge implements Serializable {
             }
             setHueState(context, actionUrl, actionWrite, !lastState);
         }
+        Log.e(TAG, "ToggleHueState + setHueState took time: " + (System.currentTimeMillis() - timestamp));
     }
 
     //Set given pair to resourceUrl
@@ -440,14 +478,6 @@ public class HueBridge implements Serializable {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    //Construct intent for incoming state JsonObject
-    private PendingIntent getState0Intent(Context context) {
-        Intent stateIntent = new Intent(context, HueEdgeProvider.class);
-        stateIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_STATE_0);
-        return PendingIntent.getBroadcast(context, 1, stateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
     //Construct intent for incoming reply JsonArray
     private PendingIntent getReplyIntent(Context context) {
         Intent replyIntent = new Intent(context, HueEdgeProvider.class);
@@ -469,17 +499,16 @@ public class HueBridge implements Serializable {
 
     //GET method
     public void requestHueState(final Context ctx) {
+        tempState = null;
+        tempState0 = null;
+        final long timestamp = System.currentTimeMillis();
+        Log.e(TAG,"Requesting hue state...");
         JsonObjectRequest jor = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        setState(response);
-                        refreshAllHashMaps();
-                        try {
-                            getStateIntent(ctx).send();
-                        } catch (PendingIntent.CanceledException e) {
-                            e.printStackTrace();
-                        }
+                        notifyState(ctx, response);
+                        Log.e(TAG,"Got state in: " + (System.currentTimeMillis() - timestamp));
                     }
                 },
                 new Response.ErrorListener() {
@@ -491,21 +520,19 @@ public class HueBridge implements Serializable {
         // Add the request to the RequestQueue.
         RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jor);
         Log.d(TAG, "Request for Hue state sent to queue");
+        requestHueState0(ctx);
     }
 
     // Philips hides group 0 in reply, have to request separately...
     public void requestHueState0(final Context ctx) {
+        final long timestamp = System.currentTimeMillis();
+        Log.e(TAG,"Requesting hue state0...");
         JsonObjectRequest jor = new JsonObjectRequest(url + "/groups/0", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        setState0(response);
-                        refreshAllHashMaps();
-                        try {
-                            getState0Intent(ctx).send();
-                        } catch (PendingIntent.CanceledException e) {
-                            e.printStackTrace();
-                        }
+                        notifyState0(ctx, response);
+                        Log.e(TAG,"Got state0 in: " + (System.currentTimeMillis() - timestamp));
                     }
                 },
                 new Response.ErrorListener() {
@@ -574,7 +601,10 @@ public class HueBridge implements Serializable {
                         if (success) {
                             Log.d(TAG, "changeHueState successful");
                             try {
+                                long timestamp = System.currentTimeMillis();
+                                Log.e(TAG, "Sending intent...");
                                 Objects.requireNonNull(bridge).getReplyIntent(ctx).send();
+                                Log.e(TAG, "Sending intent took time: " + (System.currentTimeMillis() - timestamp));
                             } catch (PendingIntent.CanceledException e) {
                                 e.printStackTrace();
                             } catch (NullPointerException ex){
