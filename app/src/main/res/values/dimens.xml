@@ -6,8 +6,8 @@
     <dimen name="resource_button_dimen">@dimen/_40sdp</dimen>
     <dimen name="resource_button_margin_top">20dp</dimen>
     <dimen name="resource_button_padding">2dp</dimen>
-    <dimen name="resource_btn_text_size_symbol">8dp</dimen>
-    <dimen name="resource_btn_text_size_scene">6dp</dimen>
+    <dimen name="resource_btn_text_size_symbol">14dp</dimen>
+    <dimen name="resource_btn_text_size_scene">12dp</dimen>
     <dimen name="resource_btn_text_text_size">@dimen/_10sdp</dimen>
     <dimen name="refresh_area_height">70dp</dimen>
     <dimen name="resource_btn_stroke_width">1dp</dimen>

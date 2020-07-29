@@ -2,6 +2,7 @@ package com.nilstrubkin.hueedge;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -232,11 +233,11 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
         }
     }
 
-    public float getBtnTextSize(Context ctx){
+    public int getBtnTextSize(Context ctx){
         if (this.getCategory().equals("scenes"))
-            return ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene);
+            return R.dimen.resource_btn_text_size_scene;
         else
-            return ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol);
+            return R.dimen.resource_btn_text_size_symbol;
     }
 
     public int getBtnTextColor(Context ctx){
@@ -265,6 +266,13 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
                 return R.drawable.add_button_background;
         }
     }
+
+    /*public int getTintColor(Context ctx){
+        if(getState(ctx) > 0)
+            return Color.HSVToColor(new float[]{getColor(ctx) * 360f / 65536f, 1f, 1f});
+        else
+            return Color.HSVToColor(new float[]{0, 1f, 0});
+    }*/
 
     public String getStateUrl(){
         if (category.equals("scenes")) {

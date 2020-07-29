@@ -5,6 +5,7 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.os.Build;
 import android.os.Vibrator;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -61,12 +62,13 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
         final String name = resource.getName();
         final String btnText = resource.getBtnText(ctx);
-        final float btnTextSize = resource.getBtnTextSize(ctx);
+        final int btnTextSizeRes = resource.getBtnTextSize(ctx);
         final int btnColor = resource.getBtnTextColor(ctx);
         final int btnResource = resource.getBtnBackgroundResource(ctx);
         gridBtnTopText.setText(btnText);
         gridBtnTopText.setTextColor(btnColor);
-        gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, btnTextSize);
+        gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                ctx.getResources().getDimensionPixelSize(btnTextSizeRes));
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(name);
         /*gridBtn.setOnClickListener(new View.OnClickListener() {

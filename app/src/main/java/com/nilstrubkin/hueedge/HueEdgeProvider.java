@@ -4,8 +4,10 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -259,7 +261,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
+                    R.layout.main_view_demo); // R.layout.main_view_no_bridge); TODO demo
             contentView.setOnClickPendingIntent(R.id.configureButton,
                     getClickIntent(ctx, R.id.configureButton, 1));
             return contentView;
@@ -796,12 +798,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 resource.getBtnBackgroundResource(ctx));
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
-                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_DIP, resource.getBtnTextSize(ctx));
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
-                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_DIP, ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);

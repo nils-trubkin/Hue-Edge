@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -304,7 +305,8 @@ public class EditActivity extends AppCompatActivity {
         final Button btn = findViewById(HueEdgeProvider.btnArr[position]);
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         btnTopText.setText(resource.getBtnText(ctx));
-        btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, resource.getBtnTextSize(ctx));
+        btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
         btnTopText.setTextColor(resource.getBtnTextColor(ctx));
         btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
     }
