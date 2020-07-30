@@ -52,7 +52,7 @@
     <string name="about_btn_contact_me">Contact me</string>
     <string name="about_btn_support">Support via PayPal</string>
     <string name="manual_ip_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>
-    <string name="switch_symbols">No symbols (\'◯\' becomes \'OFF\')</string>
+    <string name="switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
     <string name="switch_haptic">No haptic feedback (vibration)</string>
 
     <string name="list_view_id_label">ID: %1$s</string>

@@ -551,7 +551,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         removeButton.setVisibility(View.VISIBLE);
                         symbolSwitch.setVisibility(View.VISIBLE);
                         hapticSwitch.setVisibility(View.VISIBLE);
-                        statusTextView.setPadding(0,0,0, (int) ctx.getResources().getDimension(R.dimen.switch_padding_bottom));
+                        statusTextView.setPadding(0,0,0, 0);
                         try {
                             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
                             symbolSwitch.setChecked(settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false));

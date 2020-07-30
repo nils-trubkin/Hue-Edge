@@ -86,7 +86,7 @@ public class EditActivity extends AppCompatActivity {
                 if(HueBridge.getInstance(ctx) != null){
                     HueEdgeProvider.saveAllConfiguration(ctx);
                     String toastString = ctx.getString(R.string.toast_saved);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
                 }
                 else
                     Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");

@@ -651,7 +651,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 }
                 else {
                     String toastString = ctx.getString(R.string.toast_sliders_not_available);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
