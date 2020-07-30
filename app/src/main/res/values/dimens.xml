@@ -52,6 +52,8 @@
     <dimen name="setup_button_text_size">16dp</dimen>
     <dimen name="setup_discovery_results_height">150dp</dimen>
     <dimen name="setup_discovery_results_margin_bottom">30dp</dimen>
+    <dimen name="setup_discovery_results_ip_size">24dp</dimen>
+    <dimen name="setup_discovery_results_id_size">18dp</dimen>
     <dimen name="setup_progress_bar_padding_bottom">20dp</dimen>
     <dimen name="setup_pushlink_image_dimen">200dp</dimen>
     <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
@@ -69,6 +71,7 @@
     <dimen name="help_window_margin_top">100dp</dimen>
     <dimen name="help_window_padding_bottom">20dp</dimen>
     <dimen name="ip_help_close_button_margin_top_bottom">20dp</dimen>
+    <dimen name="switch_padding_bottom">20dp</dimen>
 
     <!-- bridge discovery -->
     <dimen name="setup_big_logo_text_size">56dp</dimen>

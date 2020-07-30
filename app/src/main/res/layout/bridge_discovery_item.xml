@@ -12,7 +12,7 @@
         android:layout_marginRight="@dimen/curved_edge_margin"
         android:paddingTop="@dimen/discovery_item_texts_padding_top_bottom"
         android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/setup_discovery_results_ip_size"
         android:textColor="@color/white" />
 
     <TextView
@@ -22,5 +22,6 @@
         android:layout_marginLeft="@dimen/curved_edge_margin"
         android:layout_marginRight="@dimen/curved_edge_margin"
         android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
+        android:textSize="@dimen/setup_discovery_results_id_size"
         android:textColor="@color/white" />
 </LinearLayout>

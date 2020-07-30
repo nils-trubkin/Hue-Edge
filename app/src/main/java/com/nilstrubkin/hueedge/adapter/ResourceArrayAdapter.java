@@ -3,13 +3,13 @@ package com.nilstrubkin.hueedge.adapter;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Vibrator;
-import android.util.DisplayMetrics;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,11 +18,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.BridgeResource;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,11 +31,13 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
     private final Context ctx;
     private final int mResource;
+    private Vibrator vibrator;
 
-    public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects) {
+    public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects, Vibrator vib) {
         super(context, resource, objects);
         ctx = context;
         mResource = resource;
+        vibrator = vib;
     }
 
     @NonNull
@@ -44,7 +45,8 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
     public View getView(final int position, View convertView, @NonNull ViewGroup parent){
 
         LayoutInflater inflater = LayoutInflater.from(ctx);
-        convertView = inflater.inflate(mResource, parent, false);
+        if(convertView == null)
+            convertView = inflater.inflate(mResource, parent, false);
 
         final Button gridBtn = convertView.findViewById(R.id.gridBtn);
         final TextView gridBtnText = convertView.findViewById(R.id.gridBtnText);
@@ -62,7 +64,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
         final String name = resource.getName();
         final String btnText = resource.getBtnText(ctx);
-        final int btnTextSizeRes = resource.getBtnTextSize(ctx);
+        final int btnTextSizeRes = resource.getBtnTextSize();
         final int btnColor = resource.getBtnTextColor(ctx);
         final int btnResource = resource.getBtnBackgroundResource(ctx);
         gridBtnTopText.setText(btnText);
@@ -134,6 +136,10 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
             gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                    if(!noHaptic)
+                        vibrator.vibrate(1);
                     ClipData.Item item = new ClipData.Item(String.valueOf(-1));
                     ClipData dragData = new ClipData(
                             name,

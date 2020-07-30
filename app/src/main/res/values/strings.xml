@@ -26,7 +26,7 @@
     <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\nTry the manual IP setup\n\nIf you believe this is a bug please report</string>
     <string name="fragment_auth_label">Press the link button to authenticate\n\n%1$d</string>
     <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
-    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use</string>
+    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use\n\nTap to toggle\nHold to adjust\nPull-down along the buttons to refresh\n</string>
     <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
     <string name="fragment_welcome_button">Search for bridge</string>
     <string name="fragment_welcome_button_cheat">Debug</string>
@@ -52,6 +52,8 @@
     <string name="about_btn_contact_me">Contact me</string>
     <string name="about_btn_support">Support via PayPal</string>
     <string name="manual_ip_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>
+    <string name="switch_symbols">No symbols (\'◯\' becomes \'OFF\')</string>
+    <string name="switch_haptic">No haptic feedback (vibration)</string>
 
     <string name="list_view_id_label">ID: %1$s</string>
 
@@ -61,6 +63,9 @@
 
     <string name="preference_file_key">HueEdgeConfig</string>
     <string name="recovery_file_key">HueEdgeRecovery</string>
+
+    <string name="no_symbols_preference">noSymbols</string>
+    <string name="no_haptic_preference">noHaptic</string>
 
     <string name="http_header">http://</string>
     <string name="api_path">/api/</string>
@@ -73,6 +78,10 @@
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>
     <string name="question_symbol">\?</string>
+
+    <string name="some_no_symbol">Some</string>
+    <string name="on_no_symbol">On</string>
+    <string name="off_no_symbol">Off</string>
 
     <!--string name="remote_list_item_title">Brightness #</string>
     <string name="remote_list_item_title2">Hue #</string>

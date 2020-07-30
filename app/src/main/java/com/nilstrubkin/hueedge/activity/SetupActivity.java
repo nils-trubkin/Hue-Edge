@@ -2,10 +2,12 @@ package com.nilstrubkin.hueedge.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -19,10 +21,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.os.HandlerCompat;
 
 import com.nilstrubkin.hueedge.discovery.AuthEntry;
@@ -85,6 +89,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient Button aboutCloseButton;
     private transient Button contactMe;
     private transient Button support;
+    private transient SwitchCompat symbolSwitch;
+    private transient SwitchCompat hapticSwitch;
 
     enum UIState {
         Welcome,
@@ -161,6 +167,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         contactMe.setOnClickListener(this);
         support = findViewById(R.id.support);
         support.setOnClickListener(this);
+        symbolSwitch = findViewById(R.id.switch_symbols);
+        symbolSwitch.setOnClickListener(this);
+        hapticSwitch = findViewById(R.id.switch_haptic);
+        hapticSwitch.setOnClickListener(this);
 
         Slook slook = new Slook();
 
@@ -389,6 +399,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             i.setData(Uri.parse(ctx.getString(R.string.paypal_url)));
             startActivity(i);
         }
+        else if (view == symbolSwitch) {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor e = settings.edit();
+            e.putBoolean(ctx.getResources().getString(R.string.no_symbols_preference), symbolSwitch.isChecked());
+            e.apply();
+        }
+        else if (view == hapticSwitch) {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor e = settings.edit();
+            e.putBoolean(ctx.getResources().getString(R.string.no_haptic_preference), hapticSwitch.isChecked());
+            e.apply();
+        }
     }
 
     private void updateUI(final UIState state) {
@@ -420,6 +442,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 aboutLayout.setVisibility(View.GONE);
                 aboutButton.setVisibility(View.VISIBLE);
                 helpLayout.setVisibility(View.GONE);
+                symbolSwitch.setVisibility(View.GONE);
+                hapticSwitch.setVisibility(View.GONE);
+
+                statusTextView.setPadding(0,0,0, (int) ctx.getResources().getDimension(R.dimen.setup_status_text_padding_bottom));
 
                 switch (state) {
                     case Welcome:
@@ -523,6 +549,16 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                         statusTextView.setText(getResources().getString(R.string.fragment_final_label));
                         finishButton.setVisibility(View.VISIBLE);
                         removeButton.setVisibility(View.VISIBLE);
+                        symbolSwitch.setVisibility(View.VISIBLE);
+                        hapticSwitch.setVisibility(View.VISIBLE);
+                        statusTextView.setPadding(0,0,0, (int) ctx.getResources().getDimension(R.dimen.switch_padding_bottom));
+                        try {
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            symbolSwitch.setChecked(settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false));
+                            hapticSwitch.setChecked(settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false));
+                        } catch (NullPointerException ex){
+                            Log.e(TAG, "Tried to display state for switch but no HueBridge instance present");
+                        }
                         break;
                     case Confirmation:
                         statusTextView.setText(getResources().getString(R.string.fragment_confirmation_label));

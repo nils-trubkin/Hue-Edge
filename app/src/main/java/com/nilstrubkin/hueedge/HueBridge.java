@@ -227,9 +227,9 @@ public class HueBridge implements Serializable {
         return contents;
     }
 
-    public void setContents(HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents) {
+    /*public void setContents(HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents) {
         this.contents = contents;
-    }
+    }*/
 
     public HueEdgeProvider.menuCategory getCurrentCategory() {
         return currentCategory;

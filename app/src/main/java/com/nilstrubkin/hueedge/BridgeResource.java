@@ -1,8 +1,9 @@
 package com.nilstrubkin.hueedge;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONException;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class BridgeResource implements Serializable, Comparable<BridgeResource> {
 
@@ -221,19 +223,21 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
             }
         }
         Resources resources = ctx.getResources();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
         switch (getState(ctx)) {
             case 0:
-                return resources.getString(R.string.off_symbol);
+                return noSymbols ? resources.getString(R.string.off_no_symbol) : resources.getString(R.string.off_symbol);
             case 1:
-                return resources.getString(R.string.on_symbol);
+                return noSymbols ? resources.getString(R.string.on_no_symbol) :resources.getString(R.string.on_symbol);
             case 2:
-                return resources.getString(R.string.large_minus);
+                return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.large_minus);
             default:
                 return resources.getString(R.string.question_symbol);
         }
     }
 
-    public int getBtnTextSize(Context ctx){
+    public int getBtnTextSize(){
         if (this.getCategory().equals("scenes"))
             return R.dimen.resource_btn_text_size_scene;
         else
@@ -291,6 +295,10 @@ public class BridgeResource implements Serializable, Comparable<BridgeResource> 
 
     @Override
     public int compareTo(BridgeResource bridgeResource) {
-        return this.name.compareTo(bridgeResource.name);
+        int categoryDiff = this.category.compareTo(bridgeResource.category);
+        if (categoryDiff != 0)
+            return categoryDiff;
+        else
+            return this.name.compareTo(bridgeResource.name);
     }
 }

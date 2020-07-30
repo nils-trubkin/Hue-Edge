@@ -71,6 +71,25 @@
             android:textSize="@dimen/setup_status_text_size"
             tools:text="@string/fragment_welcome_label" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_symbols"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/switch_padding_bottom"
+            android:text="@string/switch_symbols"
+            android:textColor="@color/white"
+            android:textSize="@dimen/setup_status_text_size" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_haptic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/switch_padding_bottom"
+            android:text="@string/switch_haptic"
+            android:textColor="@color/white"
+            android:textSize="@dimen/setup_status_text_size"
+            app:showText="false" />
+
         <ListView
             android:id="@+id/bridge_discovery_result_list"
             android:layout_width="match_parent"

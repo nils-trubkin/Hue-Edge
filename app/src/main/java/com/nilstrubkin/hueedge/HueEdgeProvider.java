@@ -4,15 +4,13 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.util.DisplayMetrics;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -24,9 +22,6 @@ import com.nilstrubkin.hueedge.service.LongClickColorSliderService;
 import com.nilstrubkin.hueedge.service.LongClickSaturationSliderService;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider implements Serializable {
 
@@ -261,7 +257,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         } catch (NullPointerException ex){
             Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
             contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_demo); // R.layout.main_view_no_bridge); TODO demo
+                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
             contentView.setOnClickPendingIntent(R.id.configureButton,
                     getClickIntent(ctx, R.id.configureButton, 1));
             return contentView;
@@ -505,6 +501,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             }
             if(buttonIsMapped){
                 try{
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                    if(!noHaptic) {
+                        Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
+                        vibrator.vibrate(1);
+                    }
                     currentlyClicked = id;
                     BridgeResource br = Objects.requireNonNull(bridge.getContents().get(currentCategory)).get(id);
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, Objects.requireNonNull(br));
@@ -558,6 +560,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             saveAllConfiguration(ctx);
         }
         else if(key == 2){
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+            boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+            if(!noHaptic) {
+                Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(1);
+            }
             BridgeResource br = getSlidersResource();
             String actionUrl = br.getCategory().equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
             switch (id){
@@ -632,6 +640,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                     return;
                 }
                 if (isNotAScene){
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                    if(!noHaptic) {
+                        Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
+                        vibrator.vibrate(1);
+                    }
                     setSlidersActive(true);
                     setSlidersResource(br);
                 }
@@ -798,7 +812,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 resource.getBtnBackgroundResource(ctx));
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
-                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize()));
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
@@ -899,7 +913,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         Log.e(TAG,"Starting saving all config took time: " + (System.currentTimeMillis() - timestamp));
     }
 
-    @SuppressWarnings("unchecked")
     public static void loadAllConfiguration(Context ctx) {
         Log.d(TAG, "loadConfigurationFromMemory()");
         //loadCurrentCategory(ctx);
@@ -922,7 +935,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         try {
             bridge = (HueBridge) Objects.requireNonNull(configInputStream).readObject();
             HueBridge.setInstance(bridge);
-            return;
         } catch (NullPointerException ex){
             Log.e(TAG, "Config file not found");
         }

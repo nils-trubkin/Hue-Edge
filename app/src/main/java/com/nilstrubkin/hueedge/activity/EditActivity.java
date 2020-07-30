@@ -4,10 +4,11 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -160,7 +161,7 @@ public class EditActivity extends AppCompatActivity {
             resources.add(new BridgeResource("0", "All", "groups", "any_on","on"));
         }
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
-                this, R.layout.edit_activity_adapter_view_layout, resources);
+                this, R.layout.edit_activity_adapter_view_layout, resources, vibrator);
         adapter.sort(new Comparator<BridgeResource>() {
             @Override
             public int compare(BridgeResource br1, BridgeResource br2) {
@@ -234,6 +235,10 @@ public class EditActivity extends AppCompatActivity {
                 btn.setOnLongClickListener(new View.OnLongClickListener(){
                     @Override
                     public boolean onLongClick(View v) {
+                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                        if(!noHaptic)
+                            vibrator.vibrate(1);
                         ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
                         ClipData dragData = new ClipData(
                                 resource.getName(),
@@ -257,7 +262,7 @@ public class EditActivity extends AppCompatActivity {
                 });
             } else {
                 displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText);
-                DragEventListener dragListen = new DragEventListener(ctx, i, vibrator);
+                DragEventListener dragListen = new DragEventListener(ctx, i);
                 btn.setOnDragListener(dragListen);
                 btnText.setOnDragListener(dragListen);
                 btn.setOnLongClickListener(null);
@@ -266,6 +271,10 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void clearSlot (int position) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+        if(!noHaptic)
+            vibrator.vibrate(1);
         final HashMap<Integer, BridgeResource> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
@@ -284,7 +293,7 @@ public class EditActivity extends AppCompatActivity {
         TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[position]);
         displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText);
         // Creates a new drag event listener
-        DragEventListener dragListen = new DragEventListener(ctx, position, vibrator);
+        DragEventListener dragListen = new DragEventListener(ctx, position);
         // Sets the drag event listener for the View
         btn.setOnDragListener(dragListen);
         btnText.setOnDragListener(dragListen);
@@ -306,7 +315,7 @@ public class EditActivity extends AppCompatActivity {
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         btnTopText.setText(resource.getBtnText(ctx));
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
+                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize()));
         btnTopText.setTextColor(resource.getBtnTextColor(ctx));
         btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
     }
