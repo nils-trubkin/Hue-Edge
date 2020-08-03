@@ -14,11 +14,12 @@ import com.nilstrubkin.hueedge.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 class LightResource extends BridgeResourceSliders {
 
-    static class State {
+    static class State implements Serializable {
         boolean on;
         int bri;
         int hue;
@@ -52,8 +53,8 @@ class LightResource extends BridgeResourceSliders {
     }
 
     @Override
-    protected boolean isAll_on(){
-        return getState().isOn();
+    protected boolean isAll_off(){
+        return !getState().isOn();
     }
 
     public int getBri() {

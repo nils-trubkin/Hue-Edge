@@ -88,9 +88,9 @@ public class DragEventListener implements View.OnDragListener {
                 HueBridge bridge;
                 try {
                     bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                } catch (NullPointerException ex){
+                } catch (NullPointerException e){
                     Log.e(TAG, "Tried to drag and drop but no HueBridge instance was found");
-                    ex.printStackTrace();
+                    e.printStackTrace();
                     return false;
                 }
 

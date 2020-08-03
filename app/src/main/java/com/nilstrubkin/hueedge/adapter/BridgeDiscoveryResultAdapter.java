@@ -32,7 +32,7 @@ public class BridgeDiscoveryResultAdapter extends ArrayAdapter<DiscoveryEntry> {
         DiscoveryEntry result;
         try {
             result = Objects.requireNonNull(getItem(position));
-        } catch (NullPointerException ex){
+        } catch (NullPointerException e){
             Log.e(TAG, "Could not fetch result");
             return convertView;
         }

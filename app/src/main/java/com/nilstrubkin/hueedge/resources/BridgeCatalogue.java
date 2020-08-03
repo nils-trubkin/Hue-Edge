@@ -2,11 +2,14 @@ package com.nilstrubkin.hueedge.resources;
 
 import android.util.Pair;
 
+import com.nilstrubkin.hueedge.ResourceReference;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class BridgeCatalogue {
+public class BridgeCatalogue implements Serializable {
 
     private Map<String, LightResource> lights;
     private Map<String, GroupResource> groups;
@@ -60,13 +63,7 @@ public class BridgeCatalogue {
         return groups;
     }
 
-    public Pair<String, String> getGroup0Ref() {
-        try {
-            GroupResource allGroup = Objects.requireNonNull(getGroups().get("0"));
-            return new Pair<>(allGroup.getCategory(), allGroup.getId());
-        } catch (NullPointerException e){
-            e.printStackTrace();
-            return null;
-        }
+    public static ResourceReference getGroup0Ref() {
+        return new ResourceReference("groups", "0");
     }
 }

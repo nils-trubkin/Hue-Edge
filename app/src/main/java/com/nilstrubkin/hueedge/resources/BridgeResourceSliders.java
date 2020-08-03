@@ -11,42 +11,30 @@ public abstract class BridgeResourceSliders extends BridgeResource {
     public abstract int getBri();
     public abstract int getHue();
     public abstract int getSat();
-    protected abstract boolean isAll_on();
+    protected abstract boolean isAll_off();
     protected abstract String sendValue(Context ctx, String key, Object value);
 
-    public String getBriAction(){
-        return "bri";
-    }
-
-    public String getHueAction(){
-        return "hue";
-    }
-
-    public String getSatAction(){
-        return "sat";
-    }
-
-    public void enableResource(Context ctx) {
+    private void enableResource(Context ctx) {
         String actionWrite = getActionWrite();
         sendValue(ctx, actionWrite, true);
     }
 
     public void setBri(Context ctx, int value) {
-        String briAction = getBriAction();
-        if(!isAll_on())
-            activateResource(ctx);
+        String briAction = "bri";
+        if(isAll_off())
+            enableResource(ctx);
         sendValue(ctx, briAction, value);
     }
     public void setHue(Context ctx, int value) {
-        String hueAction = getHueAction();
-        if(!isAll_on())
-            activateResource(ctx);
+        String hueAction = "hue";
+        if(isAll_off())
+            enableResource(ctx);
         sendValue(ctx, hueAction, value);
     }
     public void setSat(Context ctx, int value) {
-        String satAction = getSatAction();
-        if(!isAll_on())
-            activateResource(ctx);
+        String satAction = "sat";
+        if(isAll_off())
+            enableResource(ctx);
         sendValue(ctx, satAction, value);
     }
 

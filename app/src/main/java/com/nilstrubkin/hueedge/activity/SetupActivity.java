@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -239,7 +238,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 // Happy path
                 stopBridgeDiscovery();
                 AuthEntry ae = ((Result.Success<AuthEntry>) result).data;
-                HueBridge.getInstance(ctx, ae.ip, ae.username).requestHueState(ctx);
+                HueBridge.getInstance(ctx, ae.ip, ae.username);
                 Log.i(TAG, "Bridge " + ae.ip +  " authorized successfully");
                 updateUI(UIState.Settings);
             } else {
@@ -351,7 +350,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                     return;
                 }
-            } catch (NullPointerException ex){
+            } catch (NullPointerException e){
                 Log.e(TAG, "Tried to perfrom quick setup but no HueBridge instance found");
                 updateUI(UIState.Error);
             }
@@ -556,7 +555,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
                             symbolSwitch.setChecked(settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false));
                             hapticSwitch.setChecked(settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false));
-                        } catch (NullPointerException ex){
+                        } catch (NullPointerException e){
                             Log.e(TAG, "Tried to display state for switch but no HueBridge instance present");
                         }
                         break;

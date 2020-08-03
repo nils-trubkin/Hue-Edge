@@ -13,11 +13,12 @@ import com.nilstrubkin.hueedge.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 class GroupResource extends BridgeResourceSliders {
 
-    static class State {
+    static class State implements Serializable {
         boolean all_on;
         boolean any_on;
 
@@ -30,7 +31,7 @@ class GroupResource extends BridgeResourceSliders {
         }
     }
 
-    static class Action {
+    static class Action implements Serializable{
         int bri;
         int hue;
         int sat;
@@ -64,8 +65,8 @@ class GroupResource extends BridgeResourceSliders {
         return action;
     }
 
-    public boolean isAll_on() {
-        return getState().isAll_on();
+    public boolean isAll_off() {
+        return !getState().isAll_on();
     }
 
     public boolean isAny_on() {
@@ -123,7 +124,7 @@ class GroupResource extends BridgeResourceSliders {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
         if(isAny_on())
-            if(isAll_on())
+            if(!isAll_off())
                 return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);
             else
                 return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.some_symbol);

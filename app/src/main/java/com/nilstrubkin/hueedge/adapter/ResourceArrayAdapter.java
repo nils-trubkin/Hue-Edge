@@ -30,7 +30,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
     private final Context ctx;
     private final int mResource;
-    private Vibrator vibrator;
+    private final Vibrator vibrator;
 
     public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects, Vibrator vib) {
         super(context, resource, objects);
@@ -55,9 +55,9 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         try {
             resource = Objects.requireNonNull(getItem(position));
         }
-        catch (NullPointerException ex){
+        catch (NullPointerException e){
             Log.d(TAG, "Could not get item's position");
-            ex.printStackTrace();
+            e.printStackTrace();
             return convertView;
         }
 
@@ -79,17 +79,17 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 try {
                     br = Objects.requireNonNull(getItem(position));
                 }
-                catch (NullPointerException ex){
+                catch (NullPointerException e){
                     Log.e(TAG, "Failed to get item in grid adapter");
-                    ex.printStackTrace();
+                    e.printStackTrace();
                     return;
                 }
                 HueBridge bridge;
                 try {
                     bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                } catch (NullPointerException ex){
+                } catch (NullPointerException e){
                     Log.e(TAG,"Failed to get HueBridge instance");
-                    ex.printStackTrace();
+                    e.printStackTrace();
                     return;
                 }
                 final EditActivity instance = (EditActivity) ctx;

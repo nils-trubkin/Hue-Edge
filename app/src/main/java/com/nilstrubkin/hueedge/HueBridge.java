@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.nilstrubkin.hueedge.HueEdgeProvider.menuCategory;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogueAdapter;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -28,39 +30,33 @@ import java.util.concurrent.Future;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HueBridge implements Serializable {
     private transient static final String TAG = HueBridge.class.getSimpleName();
 
     private static HueBridge instance;
+    private BridgeCatalogue bridgeState;
 
     private final String url;
     private final String ip;
     private final String userName;
-    private transient JSONObject stateJson;
-
-    private OkHttpClient client = new OkHttpClient();
 
     private transient JSONObject tempState;
     private transient JSONObject tempState0;
 
-    private HueEdgeProvider.menuCategory currentCategory = HueEdgeProvider.menuCategory.QUICK_ACCESS;
+    private menuCategory currentCategory = menuCategory.QUICK_ACCESS;
     private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
-    private BridgeCatalogue bridgeState;
-
-    //Mapping of category to contents
-    private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, Pair<String, String>>> contents =
-            new HashMap<>();
+    //Mapping of <category to <button id to resource reference>> used to keep all mappings
+    private final Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
         this(ctx, ip, userName, ctx.getString(R.string.http_header)); // String "http://"
     }
 
-    //Custom constructor for future use TODO HTTPS
+    //Custom constructor for future use
     private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
         this.ip = ip;
         this.userName = Objects.requireNonNull(userName);
@@ -71,21 +67,9 @@ public class HueBridge implements Serializable {
                         Objects.requireNonNull(userName);
 
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
-        getContents().put(
-                HueEdgeProvider.menuCategory.QUICK_ACCESS,
-                new HashMap<Integer, Pair<String, String>>());
-        getContents().put(
-                HueEdgeProvider.menuCategory.LIGHTS,
-                new HashMap<Integer, Pair<String, String>>());
-        getContents().put(
-                HueEdgeProvider.menuCategory.ROOMS,
-                new HashMap<Integer, Pair<String, String>>());
-        getContents().put(
-                HueEdgeProvider.menuCategory.ZONES,
-                new HashMap<Integer, Pair<String, String>>());
-        getContents().put(
-                HueEdgeProvider.menuCategory.SCENES,
-                new HashMap<Integer, Pair<String, String>>());
+        for (menuCategory m : menuCategory.values()){
+            getContents().put(m, new HashMap<Integer, ResourceReference>());
+        }
     }
 
     //Delete the instance
@@ -108,15 +92,15 @@ public class HueBridge implements Serializable {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
             }
-            else instance.requestHueState(ctx);
+            else requestHueState(ctx);
         }
         return instance;
     }
 
     //Constructor for instance, first time setup
-    public static synchronized HueBridge getInstance(Context ctx, String ipAddress, String userName) {
+    public static synchronized void getInstance(Context ctx, String ipAddress, String userName) {
         instance = new HueBridge(ctx, ipAddress, userName);
-        return instance;
+        requestHueState(ctx);
     }
 
     //Setting the instance for config loading
@@ -136,17 +120,9 @@ public class HueBridge implements Serializable {
         return userName;
     }
 
-    public JSONObject getStateJson() {
-        return stateJson;
-    }
-
-    public void setStateJson(JSONObject stateJson) {
-        this.stateJson = stateJson;
-    }
-
-    public BridgeResource getResource(Pair<String, String> ref){
-        String id = ref.second;
-        switch (ref.first){
+    public BridgeResource getResource(ResourceReference ref){
+        String id = ref.id;
+        switch (ref.category){
             case "lights":
                 return getBridgeState().getLights().get(id);
             case "groups":
@@ -174,30 +150,27 @@ public class HueBridge implements Serializable {
                 Log.e(TAG,"Starting to merge json...");
                 JSONObject currentGroups = tempState.getJSONObject("groups");
                 currentGroups.put("0", tempState0);
-                setStateJson(tempState.put("groups", currentGroups));
+                JSONObject completeState = tempState.put("groups", currentGroups);
                 Log.e(TAG,"Merging took time: " + (System.currentTimeMillis() - timestamp));
                 timestamp = System.currentTimeMillis();
                 Log.e(TAG,"Starting to refresh hashmaps");
-                refreshAllHashMaps();
+                refreshAllHashMaps(ctx, completeState);
                 Log.e(TAG,"Refresh of hashmaps took time: " + (System.currentTimeMillis() - timestamp));
-                getStateIntent(ctx).send();
-            } catch (JSONException ex) {
+            } catch (JSONException e) {
                 Log.e(TAG, "Could not merge states. No groups in stateJson.");
-                ex.printStackTrace();
-            } catch (PendingIntent.CanceledException ex) {
-                ex.printStackTrace();
+                e.printStackTrace();
             }
     }
 
-    public HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, Pair<String, String>>> getContents() {
+    public Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
         return contents;
     }
 
-    public HueEdgeProvider.menuCategory getCurrentCategory() {
+    public menuCategory getCurrentCategory() {
         return currentCategory;
     }
 
-    public void setCurrentCategory(HueEdgeProvider.menuCategory currentCategory) {
+    public void setCurrentCategory(menuCategory currentCategory) {
         this.currentCategory = currentCategory;
     }
 
@@ -213,17 +186,21 @@ public class HueBridge implements Serializable {
         return bridgeState;
     }
 
-    public void setBridgeState(BridgeCatalogue bridgeState){
+    public void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
+        try {
+            getStateIntent(ctx).send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void refreshAllHashMaps() {
-        JSONObject stateJson = getStateJson();
+    private void refreshAllHashMaps(Context ctx, JSONObject catalogue) {
         Moshi moshi = new Moshi.Builder().add(new BridgeCatalogueAdapter()).build();
         JsonAdapter<BridgeCatalogue> jsonAdapter = moshi.adapter(BridgeCatalogue.class);
         try {
-            BridgeCatalogue bridgeState = jsonAdapter.fromJson(stateJson.toString());
-            setBridgeState(bridgeState);
+            BridgeCatalogue bridgeState = jsonAdapter.fromJson(catalogue.toString());
+            setBridgeState(ctx, bridgeState);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,29 +211,29 @@ public class HueBridge implements Serializable {
 
     }
 
-    public void addToCategory(Context ctx, HueEdgeProvider.menuCategory category, BridgeResource br, int index){
+    public void addToCategory(Context ctx, menuCategory category, BridgeResource br, int index){
         Log.d(TAG, "addToCurrentCategory()");
         HueBridge bridge;
         try{
             bridge = Objects.requireNonNull(getInstance(ctx));
-        } catch (NullPointerException ex){
+        } catch (NullPointerException e){
             Log.e(TAG, "Tried to add to current category but no instance of HueBridge was found");
-            ex.printStackTrace();
+            e.printStackTrace();
             return;
         }
         if (bridge.getContents().containsKey(category)) {
-            HashMap<Integer, Pair<String, String>> categoryContents = bridge.getContents().get(category);
+            Map<Integer, ResourceReference> categoryContents = bridge.getContents().get(category);
             boolean slotIsEmpty = false;
             try {
                 slotIsEmpty = !Objects.requireNonNull(categoryContents).containsKey(index);
-            } catch (NullPointerException ex) {
+            } catch (NullPointerException e) {
                 Log.e(TAG, "Failed to get current category contents");
-                ex.printStackTrace();
+                e.printStackTrace();
             }
             if (slotIsEmpty) {
                 String resCat = br.getCategory();
                 String resId = br.getId();
-                Pair<String, String> resRef = new Pair<>(resCat, resId);
+                ResourceReference resRef = new ResourceReference(resCat, resId);
                 categoryContents.put(index, resRef);
                 Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + br.toString());
             }
@@ -290,8 +267,13 @@ public class HueBridge implements Serializable {
         return null;
     }
 
-    public void requestHueState(Context ctx){
-        requestHueState(ctx, false);
+    public static void requestHueState(Context ctx){
+        try {
+            Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx, false);
+        } catch (NullPointerException e){
+            e.printStackTrace();
+            Log.e(TAG, "Tried to requestHueState() but there is no instance of HueBridge present");
+        }
     }
 
     //GET method
@@ -300,17 +282,16 @@ public class HueBridge implements Serializable {
             tempState = null;
             tempState0 = null;
         }
-        final long timestamp = System.currentTimeMillis();
         Log.e(TAG,"Requesting hue state... is state0: " + state0);
-
 
         ExecutorService pool = Executors.newFixedThreadPool(1);
         Callable<String> callable = new Callable<String>() {
             @Override
-            public String call() throws Exception {
+            public String call() {
                 Request request = new Request.Builder()
                         .url(state0 ? url + "/groups/0" : url)
                         .build();
+                final OkHttpClient client = new OkHttpClient();
                 try (Response response = client.newCall(request).execute()) {
                     return Objects.requireNonNull(response.body()).string();
                 } catch (IOException | NullPointerException e) {

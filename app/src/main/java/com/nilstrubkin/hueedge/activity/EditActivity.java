@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nilstrubkin.hueedge.DragEventListener;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.ResourceReference;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.R;
@@ -40,9 +42,10 @@ public class EditActivity extends AppCompatActivity {
     private static final String TAG = EditActivity.class.getSimpleName();
     private final Context ctx = this;
 
+    private HueBridge bridge;
     private Vibrator vibrator;
     private HueEdgeProvider.menuCategory currentCategory;
-    private HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents;
+    private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents;
 
     public HueEdgeProvider.menuCategory getCurrentCategory() {
         return currentCategory;
@@ -53,10 +56,9 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: Started.");
 
-        final HueBridge bridge;
         try {
             bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException ex){
+        } catch (NullPointerException e){
             // If no bridge is found, start setup activity
             Log.e(TAG, "Entering edit activity but no HueBridge instance was found, starting setup activity");
             HueEdgeProvider.startSetupActivity(ctx);
@@ -77,7 +79,7 @@ public class EditActivity extends AppCompatActivity {
 
         vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
         currentCategory = bridge.getCurrentCategory();
-        //contents = bridge.getContents(); TODO
+        contents = bridge.getContents();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,9 +99,9 @@ public class EditActivity extends AppCompatActivity {
         try {
             ip = Objects.requireNonNull(HueBridge.getInstance(ctx)).getIp();
         }
-        catch (NullPointerException ex){
+        catch (NullPointerException e){
             Log.e(TAG, "Trying to enter edit activity but there is no instance of HueBridge");
-            ex.printStackTrace();
+            e.printStackTrace();
             return;
         }
         hueStatus.setText(ctx.getString(R.string.hue_status, ip));
@@ -129,7 +131,8 @@ public class EditActivity extends AppCompatActivity {
                 }
                 map = bridgeState.getZones();
                 for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-                    resources.add(entry.getValue());
+                    if(!entry.getKey().equals("0"))
+                        resources.add(entry.getValue());
                 }
                 map = bridgeState.getScenes();
                 // The for loop that is supposed to be here can be found right after the switch cases
@@ -155,9 +158,6 @@ public class EditActivity extends AppCompatActivity {
             resources.add(entry.getValue());
         }
 
-        /*if(!currentCategory.equals(HueEdgeProvider.menuCategory.SCENES)){
-            resources.add(new BridgeResource("0", "All", "groups", "any_on","on"));
-        }*/
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
                 this, R.layout.edit_activity_adapter_view_layout, resources, vibrator);
         adapter.sort(new Comparator<BridgeResource>() {
@@ -189,14 +189,15 @@ public class EditActivity extends AppCompatActivity {
 
     public void panelUpdateIndex (int i){
         if (contents.containsKey(currentCategory)) {
-            final HashMap<Integer, BridgeResource> currentCategoryContents = contents.get(currentCategory);
-            boolean slotIsFilled = false;
+            Map<Integer, ResourceReference> currentCategoryContents;
             try {
-                slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
-            } catch (NullPointerException ex) {
+                currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
+            } catch (NullPointerException e) {
                 Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
-                ex.printStackTrace();
+                e.printStackTrace();
+                return;
             }
+            boolean slotIsFilled = currentCategoryContents.containsKey(i);
             final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[i]);
             final Button btn = findViewById(HueEdgeProvider.btnArr[i]);
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[i]);
@@ -204,15 +205,16 @@ public class EditActivity extends AppCompatActivity {
             final TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[i]);
 
             if (slotIsFilled) {
-                final BridgeResource resource;
+                final BridgeResource res;
                 try {
-                    resource = Objects.requireNonNull(currentCategoryContents.get(i));
-                } catch (NullPointerException ex) {
+                    ResourceReference resRef = Objects.requireNonNull(currentCategoryContents.get(i));
+                    res = bridge.getResource(resRef);
+                } catch (NullPointerException e) {
                     Log.e(TAG, "Failed to load filled slot");
-                    ex.printStackTrace();
+                    e.printStackTrace();
                     return;
                 }
-                displaySlotAsFull(i, resource);
+                displaySlotAsFull(i, res);
                 final int finalI = i;
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -239,21 +241,21 @@ public class EditActivity extends AppCompatActivity {
                             vibrator.vibrate(1);
                         ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
                         ClipData dragData = new ClipData(
-                                resource.getName(),
+                                res.getName(),
                                 new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
                                 item);
                         View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
                         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                             return v.startDragAndDrop(dragData,  // the data to be dragged
                                     myShadow,  // the drag shadow builder
-                                    resource,      // pass resource
+                                    res,      // pass resource
                                     0          // flags (not currently used, set to 0)
                             );
                         else
                             //noinspection deprecation
                             return v.startDrag(dragData,  // the data to be dragged
                                     myShadow,  // the drag shadow builder
-                                    resource,      // pass resource
+                                    res,      // pass resource
                                     0          // flags (not currently used, set to 0)
                             );
                     }
@@ -273,13 +275,13 @@ public class EditActivity extends AppCompatActivity {
         boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
         if(!noHaptic)
             vibrator.vibrate(1);
-        final HashMap<Integer, BridgeResource> currentCategoryContents;
+        final Map<Integer, ResourceReference> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
         }
-        catch (NullPointerException ex){
+        catch (NullPointerException e){
             Log.e(TAG, "Failed to get contents of current category");
-            ex.printStackTrace();
+            e.printStackTrace();
             return;
         }
         currentCategoryContents.remove(position);

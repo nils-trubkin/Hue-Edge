@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.nilstrubkin.hueedge.HueBridge;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -17,12 +18,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public abstract class BridgeResource {
+public abstract class BridgeResource implements Serializable {
 
     private String id;
     private String name;
 
-    private static OkHttpClient client = new OkHttpClient();
     private static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
@@ -34,7 +34,7 @@ public abstract class BridgeResource {
 
     public String getActionWrite() {
         return getActionRead();
-    };
+    }
 
     public abstract String getBtnText(Context ctx);
 
@@ -71,7 +71,7 @@ public abstract class BridgeResource {
             return categoryDiff;
         else {
             String thisName = this.getName();
-            String thatName = br.getClass().toString();
+            String thatName = br.getName();
             return thisName.compareTo(thatName);
         }
     }
@@ -93,6 +93,7 @@ public abstract class BridgeResource {
                         .url(url)
                         .put(body)
                         .build();
+                final OkHttpClient client = new OkHttpClient();
                 try (Response response = client.newCall(request).execute()) {
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).getReplyIntent(ctx).send();
                     return Objects.requireNonNull(response.body()).string();

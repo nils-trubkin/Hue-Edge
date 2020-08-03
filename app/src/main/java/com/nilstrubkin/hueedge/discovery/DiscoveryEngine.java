@@ -122,9 +122,9 @@ public class DiscoveryEngine {
                             else {
                                 sendAuthRequest(ctx, bridgeIp, callback);
                             }
-                        } catch (Exception ex) {
+                        } catch (Exception e) {
                             Log.e(TAG, "Could not start background auth request task");
-                            ex.printStackTrace();
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -174,8 +174,8 @@ public class DiscoveryEngine {
                                 }
                             }
                             Log.e(TAG, "Unsuccessful! Check reply");
-                        } catch (JSONException ex) {
-                            ex.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 },
@@ -576,9 +576,9 @@ public class DiscoveryEngine {
                     try {
                         Objects.requireNonNull(de).ip = address;
                     }
-                    catch (NullPointerException ex){
+                    catch (NullPointerException e){
                         Log.e(TAG, "Failed to notify result. DiscoveryEntry is null.");
-                        ex.printStackTrace();
+                        e.printStackTrace();
                     }
                     Result<DiscoveryEntry> result = new Result.Success<>(de);
                     in.close();
@@ -639,9 +639,9 @@ public class DiscoveryEngine {
         boolean confirmedHue = false;
         try {
             confirmedHue = Objects.requireNonNull(modelDescription).contains("Philips hue");
-        } catch (NullPointerException ex){
+        } catch (NullPointerException e){
             Log.e(TAG, "Not a Philips Hue description.xml");
-            ex.printStackTrace();
+            e.printStackTrace();
         }
         if(confirmedHue)
             return new DiscoveryEntry(friendlyName, serialNumber/*, logoUrl*/);
