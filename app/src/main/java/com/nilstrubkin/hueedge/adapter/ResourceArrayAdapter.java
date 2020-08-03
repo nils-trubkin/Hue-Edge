@@ -18,10 +18,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
+import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.BridgeResource;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -64,9 +63,9 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
 
         final String name = resource.getName();
         final String btnText = resource.getBtnText(ctx);
-        final int btnTextSizeRes = resource.getBtnTextSize();
+        final int btnTextSizeRes = resource.getBtnTextSize(ctx);
         final int btnColor = resource.getBtnTextColor(ctx);
-        final int btnResource = resource.getBtnBackgroundResource(ctx);
+        final int btnResource = resource.getBtnBackgroundResource();
         gridBtnTopText.setText(btnText);
         gridBtnTopText.setTextColor(btnColor);
         gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,

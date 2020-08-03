@@ -73,7 +73,7 @@
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue Bridge</string>
     <string name="ip_help_description">A screenshot displaying the ip and other details of the bridge inside the official Philips Hue app</string>
 
-    <string name="large_minus">—</string>
+    <string name="some_symbol">—</string>
     <string name="plus_symbol">+</string>
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>

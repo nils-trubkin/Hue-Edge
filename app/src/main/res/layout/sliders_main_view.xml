@@ -13,19 +13,19 @@
         tools:ignore="ContentDescription" />
 
     <ListView
-        android:id="@+id/sliders_brightness"
+        android:id="@+id/sliders_bri"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:longClickable="true" />
 
     <ListView
-        android:id="@+id/sliders_color"
+        android:id="@+id/sliders_hue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:longClickable="true" />
 
     <ListView
-        android:id="@+id/sliders_saturation"
+        android:id="@+id/sliders_sat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:longClickable="true" />

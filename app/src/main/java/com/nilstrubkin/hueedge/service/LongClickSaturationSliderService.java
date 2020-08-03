@@ -44,7 +44,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
             int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title3) + itemId);
-            int slidersResourceColor = HueEdgeProvider.getSlidersResourceColor();
+            int slidersResourceColor = HueEdgeProvider.getSlidersResHue();
             float h = slidersResourceColor * 360f / 65536f;
             float s = id / (float) MAX_CHILD;
             float v = 1f;
@@ -55,7 +55,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             Intent intent = new Intent();
             intent.putExtra("item_id", itemId);
             intent.putExtra("bg_color", bgColor);
-            intent.putExtra("saturation", Math.round(s * 254));
+            intent.putExtra("sat", Math.round(s * 254));
             // should be set fillInIntent to root of item layout
             itemView.setOnClickFillInIntent(R.id.item_root, intent);
 

@@ -3,12 +3,12 @@ package com.nilstrubkin.hueedge;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 
 import com.nilstrubkin.hueedge.activity.EditActivity;
+import com.nilstrubkin.hueedge.resources.BridgeResource;
 
 import java.util.Objects;
 

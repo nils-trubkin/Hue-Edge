@@ -24,8 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.nilstrubkin.hueedge.DragEventListener;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.resources.BridgeResource;
+import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.BridgeResource;
 import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
@@ -52,13 +53,19 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: Started.");
 
-        if(HueBridge.getInstance(ctx) == null) {
+        final HueBridge bridge;
+        try {
+            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+        } catch (NullPointerException ex){
+            // If no bridge is found, start setup activity
+            Log.e(TAG, "Entering edit activity but no HueBridge instance was found, starting setup activity");
             HueEdgeProvider.startSetupActivity(ctx);
             return;
         }
 
         setContentView(R.layout.edit_activity);
 
+        //Set bottom lip color
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(ctx.getColor(R.color.navigation_bar_color_edit));
@@ -68,17 +75,9 @@ public class EditActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
 
-        final HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException ex){
-            Log.e(TAG, "Entering edit activity but no HueBridge instance was found");
-            ex.printStackTrace();
-            return;
-        }
         vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
         currentCategory = bridge.getCurrentCategory();
-        contents = bridge.getContents();
+        //contents = bridge.getContents(); TODO
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,50 +115,49 @@ public class EditActivity extends AppCompatActivity {
         panelUpdate();
 
         ArrayList<BridgeResource> resources = new ArrayList<>();
-        HashMap<String, BridgeResource> map = null;
+        Map<String, ? extends BridgeResource> map = null;
+        BridgeCatalogue bridgeState = bridge.getBridgeState();
         switch (currentCategory) {
             case QUICK_ACCESS:
-                map = bridge.getLights();
-                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                map = bridgeState.getLights();
+                for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
                     resources.add(entry.getValue());
                 }
-                map = bridge.getRooms();
-                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                map = bridgeState.getRooms();
+                for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
                     resources.add(entry.getValue());
                 }
-                map = bridge.getZones();
-                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+                map = bridgeState.getZones();
+                for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
                     resources.add(entry.getValue());
                 }
-                map = bridge.getScenes();
-                for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                    resources.add(entry.getValue());
-                }
+                map = bridgeState.getScenes();
+                // The for loop that is supposed to be here can be found right after the switch cases
                 break;
             case LIGHTS:
-                map = bridge.getLights();
+                map = bridgeState.getLights();
                 break;
             case ROOMS:
-                map = bridge.getRooms();
+                map = bridgeState.getRooms();
                 break;
             case ZONES:
-                map = bridge.getZones();
+                map = bridgeState.getZones();
                 break;
             case SCENES:
-                map = bridge.getScenes();
+                map = bridgeState.getScenes();
                 break;
             default:
-                Log.w(TAG, "Unknown category!");
+                Log.e(TAG, "Unknown category!");
                 break;
         }
-        if(!currentCategory.equals(HueEdgeProvider.menuCategory.QUICK_ACCESS)){
-            for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
-                resources.add(entry.getValue());
-            }
+        // Add the defined map to the resources, QUICK_ACCESS case uses this too as it's last step
+        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
+            resources.add(entry.getValue());
         }
-        if(!currentCategory.equals(HueEdgeProvider.menuCategory.SCENES)){
+
+        /*if(!currentCategory.equals(HueEdgeProvider.menuCategory.SCENES)){
             resources.add(new BridgeResource("0", "All", "groups", "any_on","on"));
-        }
+        }*/
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
                 this, R.layout.edit_activity_adapter_view_layout, resources, vibrator);
         adapter.sort(new Comparator<BridgeResource>() {
@@ -315,8 +313,8 @@ public class EditActivity extends AppCompatActivity {
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         btnTopText.setText(resource.getBtnText(ctx));
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize()));
+                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
         btnTopText.setTextColor(resource.getBtnTextColor(ctx));
-        btn.setBackgroundResource(resource.getBtnBackgroundResource(ctx));
+        btn.setBackgroundResource(resource.getBtnBackgroundResource());
     }
 }

@@ -346,7 +346,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         else if (view == quickButton) {
             try{
                 HueBridge hueBridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                if (hueBridge.getLights().isEmpty()) {
+                if (hueBridge.getBridgeState().getLights().isEmpty()) {
                     String toastString = ctx.getString(R.string.toast_no_lights);
                     Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
                     return;

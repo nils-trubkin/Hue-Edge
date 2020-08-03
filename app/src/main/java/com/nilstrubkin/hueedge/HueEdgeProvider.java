@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.nilstrubkin.hueedge.activity.SetupActivity;
+import com.nilstrubkin.hueedge.resources.BridgeResource;
+import com.nilstrubkin.hueedge.resources.BridgeResourceSliders;
 import com.nilstrubkin.hueedge.service.LongClickBrightnessSliderService;
 import com.nilstrubkin.hueedge.service.LongClickColorSliderService;
 import com.nilstrubkin.hueedge.service.LongClickSaturationSliderService;
@@ -106,31 +109,31 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     private static boolean slidersActive = false;
     private static boolean bridgeConfigured = false;
 
-    private static BridgeResource slidersResource;
-    private static int slidersResourceColor;
-    private static int slidersResourceSaturation;
+    private static Pair<String, String> slidersResource;
+    private static int slidersResHue;
+    private static int slidersResSat;
 
     private static int currentlyClicked = -1;
 
-    public static BridgeResource getSlidersResource() {
+    public static Pair<String, String> getSlidersResource() {
         return slidersResource;
     }
-    public static void setSlidersResource(BridgeResource slidersResource) {
+    public static void setSlidersResource(Pair<String, String> slidersResource) {
         HueEdgeProvider.slidersResource = slidersResource;
     }
 
-    public static int getSlidersResourceColor() {
-        return slidersResourceColor;
+    public static int getSlidersResHue() {
+        return slidersResHue;
     }
-    public static void setSlidersResourceColor(int slidersResourceColor) {
-        HueEdgeProvider.slidersResourceColor = slidersResourceColor;
+    public static void setSlidersResHue(int slidersResourceColor) {
+        slidersResHue = slidersResourceColor;
     }
 
-    public static int getSlidersResourceSaturation() {
-        return slidersResourceSaturation;
+    public static int getSlidersResSat() {
+        return slidersResSat;
     }
-    public static void setSlidersResourceSaturation(int slidersResourceSaturation) {
-        HueEdgeProvider.slidersResourceSaturation = slidersResourceSaturation;
+    public static void setSlidersResSat(int slidersResSat) {
+        HueEdgeProvider.slidersResSat = slidersResSat;
     }
 
     public static boolean isSlidersActive() {
@@ -279,7 +282,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         //Hide empty columns but at least show mainColumn if both are empty
         menuCategory currentCategory = bridge.getCurrentCategory();
         if(bridge.getContents().containsKey(currentCategory)) {
-            HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
+            HashMap<Integer, Pair<String, String>> currentCategoryContents = bridge.getContents().get(currentCategory);
             boolean mainColumnEmpty = true;
             boolean extraColumnEmpty = true;
 
@@ -294,12 +297,10 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 if (slotIsFilled) {
                     if(i < 5){
                         mainColumnEmpty = false;
-                        Log.d(TAG, "mainColumnEmpty = false");
                         i = 4;  // Skip to the next column if first is not empty
                     }
                     else {
                         extraColumnEmpty = false;
-                        Log.d(TAG, "extraColumnEmpty = false;");
                         break;
                     }
                 }
@@ -345,10 +346,6 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     private RemoteViews createSlidersContentView(Context ctx) {
         Log.d(TAG, "createSlidersContentView()");
         RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_main_view);
-        setSlidersResourceColor(getSlidersResource().getColor(ctx));
-        setSlidersResourceSaturation(getSlidersResource().getSaturation(ctx));
-        SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
         HueBridge bridge;
         try {
             bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
@@ -357,30 +354,36 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             ex.printStackTrace();
             return remoteListView;
         }
+        Pair<String,String> resRef = getSlidersResource();
+        BridgeResourceSliders res = (BridgeResourceSliders) bridge.getResource(resRef);
+        setSlidersResHue(res.getHue());
+        setSlidersResSat(res.getSat());
+
+        SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
+
+        remoteListView.setViewVisibility(R.id.sliders_bri, View.GONE);
+        remoteListView.setViewVisibility(R.id.sliders_hue, View.GONE);
+        remoteListView.setViewVisibility(R.id.sliders_sat, View.GONE);
+
         switch (bridge.getCurrentSlidersCategory()) {
             case BRIGHTNESS:
                 Intent brightnessIntent = new Intent(ctx, LongClickBrightnessSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.sliders_brightness, brightnessIntent);
-                remoteListView.setViewVisibility(R.id.sliders_brightness, View.VISIBLE);
-                remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
-                remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
-                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_brightness);
+                remoteListView.setRemoteAdapter(R.id.sliders_bri, brightnessIntent);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_bri);
+                remoteListView.setViewVisibility(R.id.sliders_bri, View.VISIBLE);
                 break;
             case COLOR:
                 Intent colorIntent = new Intent(ctx, LongClickColorSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.sliders_color, colorIntent);
-                remoteListView.setViewVisibility(R.id.sliders_color, View.VISIBLE);
-                remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
-                remoteListView.setViewVisibility(R.id.sliders_saturation, View.GONE);
-                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_color);
+                remoteListView.setRemoteAdapter(R.id.sliders_hue, colorIntent);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_hue);
+                remoteListView.setViewVisibility(R.id.sliders_hue, View.VISIBLE);
                 break;
             case SATURATION:
                 Intent saturationIntent = new Intent(ctx, LongClickSaturationSliderService.class);
-                remoteListView.setRemoteAdapter(R.id.sliders_saturation, saturationIntent);
-                remoteListView.setViewVisibility(R.id.sliders_saturation, View.VISIBLE);
-                remoteListView.setViewVisibility(R.id.sliders_brightness, View.GONE);
-                remoteListView.setViewVisibility(R.id.sliders_color, View.GONE);
-                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_saturation);
+                remoteListView.setRemoteAdapter(R.id.sliders_sat, saturationIntent);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_sat);
+                remoteListView.setViewVisibility(R.id.sliders_sat, View.VISIBLE);
                 break;
             default:
                 Log.e(TAG,"Unknown category!");
@@ -388,9 +391,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         }
 
         //SlookCocktailManager.getInstance(ctx).setOnLongClickPendingIntentTemplate(remoteListView, R.id.sliders_brightness, getLongClickIntent(ctx, R.id.sliders_brightness, 0)); // Long click of slider buttons
-        remoteListView.setPendingIntentTemplate(R.id.sliders_brightness, getClickIntent(ctx, R.id.sliders_brightness, 2));
-        remoteListView.setPendingIntentTemplate(R.id.sliders_color, getClickIntent(ctx, R.id.sliders_color, 2));
-        remoteListView.setPendingIntentTemplate(R.id.sliders_saturation, getClickIntent(ctx, R.id.sliders_saturation, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_bri, getClickIntent(ctx, R.id.sliders_bri, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_hue, getClickIntent(ctx, R.id.sliders_hue, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_sat, getClickIntent(ctx, R.id.sliders_sat, 2));
         return remoteListView;
     }
 
@@ -490,14 +493,16 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         if(key == 0){
             boolean buttonIsMapped = false;
             menuCategory currentCategory = bridge.getCurrentCategory();
+            HashMap<Integer, Pair<String, String>> currentCategoryContents;
             try{
-                HashMap<Integer, BridgeResource> currentCategoryContents =
+                currentCategoryContents =
                         Objects.requireNonNull(bridge.getContents().get(currentCategory));
                 buttonIsMapped = currentCategoryContents.containsKey(id);
             }
             catch (NullPointerException ex){
                 Log.e(TAG, "Received a button press but contents not set up. Did you clearAllContents at setup?");
                 ex.printStackTrace();
+                return;
             }
             if(buttonIsMapped){
                 try{
@@ -508,8 +513,9 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         vibrator.vibrate(1);
                     }
                     currentlyClicked = id;
-                    BridgeResource br = Objects.requireNonNull(bridge.getContents().get(currentCategory)).get(id);
-                    Objects.requireNonNull(HueBridge.getInstance(ctx)).toggleHueState(ctx, Objects.requireNonNull(br));
+                    //MoshiBridgeResource br = Objects.requireNonNull(bridge.getContents().get(currentCategory)).get(id);
+                    Pair<String, String> ref = Objects.requireNonNull(currentCategoryContents.get(id));
+                    Objects.requireNonNull(HueBridge.getInstance(ctx)).getResource(ref).activateResource(ctx);
                 }
                 catch (NullPointerException ex){
                     Log.e(TAG, "Received a button press. The button is mapped. But, there is no instance of HueBridge or failed to get the mapping for the button");
@@ -566,20 +572,21 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(1);
             }
-            BridgeResource br = getSlidersResource();
-            String actionUrl = br.getCategory().equals(LIGHTS) ? br.getStateUrl() : br.getActionUrl();
+            Pair<String, String> resRef = getSlidersResource();
+            BridgeResourceSliders res = (BridgeResourceSliders) bridge.getResource(resRef);
+            int value;
             switch (id){
-                case R.id.sliders_brightness:
-                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
-                    bridge.setHueBrightness(ctx, br, intent.getIntExtra("brightness", 0));
+                case R.id.sliders_bri:
+                    value = intent.getIntExtra("bri", 0);
+                    res.setBri(ctx, value);
                     break;
-                case R.id.sliders_color:
-                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
-                    bridge.setHueColor(ctx, br, intent.getIntExtra("color", 0));
+                case R.id.sliders_hue:
+                    value = intent.getIntExtra("hue", 0);
+                    res.setHue(ctx, value);
                     break;
-                case R.id.sliders_saturation:
-                    bridge.setHueState(ctx, actionUrl, br.getActionWrite(), true);
-                    bridge.setHueSaturation(ctx, br, intent.getIntExtra("saturation", 0));
+                case R.id.sliders_sat:
+                    value = intent.getIntExtra("sat", 0);
+                    res.setSat(ctx, value);
                     break;
                 default:
                     Log.e(TAG, "Unknown category!");
@@ -611,7 +618,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
         if(key == 0){
             boolean buttonIsMapped = false;
             try{
-                HashMap<Integer, BridgeResource> currentCategoryContents =
+                HashMap<Integer, Pair<String, String>> currentCategoryContents =
                         Objects.requireNonNull(
                                 Objects.requireNonNull(
                                         HueBridge.getInstance(ctx)).
@@ -624,30 +631,33 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                 ex.printStackTrace();
             }
             if(buttonIsMapped){
-                BridgeResource br;
-                boolean isNotAScene;
+                Pair<String, String> resRef;
+                boolean slidersSupported;
+                BridgeResource res;
                 try {
-                    br = Objects.requireNonNull(
+                    resRef = Objects.requireNonNull(
                             Objects.requireNonNull(
-                                    HueBridge.getInstance(ctx)).
+                                    bridge.
                                     getContents().
-                                    get(currentCategory)).get(id);
-                    isNotAScene = !Objects.requireNonNull(br).getCategory().equals("scenes");
+                                    get(currentCategory)).
+                                    get(id));
+                    res = bridge.getResource(resRef);
+                    slidersSupported = BridgeResourceSliders.class.isAssignableFrom(res.getClass());
                 }
                 catch (NullPointerException ex){
                     Log.e(TAG, "Received a button press. The button is mapped. Failed to get the mapping for the button");
                     ex.printStackTrace();
                     return;
                 }
-                if (isNotAScene){
+                if (slidersSupported){
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
                     boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
                     if(!noHaptic) {
                         Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
                         vibrator.vibrate(1);
                     }
+                    setSlidersResource(resRef);
                     setSlidersActive(true);
-                    setSlidersResource(br);
                 }
                 else {
                     String toastString = ctx.getString(R.string.toast_sliders_not_available);
@@ -679,12 +689,12 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
 
         int buttonIndex = 0;
         int qaButtonIndex = 0;
-        HashMap<String, BridgeResource> map;
-        HashMap<Integer, BridgeResource> quickAccessContents;
-        HashMap<Integer, BridgeResource> lightsContents;
-        HashMap<Integer, BridgeResource> roomsContents;
-        HashMap<Integer, BridgeResource> zonesContents;
-        HashMap<Integer, BridgeResource> scenesContents;
+        Map<String, ? extends BridgeResource> map;
+        HashMap<Integer, Pair<String, String>> quickAccessContents;
+        HashMap<Integer, Pair<String, String>> lightsContents;
+        HashMap<Integer, Pair<String, String>> roomsContents;
+        HashMap<Integer, Pair<String, String>> zonesContents;
+        HashMap<Integer, Pair<String, String>> scenesContents;
         try {
             quickAccessContents =
                     Objects.requireNonNull(bridge.getContents().get(menuCategory.QUICK_ACCESS));
@@ -701,61 +711,70 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             ex.printStackTrace();
             return;
         }
-        BridgeResource allResource = new BridgeResource("0", "All", "groups", "any_on","on");
+        //MoshiGroupResource allResource = bridge.getBridgeState().getGroup0();
+        //Pair<String, String> allResRef = new Pair<>(allResource.getCategory(), allResource.getId());
 
-        lightsContents.put(buttonIndex++, allResource);
-        quickAccessContents.put(qaButtonIndex++, allResource);
-        map = bridge.getLights();
+        //lightsContents.put(buttonIndex++, allResRef);
+        //quickAccessContents.put(qaButtonIndex++, allResRef);
+        map = bridge.getBridgeState().getLights();
         Log.d(TAG, "quickSetup getLights() size: " + map.size());
-        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for lights on id: " + entry.getKey());
-            lightsContents.put(buttonIndex++, entry.getValue());
+            BridgeResource res = entry.getValue();
+            Pair<String, String> resRef = new Pair<>(res.getCategory(), res.getId());
+            lightsContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 3) {
-                quickAccessContents.put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, resRef);
             }
         }
 
         buttonIndex = 0;
-        roomsContents.put(buttonIndex++, allResource);
-        map = bridge.getRooms();
+        //roomsContents.put(buttonIndex++, allResRef);
+        map = bridge.getBridgeState().getRooms();
         Log.d(TAG, "quickSetup getRooms() size: " + map.size());
-        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for rooms on id: " + entry.getKey());
-            roomsContents.put(buttonIndex++, entry.getValue());
+            BridgeResource res = entry.getValue();
+            Pair<String, String> resRef = new Pair<>(res.getCategory(), res.getId());
+            roomsContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 5) {
-                quickAccessContents.put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, resRef);
             }
         }
 
         buttonIndex = 0;
-        zonesContents.put(buttonIndex++, allResource);
-        map = bridge.getZones();
+        //zonesContents.put(buttonIndex++, allResource);
+        map = bridge.getBridgeState().getZones();
         Log.d(TAG, "quickSetup getZones() size: " + map.size());
-        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for zones on id: " + entry.getKey());
-            zonesContents.put(buttonIndex++, entry.getValue());
+            BridgeResource res = entry.getValue();
+            Pair<String, String> resRef = new Pair<>(res.getCategory(), res.getId());
+            zonesContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 7) {
-                quickAccessContents.put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, resRef);
             }
         }
 
         buttonIndex = 0;
 
-        map = bridge.getScenes();
+        map = bridge.getBridgeState().getScenes();
         Log.d(TAG, "quickSetup getScenes() size: " + map.size());
-        for (Map.Entry<String, BridgeResource> entry : map.entrySet()) {
+        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
             if(buttonIndex >= 10)
                 break;
             Log.d(TAG, "quickSetup for scenes on id: " + entry.getKey());
-            scenesContents.put(buttonIndex++, entry.getValue());
+            BridgeResource res = entry.getValue();
+            Pair<String, String> resRef = new Pair<>(res.getCategory(), res.getId());
+            scenesContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 9) {
-                quickAccessContents.put(qaButtonIndex++, entry.getValue());
+                quickAccessContents.put(qaButtonIndex++, resRef);
             }
         }
 
@@ -791,7 +810,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             menuCategory currentCategory = bridge.getCurrentCategory();
             for (int i = 0; i < 10; i++) {
                 if (bridge.getContents().containsKey(currentCategory)) {
-                    HashMap<Integer, BridgeResource> currentCategoryContents = bridge.getContents().get(currentCategory);
+                    HashMap<Integer, Pair<String, String>> currentCategoryContents = bridge.getContents().get(currentCategory);
                     boolean slotIsFilled = false;
                     try {
                         slotIsFilled = Objects.requireNonNull(currentCategoryContents).containsKey(i);
@@ -800,19 +819,20 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
                         ex.printStackTrace();
                     }
                     if (slotIsFilled) {
-                        BridgeResource resource = currentCategoryContents.get(i);
+                        Pair<String, String> ref = currentCategoryContents.get(i);
+                        BridgeResource resource = bridge.getResource(ref);
                         if (resource == null) {
                             Log.wtf(TAG, "resource == null");
                             return;
                         }
                         contentView.setViewVisibility(progressBarArr[i], View.GONE);
-                        contentView.setTextViewText(btnTextArr[i], resource.getName());
+                        contentView.setTextViewText(btnTextArr[i], resource.getUnderBtnText());
                         contentView.setTextViewText(btnTopTextArr[i], resource.getBtnText(ctx));
                         contentView.setTextColor(btnTopTextArr[i], resource.getBtnTextColor(ctx));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
-                                resource.getBtnBackgroundResource(ctx));
+                                resource.getBtnBackgroundResource());
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
-                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize()));
+                        contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
@@ -877,6 +897,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     }*/
 
     public static void saveAllConfiguration(Context ctx) {
+        if(true)
+            return;
         long timestamp = System.currentTimeMillis();
         Log.e(TAG,"Starting saving all config...");
         File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
@@ -903,7 +925,7 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
             recoveryOutputStream.writeObject(bridge.getIp());
             recoveryOutputStream.writeObject(bridge.getUserName());
             recoveryOutputStream.writeObject(bridge.getContents());
-            recoveryOutputStream.writeObject(bridge.getState().toString());
+            recoveryOutputStream.writeObject(bridge.getStateJson().toString());
             recoveryOutputStream.flush();
             recoveryOutputStream.close();
         } catch (Exception ex) {
@@ -914,6 +936,8 @@ public class HueEdgeProvider extends SlookCocktailProvider implements Serializab
     }
 
     public static void loadAllConfiguration(Context ctx) {
+        if(true)
+            return;
         Log.d(TAG, "loadConfigurationFromMemory()");
         //loadCurrentCategory(ctx);
 
