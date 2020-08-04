@@ -72,7 +72,11 @@ public abstract class BridgeResource implements Serializable {
         else {
             String thisName = this.getName();
             String thatName = br.getName();
-            return thisName.compareTo(thatName);
+            int nameDiff = thisName.compareTo(thatName);
+            if (nameDiff != 0)
+                return nameDiff;
+            else
+                return this.getUnderBtnText().compareTo(br.getUnderBtnText());
         }
     }
 
