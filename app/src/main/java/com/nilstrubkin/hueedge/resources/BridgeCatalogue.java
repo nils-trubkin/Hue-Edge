@@ -9,9 +9,9 @@ import java.util.Objects;
 
 public class BridgeCatalogue implements Serializable {
 
-    private Map<String, LightResource> lights;
-    private Map<String, GroupResource> groups;
-    private Map<String, SceneResource> scenes;
+    private Map<String, LightResource> lights = new HashMap<>();
+    private Map<String, GroupResource> groups = new HashMap<>();
+    private Map<String, SceneResource> scenes = new HashMap<>();
 
     public Map<String, LightResource> getLights() {
         return lights;

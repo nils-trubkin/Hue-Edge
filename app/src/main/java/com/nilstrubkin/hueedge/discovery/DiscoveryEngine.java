@@ -120,18 +120,13 @@ public class DiscoveryEngine {
                     public void run() {
                         if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
                             return;
-                        try {
-                            if (requestAmount == 0) {
-                                Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
-                                notifyAuthResult(errorResult, callback);
-                                timer.cancel();
-                            }
-                            else {
-                                sendAuthRequest(ctx, bridgeIp, callback);
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Could not start background auth request task");
-                            e.printStackTrace();
+                        if (requestAmount == 0) {
+                            Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
+                            notifyAuthResult(errorResult, callback);
+                            timer.cancel();
+                        }
+                        else {
+                            sendAuthRequest(ctx, bridgeIp, callback);
                         }
                     }
                 });
@@ -153,6 +148,7 @@ public class DiscoveryEngine {
             e.printStackTrace();
             return;
         }
+        Log.i(TAG, "Sending request to ip: " + ip);
         RequestBody body = RequestBody.create(json.toString(), JSON);
         Request request = new Request.Builder()
                 .url("http://" + ip + "/api")
@@ -162,14 +158,20 @@ public class DiscoveryEngine {
             Type type = Types.newParameterizedType(List.class, AuthResponse.class);
             Moshi moshi = new Moshi.Builder().build();
             JsonAdapter<List<AuthResponse>> adapter = moshi.adapter(type);
-            List<AuthResponse> responses = Objects.requireNonNull(adapter.fromJson(response.body().string()));
-            for (AuthResponse r : responses)
-                if (r.success != null){
-                    AuthEntry authEntry = new AuthEntry(ip, r.success.username);
-                    Result<AuthEntry> result = new Result.Success<>(authEntry);
-                    notifyAuthResult(result, callback);
+            String responseString = response.body().string();
+            Log.i(TAG, "response: " + responseString);
+            List<AuthResponse> responses = adapter.fromJson(responseString);
+            if(!responses.isEmpty())
+                for (AuthResponse r : responses) {
+                    if (r.success != null)
+                        if (r.success.username != null) {
+                            Log.e(TAG, r.success.username);
+                            AuthEntry authEntry = new AuthEntry(ip, r.success.username);
+                            Result<AuthEntry> result = new Result.Success<>(authEntry);
+                            notifyAuthResult(result, callback);
+                        }
                 }
-        } catch (IOException e){
+        } catch (IOException | NullPointerException e){
             e.printStackTrace();
         }
         requestAmount--;

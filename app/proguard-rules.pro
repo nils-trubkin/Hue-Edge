@@ -26,4 +26,17 @@
     public static *** i(...);
 }
 
+#-dontwarn org.jetbrains.annotations.**
+#-keep class kotlin.Metadata { *; }
+
+-keep class com.nilstrubkin.hueedge.discovery.* { *; }
+-keepnames class com.nilstrubkin.hueedge.discovery.* { *; }
+
+-keep class com.nilstrubkin.hueedge.resources.* { *; }
+-keepnames class com.nilstrubkin.hueedge.resources.* { *; }
+
+-keepclassmembers class com.nilstrubkin.hueedge.* { *; }
+
 -keepclassmembers enum com.nilstrubkin.hueedge.* { *; }
+
+#-addconfigurationdebugging

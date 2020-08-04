@@ -1,8 +1,10 @@
 package com.nilstrubkin.hueedge.discovery;
 
 class AuthResponse {
-    public static class Success{
-        String username;
+    static class Success{
+        String username = "";
+        public Success() {
+        }
     }
 
     /*private static class Error{
@@ -11,6 +13,9 @@ class AuthResponse {
         String description;
     }*/
 
-    Success success;
+    Success success = new Success();
     //Error error;
+    public AuthResponse(Success success) {
+        success = new Success();
+    }
 }

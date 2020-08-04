@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Objects;
 
-class GroupResource extends BridgeResourceSliders {
+public class GroupResource extends BridgeResourceSliders {
 
     static class State implements Serializable {
         boolean all_on;

@@ -690,7 +690,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         int qaButtonIndex = 0;
 
         quickAccessContents.put(qaButtonIndex++, allResRef);
-        lightsContents.put(buttonIndex++, allResRef);
         map = bridge.getBridgeState().getLights();
         Log.d(TAG, "quickSetup getLights() size: " + map.size());
         for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
