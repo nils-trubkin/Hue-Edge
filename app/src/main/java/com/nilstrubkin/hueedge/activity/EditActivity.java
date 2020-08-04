@@ -308,7 +308,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void displaySlotAsFull (int position, BridgeResource resource) {
         TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
-        tw.setText(resource.getName());
+        tw.setText(resource.getUnderBtnText());
         final Button btn = findViewById(HueEdgeProvider.btnArr[position]);
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         btnTopText.setText(resource.getBtnText(ctx));
