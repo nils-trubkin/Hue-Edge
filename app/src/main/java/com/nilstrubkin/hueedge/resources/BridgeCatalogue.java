@@ -1,7 +1,5 @@
 package com.nilstrubkin.hueedge.resources;
 
-import android.util.Pair;
-
 import com.nilstrubkin.hueedge.ResourceReference;
 
 import java.io.Serializable;

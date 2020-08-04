@@ -54,8 +54,8 @@ public class LongClickBrightnessSliderService extends RemoteViewsService {
 
             // set fill in intent
             Intent intent = new Intent();
-            intent.putExtra("item_id", itemId);
-            intent.putExtra("bg_color", bgColor);
+            //intent.putExtra("item_id", itemId);
+            //intent.putExtra("bg_color", bgColor);
             intent.putExtra("bri", Math.round(v * 254));
             // should be set fillInIntent to root of item layout
             itemView.setOnClickFillInIntent(R.id.item_root, intent);

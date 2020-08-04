@@ -53,8 +53,8 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
 
             // set fill in intent
             Intent intent = new Intent();
-            intent.putExtra("item_id", itemId);
-            intent.putExtra("bg_color", bgColor);
+            //intent.putExtra("item_id", itemId);
+            //intent.putExtra("bg_color", bgColor);
             intent.putExtra("sat", Math.round(s * 254));
             // should be set fillInIntent to root of item layout
             itemView.setOnClickFillInIntent(R.id.item_root, intent);

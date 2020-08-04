@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.Pair;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -18,7 +17,6 @@ import androidx.core.content.ContextCompat;
 
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
-import com.nilstrubkin.hueedge.resources.BridgeCatalogueAdapter;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeResourceSliders;
 import com.nilstrubkin.hueedge.service.LongClickBrightnessSliderService;
@@ -37,8 +35,6 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 

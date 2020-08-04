@@ -10,14 +10,10 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Xml;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.nilstrubkin.hueedge.HueBridge;
-import com.nilstrubkin.hueedge.api.JsonCustomRequest;
-import com.nilstrubkin.hueedge.api.RequestQueueSingleton;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
@@ -25,6 +21,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -34,14 +31,23 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static android.content.Context.NSD_SERVICE;
 
@@ -137,55 +143,35 @@ public class DiscoveryEngine {
             Context ctx,
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
-        Log.d(TAG, "requestAmount = " + requestAmount);
-        JsonCustomRequest jcr = getJsonAuthRequest(ip, callback);
-        Log.d(TAG, "changeHueState postRequest created for this ip " + ip);
-        RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jcr);
-        requestAmount--;
-    }
-
-    private JsonCustomRequest getJsonAuthRequest(
-            final String ip,
-            final DiscoveryCallback<AuthEntry> callback){
-        Log.d(TAG, "getJsonAuthRequest for this device: " + "HueEdge#" + android.os.Build.MODEL);
-        final JSONObject job = HueBridge.createJsonOnObject("devicetype", "HueEdge#" + android.os.Build.MODEL);
-        return new JsonCustomRequest(Request.Method.POST, "http://" + ip + "/api", job,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, "Auth request responds " + response.toString());
-                        Iterator<String> responseKeys; // iterator for response JSONObject
-                        String responseKey; // index for response JSONObject
-                        try {
-                            JSONObject jsonResponse = response.getJSONObject(0);
-                            responseKeys = jsonResponse.keys();
-                            if(responseKeys.hasNext()) {
-                                responseKey = responseKeys.next();
-                                if(responseKey.equals("success")){  //response key should be success
-                                    JSONObject usernameContainer = (JSONObject) jsonResponse.get("success");    // this should be JSONObject with username field
-                                    if(usernameContainer.keys().next().equals("username")) {
-                                        String username = usernameContainer.getString("username");
-                                        Log.d(TAG, "Auth successful: " + username.substring(0,5) + "*****");
-                                        AuthEntry authEntry = new AuthEntry(ip, username);
-                                        Result<AuthEntry> result = new Result.Success<>(authEntry);
-                                        notifyAuthResult(result, callback);
-                                        return;
-                                    }
-                                }
-                            }
-                            Log.e(TAG, "Unsuccessful! Check reply");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, error.toString());
-                    }
+        final MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        JSONObject json;
+        try {
+            json = new JSONObject().put("devicetype", "HueEdge#" + android.os.Build.MODEL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        RequestBody body = RequestBody.create(json.toString(), JSON);
+        Request request = new Request.Builder()
+                .url("http://" + ip + "/api")
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            Type type = Types.newParameterizedType(List.class, AuthResponse.class);
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter<List<AuthResponse>> adapter = moshi.adapter(type);
+            List<AuthResponse> responses = Objects.requireNonNull(adapter.fromJson(response.body().string()));
+            for (AuthResponse r : responses)
+                if (r.success != null){
+                    AuthEntry authEntry = new AuthEntry(ip, r.success.username);
+                    Result<AuthEntry> result = new Result.Success<>(authEntry);
+                    notifyAuthResult(result, callback);
                 }
-        );
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        requestAmount--;
     }
 
     public void initializeFullDiscovery(
@@ -196,7 +182,7 @@ public class DiscoveryEngine {
         initializeSynchronousNUPNPDiscovery(ctx, executorService, callback);
         initializeSynchronousUPNPDiscovery(executorService, callback);
         initializeIpScan(ctx, executorService, callback);
-        initializeTest(executorService);
+        //initializeTest(executorService);
     }
 
     private void initializeSynchronousDnsSDDiscovery(
@@ -217,7 +203,7 @@ public class DiscoveryEngine {
         });
     }
 
-    private void initializeTest(final ExecutorService executorService){
+    /*private void initializeTest(final ExecutorService executorService){
         executorService.submit(new Runnable() {
             @Override
             public void run() {
@@ -241,7 +227,7 @@ public class DiscoveryEngine {
                 }
             }
         });
-    }
+    }*/
 
     private NsdManager.DiscoveryListener initializeDnsSDDiscoveryListener(
             final NsdManager nsdManager,
@@ -329,47 +315,38 @@ public class DiscoveryEngine {
             final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
-        executorService.submit(new Runnable() {
+        Log.d(TAG, "Initializing NUPnP discovery...");
+        final String portal = "https://discovery.meethue.com";
+        Callable<String> callable = new Callable<String>() {
             @Override
-            public void run() {
-                Log.d(TAG, "Initializing NUPnP discovery...");
-                String portal = "https://discovery.meethue.com";
-                JsonCustomRequest jcr = getJsonNUPNP(portal, callback);
-                RequestQueueSingleton.getInstance(ctx).addToRequestQueue(ctx, jcr);
-            }
-        });
-    }
-
-    private JsonCustomRequest getJsonNUPNP(final String portal,
-                                           final DiscoveryCallback<DiscoveryEntry> callback){
-        return new JsonCustomRequest(Request.Method.GET, portal, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, "Request responds " + response.toString());
-                        for (int i = 0; i < response.length(); i++){
-                            try {
-                                JSONObject job = response.getJSONObject(i);
-                                String ip = job.getString("internalipaddress");
-                                Log.d(TAG, "NUPnP discovered a bridge: " + ip);
-                                parseDescriptionXml(ip, callback);
-                                /*Result<DiscoveryEntry> result = new Result.Success<>(entry);
-                                notifyResult(result, callback);*/
-                            } catch (IOException | JSONException e) {
-                                e.printStackTrace();
-                                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-                                notifyResult(errorResult, callback);
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, error.toString());
-                    }
+            public String call() {
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url(portal)
+                        .build();
+                final OkHttpClient client = new OkHttpClient();
+                try (okhttp3.Response response = client.newCall(request).execute()) {
+                    return Objects.requireNonNull(response.body()).string();
+                } catch (IOException | NullPointerException e) {
+                    e.printStackTrace();
+                    return null;
                 }
-        );
+            }
+        };
+        Future<String> future = executorService.submit(callable);
+        try {
+            String response = future.get();
+            Type type = Types.newParameterizedType(List.class, NupnpResponse.class);
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter<List<NupnpResponse>> adapter = moshi.adapter(type);
+            List<NupnpResponse> bridges = Objects.requireNonNull(adapter.fromJson(response));
+            for(NupnpResponse b : bridges){
+                parseDescriptionXml(b.internalipaddress, callback);
+            }
+        } catch (ExecutionException | InterruptedException | IOException | NullPointerException e) {
+            e.printStackTrace();
+            Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+            notifyResult(errorResult, callback);
+        }
     }
 
     private void initializeSynchronousUPNPDiscovery(
@@ -615,7 +592,7 @@ public class DiscoveryEngine {
         String modelDescription = null;
         String friendlyName = null;
         String serialNumber = null;
-        //String logoUrl = null; //TODO
+        //String logoUrl = null; //TODO maybe add a logo
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;

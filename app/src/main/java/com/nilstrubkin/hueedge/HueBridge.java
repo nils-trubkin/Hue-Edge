@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.util.Pair;
 import android.widget.Toast;
 
 import com.nilstrubkin.hueedge.HueEdgeProvider.menuCategory;
@@ -306,7 +305,6 @@ public class HueBridge implements Serializable {
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "Request for Hue state sent to queue");
         if(!state0)
             requestHueState(ctx, true);
     }
