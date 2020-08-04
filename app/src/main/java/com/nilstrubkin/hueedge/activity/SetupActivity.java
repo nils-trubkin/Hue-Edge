@@ -121,6 +121,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(getResources().getColor(R.color.navigation_bar_color_setup, getTheme()));
 
+        bridgeDiscoveryResults = new ArrayList<>();
+
         // Setup the UI
         statusTextView = findViewById(R.id.status_text);
         bridgeDiscoveryListView = findViewById(R.id.bridge_discovery_result_list);
@@ -201,7 +203,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     public void startBridgeDiscovery() {
         Log.i(TAG, "startBridgeDiscovery()");
         bridgeDiscoveryRunning = true;
-        bridgeDiscoveryResults = new ArrayList<>();
+        bridgeDiscoveryResults.clear();
         Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
         executorService = Executors.newFixedThreadPool(4);
         discoveryEngine = new DiscoveryEngine(executor, mainThreadHandler);
@@ -215,8 +217,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     public void stopBridgeDiscovery() {
         Log.i(TAG, "stopBridgeDiscovery()");
         bridgeDiscoveryRunning = false;
-        executorService.shutdownNow();
         progressBar.clearAnimation();
+        executorService.shutdownNow();
         updateUI(UIState.Welcome);
     }
 
@@ -227,8 +229,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         Log.i(TAG, "Selected Bridge " + bridgeIp);
         executorService = Executors.newFixedThreadPool(4);
         discoveryEngine.connectToBridge(ctx, executorService, bridgeAuthCallback, bridgeIp);
-        //statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, DiscoveryEngine.REQUEST_AMOUNT));
         updateUI(UIState.Auth);
+        //statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, DiscoveryEngine.REQUEST_AMOUNT));
     }
 
     private final DiscoveryEngine.DiscoveryCallback<AuthEntry> bridgeAuthCallback = new DiscoveryEngine.DiscoveryCallback<AuthEntry>(){
@@ -522,19 +524,21 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                             @Override
                             public void run() {
                                 int i = DiscoveryEngine.REQUEST_AMOUNT;
-                                try {
-                                    while (i > 0) {
-                                        Thread.sleep(1000);
-                                        i--;
-                                        if (!executorService.isShutdown()) {
-                                            statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, i));
-                                        } else {
-                                            Log.e(TAG, "executorService shut down, not updating the auth label");
+                                while (i-- > 0) {
+                                    long timeStamp = System.currentTimeMillis();
+                                    while (System.currentTimeMillis() - timeStamp < 1000)
+                                        if (executorService.isShutdown())
                                             return;
+                                    if (executorService.isShutdown())
+                                        return;
+                                    final int finalI = i;
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            if (executorService.isShutdown())
+                                                return;
+                                            statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, finalI));
                                         }
-                                    }
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                                    });
                                 }
                             }
                         }).start();

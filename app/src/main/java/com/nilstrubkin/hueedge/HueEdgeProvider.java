@@ -849,7 +849,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     /*public static void saveCurrentCategory(Context ctx){
-        Gson gson = new Gson();
         String currentCategory = gson.toJson(getCurrentCategory());
         String currentSlidersCategory = gson.toJson(getCurrentSlidersCategory());
         String slidersResource = gson.toJson(getSlidersResource());
@@ -885,8 +884,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }*/
 
     public static void saveAllConfiguration(Context ctx) {
-        long timestamp = System.currentTimeMillis();
-        Log.e(TAG,"Starting saving all config...");
         File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         //File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
         try {
@@ -921,7 +918,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             Log.e(TAG,"Failed to save configuration");
             e.printStackTrace();
         }
-        Log.e(TAG,"Starting saving all config took time: " + (System.currentTimeMillis() - timestamp));
     }
 
     public static void loadAllConfiguration(Context ctx) {

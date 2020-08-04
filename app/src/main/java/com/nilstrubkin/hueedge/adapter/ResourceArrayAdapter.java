@@ -62,6 +62,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         }
 
         final String name = resource.getName();
+        final String underBtnText = resource.getUnderBtnText();
         final String btnText = resource.getBtnText(ctx);
         final int btnTextSizeRes = resource.getBtnTextSize(ctx);
         final int btnColor = resource.getBtnTextColor(ctx);
@@ -71,95 +72,35 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 ctx.getResources().getDimensionPixelSize(btnTextSizeRes));
         gridBtn.setBackgroundResource(btnResource);
-        gridBtnText.setText(name);
-        /*gridBtn.setOnClickListener(new View.OnClickListener() {
+        gridBtnText.setText(underBtnText);
+        gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-                BridgeResource br;
-                try {
-                    br = Objects.requireNonNull(getItem(position));
-                }
-                catch (NullPointerException e){
-                    Log.e(TAG, "Failed to get item in grid adapter");
-                    e.printStackTrace();
-                    return;
-                }
-                HueBridge bridge;
-                try {
-                    bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                } catch (NullPointerException e){
-                    Log.e(TAG,"Failed to get HueBridge instance");
-                    e.printStackTrace();
-                    return;
-                }
-                final EditActivity instance = (EditActivity) ctx;
-                HueEdgeProvider.menuCategory currentCategory = instance.getCurrentCategory();
-                final int position = bridge.addToCategory(ctx, currentCategory, br);
-                if (position == -1){
-                    String toastString = ctx.getString(R.string.toast_add_over_ten_buttons);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-                }
-                else {
-                    HueEdgeProvider.saveAllConfiguration(ctx);
-                    TextView tw = instance.findViewById(HueEdgeProvider.btnTextArr[position]);
-                    tw.setText(br.getName());
-                    Button btn = instance.findViewById(HueEdgeProvider.btnArr[position]);
-                    btn.setText(br.getBtnText(ctx));
-                    if(br.getCategory().equals("scenes")){
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_scene));
-                    }
-                    else {
-                        btn.setTextSize(ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
-                    }
-                    btn.setTextColor(br.getBtnTextColor(ctx));
-                    btn.setBackgroundResource(br.getBtnBackgroundResource(ctx));
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            instance.clearSlot(position);
-                        }
-                    });
-                    Button btnDelete = instance.findViewById(HueEdgeProvider.btnDeleteArr[position]);
-                    btnDelete.setVisibility(View.VISIBLE);
-                    btnDelete.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            instance.clearSlot(position);
-                        }
-                    });
-                    String toastString = ctx.getString(R.string.toast_adding, br.getName());
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-                }
+            public boolean onLongClick(View v) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                if(!noHaptic)
+                    vibrator.vibrate(1);
+                ClipData.Item item = new ClipData.Item(String.valueOf(-1));
+                ClipData dragData = new ClipData(
+                        name,
+                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                        item);
+                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    return v.startDragAndDrop(dragData,  // the data to be dragged
+                            myShadow,  // the drag shadow builder
+                            resource,      // pass resource
+                            0          // flags (not currently used, set to 0)
+                    );
+                else
+                    //noinspection deprecation
+                    return v.startDrag(dragData,  // the data to be dragged
+                            myShadow,  // the drag shadow builder
+                            resource,      // pass resource
+                            0          // flags (not currently used, set to 0)
+                    );
             }
-        });*/
-            gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
-                    if(!noHaptic)
-                        vibrator.vibrate(1);
-                    ClipData.Item item = new ClipData.Item(String.valueOf(-1));
-                    ClipData dragData = new ClipData(
-                            name,
-                            new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
-                            item);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        return v.startDragAndDrop(dragData,  // the data to be dragged
-                                myShadow,  // the drag shadow builder
-                                resource,      // pass resource
-                                0          // flags (not currently used, set to 0)
-                        );
-                    else
-                        //noinspection deprecation
-                        return v.startDrag(dragData,  // the data to be dragged
-                                myShadow,  // the drag shadow builder
-                                resource,      // pass resource
-                                0          // flags (not currently used, set to 0)
-                        );
-                }
-            });
+        });
         return convertView;
     }
 }

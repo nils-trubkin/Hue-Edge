@@ -48,6 +48,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static android.content.Context.NSD_SERVICE;
 
@@ -325,7 +326,8 @@ public class DiscoveryEngine {
                         .build();
                 final OkHttpClient client = new OkHttpClient();
                 try (okhttp3.Response response = client.newCall(request).execute()) {
-                    return Objects.requireNonNull(response.body()).string();
+                    ResponseBody responseBody = Objects.requireNonNull(response.body());
+                    return responseBody.string();
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                     return null;

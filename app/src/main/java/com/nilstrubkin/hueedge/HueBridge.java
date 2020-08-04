@@ -145,16 +145,10 @@ public class HueBridge implements Serializable {
     private void mergeState(Context ctx){
         if(tempState != null && tempState0 != null)
             try {
-                long timestamp = System.currentTimeMillis();
-                Log.e(TAG,"Starting to merge json...");
                 JSONObject currentGroups = tempState.getJSONObject("groups");
                 currentGroups.put("0", tempState0);
                 JSONObject completeState = tempState.put("groups", currentGroups);
-                Log.e(TAG,"Merging took time: " + (System.currentTimeMillis() - timestamp));
-                timestamp = System.currentTimeMillis();
-                Log.e(TAG,"Starting to refresh hashmaps");
                 refreshAllHashMaps(ctx, completeState);
-                Log.e(TAG,"Refresh of hashmaps took time: " + (System.currentTimeMillis() - timestamp));
             } catch (JSONException e) {
                 Log.e(TAG, "Could not merge states. No groups in stateJson.");
                 e.printStackTrace();
@@ -203,11 +197,6 @@ public class HueBridge implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Log.e(TAG, "Lights size : " + getBridgeState().getLights().size());
-        Log.e(TAG, "Groups size : " + getBridgeState().getGroups().size());
-        Log.e(TAG, "Scenes size : " + getBridgeState().getScenes().size());
-
     }
 
     public void addToCategory(Context ctx, menuCategory category, BridgeResource br, int index){
@@ -255,17 +244,6 @@ public class HueBridge implements Serializable {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    //Create a JsonObject to send to Hue Bridge
-    public static JSONObject createJsonOnObject(String k, Object v) {
-        try {
-            return new JSONObject().put(k, v);
-        } catch (JSONException e) {
-            Log.wtf(TAG, "Can not create JsonObject. Missing dep?");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static void requestHueState(Context ctx){
         try {
             Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx, false);
@@ -281,7 +259,6 @@ public class HueBridge implements Serializable {
             tempState = null;
             tempState0 = null;
         }
-        Log.e(TAG,"Requesting hue state... is state0: " + state0);
 
         ExecutorService pool = Executors.newFixedThreadPool(1);
         Callable<String> callable = new Callable<String>() {
