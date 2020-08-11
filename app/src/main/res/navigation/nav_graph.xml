@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.WelcomeFragment"
+        android:label="WelcomeFragment"
+        tools:layout="@layout/welcome_fragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_discoveryFragment"
+            app:destination="@id/discoveryFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_welcomeFragment_to_manualFragment"
+            app:destination="@id/manualFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/discoveryFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.DiscoveryFragment"
+        android:label="DiscoveryFragment"
+        tools:layout="@layout/discovery_fragment">
+        <action
+            android:id="@+id/action_discoveryFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manualFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.ManualFragment"
+        android:label="ManualFragment"
+        tools:layout="@layout/manual_fragment">
+        <action
+            android:id="@+id/action_manualFragment_to_authFragment"
+            app:destination="@id/authFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.AuthFragment"
+        android:label="AuthFragment"
+        tools:layout="@layout/auth_fragment"/>
+</navigation>

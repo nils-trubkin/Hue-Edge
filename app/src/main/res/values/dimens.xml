@@ -52,9 +52,10 @@
     <dimen name="setup_button_text_size">16dp</dimen>
     <dimen name="setup_discovery_results_height">150dp</dimen>
     <dimen name="setup_discovery_results_margin_bottom">30dp</dimen>
+    <dimen name="setup_discovery_results_margin_left_right">16dp</dimen>
     <dimen name="setup_discovery_results_ip_size">24dp</dimen>
     <dimen name="setup_discovery_results_id_size">18dp</dimen>
-    <dimen name="setup_progress_bar_padding_bottom">20dp</dimen>
+    <dimen name="setup_progress_bar_margin_top_bottom">20dp</dimen>
     <dimen name="setup_pushlink_image_dimen">200dp</dimen>
     <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
     <dimen name="setup_big_logo_height">400dp</dimen>

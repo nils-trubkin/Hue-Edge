@@ -76,13 +76,10 @@ public class DiscoveryEngine {
             final Result<DiscoveryEntry> result,
             final DiscoveryCallback<DiscoveryEntry> callback
     ) {
-        resultHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (Thread.currentThread().isInterrupted())
-                    return;
-                callback.onComplete(result);
-            }
+        resultHandler.post(() -> {
+            if (Thread.currentThread().isInterrupted())
+                return;
+            callback.onComplete(result);
         });
     }
 
@@ -90,13 +87,10 @@ public class DiscoveryEngine {
             final Result<AuthEntry> result,
             final DiscoveryCallback<AuthEntry> callback
     ) {
-        resultHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (Thread.currentThread().isInterrupted())
-                    return;
-                callback.onComplete(result);
-            }
+        resultHandler.post(() -> {
+            if (Thread.currentThread().isInterrupted())
+                return;
+            callback.onComplete(result);
         });
     }
 
@@ -116,18 +110,16 @@ public class DiscoveryEngine {
                     timer.cancel();
                     return;
                 }
-                executorService.submit(new Runnable() {
-                    public void run() {
-                        if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
-                            return;
-                        if (requestAmount == 0) {
-                            Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
-                            notifyAuthResult(errorResult, callback);
-                            timer.cancel();
-                        }
-                        else {
-                            sendAuthRequest(ctx, bridgeIp, callback);
-                        }
+                executorService.submit(() -> {
+                    if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
+                        return;
+                    if (requestAmount == 0) {
+                        Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
+                        notifyAuthResult(errorResult, callback);
+                        timer.cancel();
+                    }
+                    else {
+                        sendAuthRequest(bridgeIp, callback);
                     }
                 });
             }
@@ -136,7 +128,6 @@ public class DiscoveryEngine {
     }
 
     private void sendAuthRequest(
-            Context ctx,
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
@@ -192,42 +183,36 @@ public class DiscoveryEngine {
             final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Initializing mDNS discovery...");
-                final String SERVICE_TYPE = "_hue._tcp.";
-                final NsdManager nsdManager = (NsdManager) ctx.getSystemService(NSD_SERVICE);
-                NsdManager.DiscoveryListener discoveryListener =
-                        initializeDnsSDDiscoveryListener(nsdManager, callback);
-                nsdManager.discoverServices(
-                        SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
-            }
+        executorService.submit(() -> {
+            Log.d(TAG, "Initializing mDNS discovery...");
+            final String SERVICE_TYPE = "_hue._tcp.";
+            final NsdManager nsdManager = (NsdManager) ctx.getSystemService(NSD_SERVICE);
+            NsdManager.DiscoveryListener discoveryListener =
+                    initializeDnsSDDiscoveryListener(nsdManager, callback);
+            nsdManager.discoverServices(
+                    SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
         });
     }
 
     /*private void initializeTest(final ExecutorService executorService){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    try {
-                        Thread.sleep(1000);
-                        Log.d(TAG,"Executing");
-                        if (Thread.currentThread().isInterrupted()){
-                            Log.e(TAG,"Testing! Thread.currentThread().isInterrupted()");
-                            break;
-                        }
-                        if (executorService.isShutdown()){
-                            Log.e(TAG,"Testing! executorService.isShutdown()");
-                            break;
-                        }
-                    } catch (InterruptedException e) {
-                        Log.e(TAG,"Testing! InterruptedException");
-                        return;
+        executorService.submit(() -> {
+            while (true){
+                try {
+                    Thread.sleep(1000);
+                    Log.d(TAG,"Executing");
+                    if (Thread.currentThread().isInterrupted()){
+                        Log.e(TAG,"Testing! Thread.currentThread().isInterrupted()");
+                        break;
                     }
-
+                    if (executorService.isShutdown()){
+                        Log.e(TAG,"Testing! executorService.isShutdown()");
+                        break;
+                    }
+                } catch (InterruptedException e) {
+                    Log.e(TAG,"Testing! InterruptedException");
+                    return;
                 }
+
             }
         });
     }*/
@@ -320,110 +305,106 @@ public class DiscoveryEngine {
             final DiscoveryCallback<DiscoveryEntry> callback){
         Log.d(TAG, "Initializing NUPnP discovery...");
         final String portal = "https://discovery.meethue.com";
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() {
-                okhttp3.Request request = new okhttp3.Request.Builder()
-                        .url(portal)
-                        .build();
-                final OkHttpClient client = new OkHttpClient();
-                try (okhttp3.Response response = client.newCall(request).execute()) {
-                    ResponseBody responseBody = Objects.requireNonNull(response.body());
-                    return responseBody.string();
-                } catch (IOException | NullPointerException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+        Callable<String> callable = () -> {
+            Request request = new Request.Builder()
+                    .url(portal)
+                    .build();
+            final OkHttpClient client = new OkHttpClient();
+            try (Response response = client.newCall(request).execute()) {
+                ResponseBody responseBody = Objects.requireNonNull(response.body());
+                return responseBody.string();
+            } catch (IOException | NullPointerException e) {
+                e.printStackTrace();
+                return null;
             }
         };
         Future<String> future = executorService.submit(callable);
-        try {
-            String response = future.get();
-            Type type = Types.newParameterizedType(List.class, NupnpResponse.class);
-            Moshi moshi = new Moshi.Builder().build();
-            JsonAdapter<List<NupnpResponse>> adapter = moshi.adapter(type);
-            List<NupnpResponse> bridges = Objects.requireNonNull(adapter.fromJson(response));
-            for(NupnpResponse b : bridges){
-                parseDescriptionXml(b.internalipaddress, callback);
+        executorService.submit(() -> {
+            try {
+                String response = future.get();
+                Type type = Types.newParameterizedType(List.class, NupnpResponse.class);
+                Moshi moshi = new Moshi.Builder().build();
+                JsonAdapter<List<NupnpResponse>> adapter = moshi.adapter(type);
+                List<NupnpResponse> bridges = Objects.requireNonNull(adapter.fromJson(response));
+                for(NupnpResponse b : bridges){
+                    parseDescriptionXml(b.internalipaddress, callback);
+                }
+            } catch (ExecutionException | InterruptedException | IOException | NullPointerException e) {
+                e.printStackTrace();
+                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                notifyResult(errorResult, callback);
             }
-        } catch (ExecutionException | InterruptedException | IOException | NullPointerException e) {
-            e.printStackTrace();
-            Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-            notifyResult(errorResult, callback);
-        }
+        });
     }
 
     private void initializeSynchronousUPNPDiscovery(
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback) {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Initializing UPnP discovery...");
-                try {
-                    byte[] sendData;
-                    final byte[] receiveData = new byte[1024];
-                    final int timeout = 5000; // 5 seconds according to Hue Bridge best practice
+        executorService.submit(() -> {
+            Log.d(TAG, "Initializing UPnP discovery...");
+            try {
+                byte[] sendData;
+                final byte[] receiveData = new byte[1024];
+                final int timeout = 5000; // 5 seconds according to Hue Bridge best practice
 
-                    /* our M-SEARCH data as a byte array */
-                    String MSEARCH = "M-SEARCH * HTTP/1.1\r\n" +
-                            "HOST: 239.255.255.250:1900\r\n" +
-                            "MAN: \"ssdp:discover\"\r\n" +
-                            "MX: 10\r\n" +
-                            "ST: ssdp:all\r\n" +  // Use this for all UPnP Devices
-                            "\r\n";
-                    sendData = MSEARCH.getBytes();
+                /* our M-SEARCH data as a byte array */
+                String MSEARCH = "M-SEARCH * HTTP/1.1\r\n" +
+                        "HOST: 239.255.255.250:1900\r\n" +
+                        "MAN: \"ssdp:discover\"\r\n" +
+                        "MX: 10\r\n" +
+                        "ST: ssdp:all\r\n" +  // Use this for all UPnP Devices
+                        "\r\n";
+                sendData = MSEARCH.getBytes();
 
-                    /* create a packet from our data destined for 239.255.255.250:1900 */
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("239.255.255.250"), 1900);
+                /* create a packet from our data destined for 239.255.255.250:1900 */
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("239.255.255.250"), 1900);
 
-                    /* send packet to the socket we're creating */
-                    final DatagramSocket clientSocket = new DatagramSocket();
-                    clientSocket.setSoTimeout(timeout);
-                    clientSocket.send(sendPacket);
+                /* send packet to the socket we're creating */
+                final DatagramSocket clientSocket = new DatagramSocket();
+                clientSocket.setSoTimeout(timeout);
+                clientSocket.send(sendPacket);
 
-                    /* recieve response and store in our receivePacket */
-                    final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                /* recieve response and store in our receivePacket */
+                final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 
-                    ArrayList<InetAddress> ipList = new ArrayList<>();
-                    long timeStart = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - timeStart < timeout) {
-                        try {
-                            if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
-                                clientSocket.close();
-                                return;
-                            }
-                            clientSocket.receive(receivePacket);
-                            InetAddress ip = receivePacket.getAddress();
-                            if (!ipList.contains(ip)) {
-                                /* get the response as a string */
-                                String response = new String(receivePacket.getData());
-                                if (response.contains("IpBridge")) {
-                                    ipList.add(receivePacket.getAddress());
-                                    Log.d(TAG, "UPnP discovered bridge: " + ip.getHostAddress());
-                                    parseDescriptionXml(ip, callback);
-                                }
-                            }
-                        } catch (SocketTimeoutException e) {
-                            Log.d(TAG, "SocketTimeoutException, closing socket.");
-                            /* close the socket */
+                ArrayList<InetAddress> ipList = new ArrayList<>();
+                long timeStart = System.currentTimeMillis();
+                while (System.currentTimeMillis() - timeStart < timeout) {
+                    try {
+                        if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
                             clientSocket.close();
                             return;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-                            notifyResult(errorResult, callback);
                         }
+                        clientSocket.receive(receivePacket);
+                        InetAddress ip = receivePacket.getAddress();
+                        if (!ipList.contains(ip)) {
+                            /* get the response as a string */
+                            String response = new String(receivePacket.getData());
+                            if (response.contains("IpBridge")) {
+                                ipList.add(receivePacket.getAddress());
+                                Log.d(TAG, "UPnP discovered bridge: " + ip.getHostAddress());
+                                parseDescriptionXml(ip, callback);
+                            }
+                        }
+                    } catch (SocketTimeoutException e) {
+                        Log.d(TAG, "SocketTimeoutException, closing socket.");
+                        /* close the socket */
+                        clientSocket.close();
+                        return;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                        notifyResult(errorResult, callback);
                     }
-                    Log.d(TAG, "5 seconds passed, closing socket.");
-                    clientSocket.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-                    notifyResult(errorResult, callback);
                 }
-                Log.d(TAG, "Done");
+                Log.d(TAG, "5 seconds passed, closing socket.");
+                clientSocket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                notifyResult(errorResult, callback);
             }
+            Log.d(TAG, "Done");
         });
     }
 
@@ -431,28 +412,25 @@ public class DiscoveryEngine {
             final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Initializing IP scan...");
-                WifiManager wifiManager = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-                int gateway = wifiManager.getDhcpInfo().gateway;
-                try {
-                    InetAddress inetAddress = InetAddress.getByAddress(extractBytes(dhcpInfo.ipAddress));
-                    NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
-                    for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-                        /* not an IPv6 */
-                        if (!address.toString().contains(":")) {
-                            short netPrefix = address.getNetworkPrefixLength();
-                            //Log.d(TAG, address.toString());
-                            checkHosts(gateway, netPrefix, callback);
-                        }
+        executorService.submit(() -> {
+            Log.d(TAG, "Initializing IP scan...");
+            WifiManager wifiManager = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
+            int gateway = wifiManager.getDhcpInfo().gateway;
+            try {
+                InetAddress inetAddress = InetAddress.getByAddress(extractBytes(dhcpInfo.ipAddress));
+                NetworkInterface networkInterface = NetworkInterface.getByInetAddress(inetAddress);
+                for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
+                    /* not an IPv6 */
+                    if (!address.toString().contains(":")) {
+                        short netPrefix = address.getNetworkPrefixLength();
+                        //Log.d(TAG, address.toString());
+                        checkHosts(gateway, netPrefix, callback);
                     }
-                } catch (IOException e) {
-                    Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-                    notifyResult(errorResult, callback);
                 }
+            } catch (IOException e) {
+                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                notifyResult(errorResult, callback);
             }
         });
     }
@@ -541,33 +519,30 @@ public class DiscoveryEngine {
 
     private void parseDescriptionXml(final String address, final DiscoveryCallback<DiscoveryEntry> callback) throws IOException {
         final URL url = new URL("http://" + address + "/description.xml");
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try (InputStream in = url.openConnection().getInputStream()) {
-                    XmlPullParser parser = Xml.newPullParser();
-                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                    parser.setInput(in, null);
-                    parser.nextTag();
-                    DiscoveryEntry de = readXml(parser);
-                    if (Thread.currentThread().isInterrupted()){
-                        in.close();
-                        return;
-                    }
-                    try {
-                        Objects.requireNonNull(de).ip = address;
-                    }
-                    catch (NullPointerException e){
-                        Log.e(TAG, "Failed to notify result. DiscoveryEntry is null.");
-                        e.printStackTrace();
-                    }
-                    Result<DiscoveryEntry> result = new Result.Success<>(de);
+        executor.execute(() -> {
+            try (InputStream in = url.openConnection().getInputStream()) {
+                XmlPullParser parser = Xml.newPullParser();
+                parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                parser.setInput(in, null);
+                parser.nextTag();
+                DiscoveryEntry de = readXml(parser);
+                if (Thread.currentThread().isInterrupted()){
                     in.close();
-                    notifyResult(result, callback);
-                } catch (Exception e){
-                    Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
-                    notifyResult(errorResult, callback);
+                    return;
                 }
+                try {
+                    Objects.requireNonNull(de).ip = address;
+                }
+                catch (NullPointerException e){
+                    Log.e(TAG, "Failed to notify result. DiscoveryEntry is null.");
+                    e.printStackTrace();
+                }
+                Result<DiscoveryEntry> result = new Result.Success<>(de);
+                in.close();
+                notifyResult(result, callback);
+            } catch (Exception e){
+                Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
+                notifyResult(errorResult, callback);
             }
         });
     }

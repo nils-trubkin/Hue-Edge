@@ -115,4 +115,12 @@
 
     <string name="email">hueedgepanel@gmail.com</string>
     <string name="paypal_url">https://paypal.me/NilsTrubkin?locale.x=en_US</string>
+
+    <string-array name="step_labels">
+        <item>Welcome</item>
+        <item>Search</item>
+        <item>Link</item>
+        <item>Setup</item>
+        <item>Finish</item>
+    </string-array>
 </resources>

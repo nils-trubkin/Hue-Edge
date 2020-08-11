@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/discovery_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/setup_discovery_results_margin_left_right"
+    android:layout_marginRight="@dimen/setup_discovery_results_margin_left_right"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/bridge_ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/curved_edge_margin"
-        android:layout_marginRight="@dimen/curved_edge_margin"
         android:paddingTop="@dimen/discovery_item_texts_padding_top_bottom"
         android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
+        android:textColor="@color/white"
         android:textSize="@dimen/setup_discovery_results_ip_size"
-        android:textColor="@color/white" />
+        app:layout_constraintBottom_toTopOf="@id/bridge_id"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bridge_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/curved_edge_margin"
-        android:layout_marginRight="@dimen/curved_edge_margin"
         android:paddingBottom="@dimen/discovery_item_texts_padding_top_bottom"
+        android:textColor="@color/white"
         android:textSize="@dimen/setup_discovery_results_id_size"
-        android:textColor="@color/white" />
-</LinearLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bridge_ip" />
+</androidx.constraintlayout.widget.ConstraintLayout>

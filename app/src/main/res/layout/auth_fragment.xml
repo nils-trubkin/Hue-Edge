@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".fragment.AuthFragment">
+
+    <TextView
+        android:id="@+id/text_setup_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/setup_status_text_padding_bottom"
+        android:text="@string/fragment_welcome_label"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        tools:ignore="SpUsage" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_setup_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/list_background"
+        android:divider="@null" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_setup_search"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/setup_progress_bar_margin_top_bottom"
+        android:layout_marginBottom="@dimen/setup_progress_bar_margin_top_bottom"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/button_setup_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/setup_button_margin_top"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_search_button"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        tools:ignore="SpUsage" />
+
+</LinearLayout>

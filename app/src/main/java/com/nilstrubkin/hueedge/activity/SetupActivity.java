@@ -1,68 +1,47 @@
 package com.nilstrubkin.hueedge.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.os.HandlerCompat;
 
-import com.nilstrubkin.hueedge.discovery.AuthEntry;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEngine;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
-import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.discovery.Result;
-import com.nilstrubkin.hueedge.adapter.BridgeDiscoveryResultAdapter;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.look.Slook;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
-public class SetupActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, Serializable {
+public class SetupActivity extends AppCompatActivity implements Serializable {
 
     private transient static final String TAG = SetupActivity.class.getSimpleName();
     private transient final Context ctx = this;
 
-    private transient ExecutorService executorService;
+    /*private transient ExecutorService executorService;
     private transient Executor executor;
-    private transient DiscoveryEngine discoveryEngine;
+    private transient DiscoveryEngine discoveryEngine;*/
 
 
-    private transient BridgeDiscoveryResultAdapter adapter;
-    private transient List<DiscoveryEntry> bridgeDiscoveryResults;
-    private transient boolean bridgeDiscoveryRunning;
+    //private transient BridgeDiscoveryResultAdapter adapter;
+    //private transient boolean bridgeDiscoveryRunning;
 
-    // UI elements
+    /*// UI elements
     private transient TextView statusTextView;
     private transient ListView bridgeDiscoveryListView;
     private transient View pushlinkImage;
@@ -89,9 +68,9 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private transient Button contactMe;
     private transient Button support;
     private transient SwitchCompat symbolSwitch;
-    private transient SwitchCompat hapticSwitch;
+    private transient SwitchCompat hapticSwitch;*/
 
-    enum UIState {
+    /*enum UIState {
         Welcome,
         ManualSetup,
         Search,
@@ -103,17 +82,17 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         Final,
         Confirmation,
         Not_supported
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        executor = new Executor() {
+        /*executor = new Executor() {
             @Override
             public void execute(Runnable r) {
                 new Thread(r).start();
             }
-        };
+        };*/
 
         setContentView(R.layout.setup_activity);
 
@@ -121,10 +100,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(getResources().getColor(R.color.navigation_bar_color_setup, getTheme()));
 
-        bridgeDiscoveryResults = new ArrayList<>();
+        //bridgeDiscoveryResults = new ArrayList<>();
 
         // Setup the UI
-        statusTextView = findViewById(R.id.status_text);
+        /*statusTextView = findViewById(R.id.status_text);
         bridgeDiscoveryListView = findViewById(R.id.bridge_discovery_result_list);
         bridgeDiscoveryListView.setOnItemClickListener(this);
         pushlinkImage = findViewById(R.id.pushlink_image);
@@ -171,58 +150,57 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         symbolSwitch = findViewById(R.id.switch_symbols);
         symbolSwitch.setOnClickListener(this);
         hapticSwitch = findViewById(R.id.switch_haptic);
-        hapticSwitch.setOnClickListener(this);
+        hapticSwitch.setOnClickListener(this);*/
 
         Slook slook = new Slook();
 
         try {
             slook.initialize(this);
         } catch (SsdkUnsupportedException e){
-            updateUI(UIState.Not_supported);
+            //updateUI(UIState.Not_supported); TODO
             return;
         }
 
         // The device doesn't support Edge Single Mode, Edge Single Plus Mode, and Edge Feeds Mode.
         if (!slook.isFeatureEnabled(Slook.COCKTAIL_PANEL)) {
-            updateUI(UIState.Not_supported);
+            //updateUI(UIState.Not_supported); TODO
             return;
         }
 
         if (HueBridge.getInstance(ctx) == null){
-            updateUI(UIState.Welcome);
+            //updateUI(UIState.Welcome); TODO
         }
         else{
-            updateUI(UIState.Final);
+            //updateUI(UIState.Final); TODO
         }
     }
 
-    /**
+    /*/**
      * Start the bridge discovery search
      * Read the documentation on meethue for an explanation of the bridge discovery options
      */
-    public void startBridgeDiscovery() {
+    /*public void startBridgeDiscovery() {
         Log.i(TAG, "startBridgeDiscovery()");
-        bridgeDiscoveryRunning = true;
-        bridgeDiscoveryResults.clear();
+        //bridgeDiscoveryRunning = true;
         Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
         executorService = Executors.newFixedThreadPool(4);
         discoveryEngine = new DiscoveryEngine(executor, mainThreadHandler);
         discoveryEngine.initializeFullDiscovery(ctx, executorService, bridgeDiscoveryCallback);
         updateUI(UIState.Search);
-    }
+    }*/
 
     /**
      * Stops the bridge discovery if it is still running
      */
-    public void stopBridgeDiscovery() {
+    /*public void stopBridgeDiscovery() {
         Log.i(TAG, "stopBridgeDiscovery()");
         bridgeDiscoveryRunning = false;
         progressBar.clearAnimation();
         executorService.shutdownNow();
         updateUI(UIState.Welcome);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         stopBridgeDiscovery();
         final String bridgeIp = bridgeDiscoveryResults.get(i).ip;
@@ -231,9 +209,9 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         discoveryEngine.connectToBridge(ctx, executorService, bridgeAuthCallback, bridgeIp);
         updateUI(UIState.Auth);
         //statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, DiscoveryEngine.REQUEST_AMOUNT));
-    }
+    }*/
 
-    private final DiscoveryEngine.DiscoveryCallback<AuthEntry> bridgeAuthCallback = new DiscoveryEngine.DiscoveryCallback<AuthEntry>(){
+    /*private final DiscoveryEngine.DiscoveryCallback<AuthEntry> bridgeAuthCallback = new DiscoveryEngine.DiscoveryCallback<AuthEntry>(){
         @Override
         public void onComplete(Result<AuthEntry> result) {
             if (result instanceof Result.Success) {
@@ -253,7 +231,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         }
-    };
+    };*/
 
     public static class ProgressBarAnimation extends Animation {
         private final ProgressBar progressBar;
@@ -276,7 +254,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private final DiscoveryEngine.DiscoveryCallback<DiscoveryEntry> bridgeDiscoveryCallback = new DiscoveryEngine.DiscoveryCallback<DiscoveryEntry>(){
+    /*private final DiscoveryEngine.DiscoveryCallback<DiscoveryEntry> bridgeDiscoveryCallback = new DiscoveryEngine.DiscoveryCallback<DiscoveryEntry>(){
         @Override
         public void onComplete(Result<DiscoveryEntry> result) {
             if (result instanceof Result.Success) {
@@ -296,14 +274,14 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 Log.e(TAG, "Error: " + e.toString());
             }
         }
-    };
+    };*/
 
 
-    @Override
+    /*@Override
     public void onClick(View view) {
         if (view == bridgeDiscoveryButton) {
             startBridgeDiscovery();
-        }
+        }*/
         /*else if (view == cheatButton) {
             Log.d(TAG, "Instantiating HueBridge singleton");
             HueBridge.getInstance(
@@ -314,7 +292,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             Log.d(TAG, "getInstance() returns cheat bridge:" + HueBridge.getInstance(ctx));
             updateUI(UIState.Settings);
         }*/
-        else if (view == manualIp) {
+        /*else if (view == manualIp) {
             updateUI(UIState.ManualSetup);
         }
         else if (view == manualIpConfirm) {
@@ -412,15 +390,15 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             e.putBoolean(ctx.getResources().getString(R.string.no_haptic_preference), hapticSwitch.isChecked());
             e.apply();
         }
-    }
+    }*/
 
-    private void updateUI(final UIState state) {
+    /*private void updateUI(final UIState state) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Log.i(TAG, "Status: " + state.toString());
 
-                Animation anim;
+                /*Animation anim;
                 final int searchTimeout = 30 * 1000;
                 bridgeDiscoveryListView.setVisibility(View.GONE);
                 statusTextView.setVisibility(View.VISIBLE);
@@ -576,5 +554,5 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
-    }
+    }*/
 }
