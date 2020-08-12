@@ -3,6 +3,8 @@ package com.nilstrubkin.hueedge;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -71,17 +73,6 @@ public class HueBridge implements Serializable {
         }
     }
 
-    //Delete the instance
-    public static synchronized void deleteInstance(Context ctx) {
-        Log.i(TAG, "Deleting instance of HueBridge");
-        instance = null;
-        boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
-        if (deleted) {
-            String toastString = ctx.getString(R.string.toast_configuration_deleted);
-            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     //Get instance of instantiated HueBridge
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
@@ -100,11 +91,34 @@ public class HueBridge implements Serializable {
     public static synchronized void getInstance(Context ctx, String ipAddress, String userName) {
         instance = new HueBridge(ctx, ipAddress, userName);
         requestHueState(ctx);
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.putBoolean(ctx.getString(R.string.bridge_configured), true);
+        e.apply();
     }
 
     //Setting the instance for config loading
-    public static synchronized void setInstance(HueBridge bridge) {
+    public static synchronized void setInstance(Context ctx, HueBridge bridge) {
         instance = bridge;
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.putBoolean(ctx.getString(R.string.bridge_configured), true);
+        e.apply();
+    }
+
+    //Delete the instance
+    public static synchronized void deleteInstance(Context ctx) {
+        Log.i(TAG, "Deleting instance of HueBridge");
+        instance = null;
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.putBoolean(ctx.getString(R.string.bridge_configured), false);
+        e.apply();
+        boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
+        if (deleted) {
+            String toastString = ctx.getString(R.string.toast_configuration_deleted);
+            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public String getIp() {
@@ -113,10 +127,6 @@ public class HueBridge implements Serializable {
 
     public String getUrl() {
         return url;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public BridgeResource getResource(ResourceReference ref){

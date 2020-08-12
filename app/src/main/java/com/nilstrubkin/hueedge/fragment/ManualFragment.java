@@ -1,9 +1,13 @@
 package com.nilstrubkin.hueedge.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,14 +17,19 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.nilstrubkin.hueedge.R;
+import com.nilstrubkin.hueedge.activity.SetupActivity;
+import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 public class ManualFragment extends Fragment implements View.OnClickListener {
     private NavController navController = null;
+    private SetupActivity setup;
 
+    // UI elements
     private final int confirmButtonId = R.id.button_manual_confirm;
     private final int helpButtonId = R.id.button_manual_help;
     private final int closeButtonId = R.id.button_help_close;
     private ConstraintLayout helpLayout;
+    private EditText ipField;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,13 +45,31 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         view.findViewById(helpButtonId).setOnClickListener(this);
         requireActivity().findViewById(closeButtonId).setOnClickListener(this);
         helpLayout = requireActivity().findViewById(R.id.help_layout);
+        ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
+        setup = (SetupActivity) requireActivity();
+
+        ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(1);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case confirmButtonId:
-                navController.navigate(R.id.action_welcomeFragment_to_manualFragment);
+                if(!setup.checkWifiOnAndConnected()) {
+                    Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String ip = ipField.getText().toString();
+                if (Patterns.IP_ADDRESS.matcher(ip).matches()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("ip", ip);
+                    navController.navigate(R.id.action_manualFragment_to_linkFragment, bundle);
+                }
+                else {
+                    Context ctx = requireContext();
+                    String toastString = ctx.getString(R.string.toast_ip_mistake);
+                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+                }
                 break;
             case helpButtonId:
                 helpLayout.setVisibility(View.VISIBLE);

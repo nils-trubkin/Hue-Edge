@@ -95,7 +95,6 @@ public class DiscoveryEngine {
     }
 
     public void connectToBridge(
-            final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<AuthEntry> callback,
             final String bridgeIp){
@@ -105,23 +104,25 @@ public class DiscoveryEngine {
             @Override
             public void run() {
                 if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
-                    Log.e(TAG, "Connect to bridge: isInterrupted: " + executorService.isShutdown());
-                    Log.e(TAG, "Connect to bridge: isShutdown(): " + executorService.isShutdown());
                     timer.cancel();
                     return;
                 }
-                executorService.submit(() -> {
-                    if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
-                        return;
-                    if (requestAmount == 0) {
-                        Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
-                        notifyAuthResult(errorResult, callback);
-                        timer.cancel();
+                else
+                    try {
+                        executorService.submit(() -> {
+                                    if (Thread.currentThread().isInterrupted() || executorService.isShutdown())
+                                        return;
+                                    if (requestAmount == 0) {
+                                        Result<AuthEntry> errorResult = new Result.Error<>(new TimeoutException("requestAmount has reached zero"));
+                                        notifyAuthResult(errorResult, callback);
+                                        timer.cancel();
+                                    } else
+                                        sendAuthRequest(bridgeIp, callback);
+                                }
+                        );
+                    } catch (Exception e){
+                        e.printStackTrace();
                     }
-                    else {
-                        sendAuthRequest(bridgeIp, callback);
-                    }
-                });
             }
         };
         timer.schedule(periodicalAuthTask, 0, 1000); //execute every second
@@ -156,7 +157,6 @@ public class DiscoveryEngine {
                 for (AuthResponse r : responses) {
                     if (r.success != null)
                         if (r.success.username != null) {
-                            Log.e(TAG, r.success.username);
                             AuthEntry authEntry = new AuthEntry(ip, r.success.username);
                             Result<AuthEntry> result = new Result.Success<>(authEntry);
                             notifyAuthResult(result, callback);
@@ -313,10 +313,12 @@ public class DiscoveryEngine {
             try (Response response = client.newCall(request).execute()) {
                 ResponseBody responseBody = Objects.requireNonNull(response.body());
                 return responseBody.string();
+            } catch (UnknownHostException e){
+                Log.e(TAG, portal + " not reachable");
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
-                return null;
             }
+            return null;
         };
         Future<String> future = executorService.submit(callable);
         executorService.submit(() -> {
@@ -329,7 +331,8 @@ public class DiscoveryEngine {
                 for(NupnpResponse b : bridges){
                     parseDescriptionXml(b.internalipaddress, callback);
                 }
-            } catch (ExecutionException | InterruptedException | IOException | NullPointerException e) {
+            } catch (InterruptedException ignored){
+            } catch (ExecutionException | IOException | NullPointerException e) {
                 e.printStackTrace();
                 Result<DiscoveryEntry> errorResult = new Result.Error<>(e);
                 notifyResult(errorResult, callback);

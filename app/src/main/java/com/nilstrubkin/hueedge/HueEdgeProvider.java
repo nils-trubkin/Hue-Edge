@@ -923,6 +923,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         Log.d(TAG, "loadConfigurationFromMemory()");
         //loadCurrentCategory(ctx);
 
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean bridgeConfigured = s.getBoolean(ctx.getString(R.string.bridge_configured), false);
+        if (!bridgeConfigured)
+            return;
+
         File configFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         ObjectInputStream configInputStream = null;
 
@@ -931,9 +936,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             configInputStream = new ObjectInputStream(new FileInputStream(configFile));
         } catch (FileNotFoundException e){
             Log.e(TAG, "Config file not found");
+            return;
         } catch (IOException e) {
             Log.e(TAG, "IOException");
             e.printStackTrace();
+            return;
         }
 
         // Load instance of HueBridge
@@ -942,9 +949,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         try {
             String bridgeString = Objects.requireNonNull(configInputStream).readObject().toString();
             HueBridge bridge = jsonAdapter.fromJson(bridgeString);
-            HueBridge.setInstance(bridge);
+            HueBridge.setInstance(ctx, bridge);
         } catch (NullPointerException e){
             Log.e(TAG, "Config file not found");
+            return;
         }
 
         // Catch old version

@@ -35,6 +35,8 @@
 -keep class com.nilstrubkin.hueedge.resources.* { *; }
 -keepnames class com.nilstrubkin.hueedge.resources.* { *; }
 
+-keepnames class androidx.navigation.fragment.NavHostFragment
+
 -keepclassmembers class com.nilstrubkin.hueedge.* { *; }
 
 -keepclassmembers enum com.nilstrubkin.hueedge.* { *; }

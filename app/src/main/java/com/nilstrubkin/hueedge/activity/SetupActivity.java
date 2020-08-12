@@ -1,10 +1,8 @@
 package com.nilstrubkin.hueedge.activity;
 
 import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -12,87 +10,20 @@ import android.view.animation.Transformation;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.os.HandlerCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.nilstrubkin.hueedge.discovery.DiscoveryEngine;
-import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
-import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.discovery.Result;
 import com.samsung.android.sdk.SsdkUnsupportedException;
 import com.samsung.android.sdk.look.Slook;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Objects;
 
-public class SetupActivity extends AppCompatActivity implements Serializable {
-
-    private transient static final String TAG = SetupActivity.class.getSimpleName();
-    private transient final Context ctx = this;
-
-    /*private transient ExecutorService executorService;
-    private transient Executor executor;
-    private transient DiscoveryEngine discoveryEngine;*/
-
-
-    //private transient BridgeDiscoveryResultAdapter adapter;
-    //private transient boolean bridgeDiscoveryRunning;
-
-    /*// UI elements
-    private transient TextView statusTextView;
-    private transient ListView bridgeDiscoveryListView;
-    private transient View pushlinkImage;
-    private transient ProgressBar progressBar;
-    private transient Button bridgeDiscoveryButton;
-    private transient Button cheatButton;
-    private transient Button manualIp;
-    private transient Button manualIpConfirm;
-    private transient Button manualIpHelp;
-    private transient Button manualIpBack;
-    private transient LinearLayout helpLayout;
-    private transient Button helpCloseButton;
-    private transient EditText ipField;
-    private transient Button bridgeDiscoveryCancelButton;
-    private transient Button quickButton;
-    private transient Button customButton;
-    private transient Button finishButton;
-    private transient Button removeButton;
-    private transient Button yesButton;
-    private transient Button noButton;
-    private transient LinearLayout aboutLayout;
-    private transient Button aboutButton;
-    private transient Button aboutCloseButton;
-    private transient Button contactMe;
-    private transient Button support;
-    private transient SwitchCompat symbolSwitch;
-    private transient SwitchCompat hapticSwitch;*/
-
-    /*enum UIState {
-        Welcome,
-        ManualSetup,
-        Search,
-        Results,
-        Connecting,
-        Error,
-        Auth,
-        Settings,
-        Final,
-        Confirmation,
-        Not_supported
-    }*/
+public class SetupActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*executor = new Executor() {
-            @Override
-            public void execute(Runnable r) {
-                new Thread(r).start();
-            }
-        };*/
 
         setContentView(R.layout.setup_activity);
 
@@ -154,84 +85,24 @@ public class SetupActivity extends AppCompatActivity implements Serializable {
 
         Slook slook = new Slook();
 
+        NavHostFragment navHostFragment = (NavHostFragment) Objects.requireNonNull(getSupportFragmentManager().findFragmentById(R.id.fragment_container_setup));
+        NavController navController = navHostFragment.getNavController();
+
         try {
             slook.initialize(this);
         } catch (SsdkUnsupportedException e){
-            //updateUI(UIState.Not_supported); TODO
+            navController.navigate(R.id.action_welcomeFragment_to_notSupportedFragment);
             return;
         }
 
         // The device doesn't support Edge Single Mode, Edge Single Plus Mode, and Edge Feeds Mode.
         if (!slook.isFeatureEnabled(Slook.COCKTAIL_PANEL)) {
-            //updateUI(UIState.Not_supported); TODO
+            navController.navigate(R.id.action_welcomeFragment_to_notSupportedFragment);
             return;
-        }
-
-        if (HueBridge.getInstance(ctx) == null){
-            //updateUI(UIState.Welcome); TODO
-        }
-        else{
-            //updateUI(UIState.Final); TODO
         }
     }
 
-    /*/**
-     * Start the bridge discovery search
-     * Read the documentation on meethue for an explanation of the bridge discovery options
-     */
-    /*public void startBridgeDiscovery() {
-        Log.i(TAG, "startBridgeDiscovery()");
-        //bridgeDiscoveryRunning = true;
-        Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
-        executorService = Executors.newFixedThreadPool(4);
-        discoveryEngine = new DiscoveryEngine(executor, mainThreadHandler);
-        discoveryEngine.initializeFullDiscovery(ctx, executorService, bridgeDiscoveryCallback);
-        updateUI(UIState.Search);
-    }*/
 
-    /**
-     * Stops the bridge discovery if it is still running
-     */
-    /*public void stopBridgeDiscovery() {
-        Log.i(TAG, "stopBridgeDiscovery()");
-        bridgeDiscoveryRunning = false;
-        progressBar.clearAnimation();
-        executorService.shutdownNow();
-        updateUI(UIState.Welcome);
-    }*/
-
-    /*@Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        stopBridgeDiscovery();
-        final String bridgeIp = bridgeDiscoveryResults.get(i).ip;
-        Log.i(TAG, "Selected Bridge " + bridgeIp);
-        executorService = Executors.newFixedThreadPool(4);
-        discoveryEngine.connectToBridge(ctx, executorService, bridgeAuthCallback, bridgeIp);
-        updateUI(UIState.Auth);
-        //statusTextView.setText(ctx.getResources().getString(R.string.fragment_auth_label, DiscoveryEngine.REQUEST_AMOUNT));
-    }*/
-
-    /*private final DiscoveryEngine.DiscoveryCallback<AuthEntry> bridgeAuthCallback = new DiscoveryEngine.DiscoveryCallback<AuthEntry>(){
-        @Override
-        public void onComplete(Result<AuthEntry> result) {
-            if (result instanceof Result.Success) {
-                // Happy path
-                stopBridgeDiscovery();
-                AuthEntry ae = ((Result.Success<AuthEntry>) result).data;
-                HueBridge.getInstance(ctx, ae.ip, ae.username);
-                Log.i(TAG, "Bridge " + ae.ip +  " authorized successfully");
-                updateUI(UIState.Settings);
-            } else {
-                // Show error in UI
-                stopBridgeDiscovery();
-                Exception e = ((Result.Error<AuthEntry>) result).exception;
-                Log.d(TAG, e.toString());
-                if (e.getClass() == TimeoutException.class){
-                    updateUI(UIState.Error);
-                }
-            }
-        }
-    };*/
 
     public static class ProgressBarAnimation extends Animation {
         private final ProgressBar progressBar;
@@ -253,28 +124,6 @@ public class SetupActivity extends AppCompatActivity implements Serializable {
         }
 
     }
-
-    /*private final DiscoveryEngine.DiscoveryCallback<DiscoveryEntry> bridgeDiscoveryCallback = new DiscoveryEngine.DiscoveryCallback<DiscoveryEntry>(){
-        @Override
-        public void onComplete(Result<DiscoveryEntry> result) {
-            if (result instanceof Result.Success) {
-                // Happy path
-                DiscoveryEntry de = ((Result.Success<DiscoveryEntry>) result).data;
-                Log.d(TAG, "Result: " + de.friendlyName);
-                for (DiscoveryEntry deInList : bridgeDiscoveryResults){
-                    if(deInList.ip.equals(de.ip))
-                        return;
-                }
-                bridgeDiscoveryResults.add(de);
-                adapter.notifyDataSetChanged();
-                Log.i(TAG, "Bridge discovery found " + bridgeDiscoveryResults.size() + " bridge(s) in the network");
-            } else {
-                // Show error in UI
-                Exception e = ((Result.Error<DiscoveryEntry>) result).exception;
-                Log.e(TAG, "Error: " + e.toString());
-            }
-        }
-    };*/
 
 
     /*@Override
@@ -555,4 +404,14 @@ public class SetupActivity extends AppCompatActivity implements Serializable {
             }
         });
     }*/
+
+    public boolean checkWifiOnAndConnected() {
+        if(true)
+            return true;
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiMgr.isWifiEnabled())// Wi-Fi adapter is ON
+            return wifiMgr.getConnectionInfo().getNetworkId() != -1;
+        else
+            return false; // Wi-Fi adapter is OFF
+    }
 }

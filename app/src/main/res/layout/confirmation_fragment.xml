@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:orientation="vertical"
-    tools:context=".fragment.WelcomeFragment">
+    tools:context=".fragment.ConfirmationFragment">
 
     <TextView
         android:id="@+id/text_setup_status"
@@ -15,48 +15,48 @@
         android:layout_marginStart="@dimen/curved_edge_margin"
         android:layout_marginEnd="@dimen/curved_edge_margin"
         android:layout_marginBottom="32dp"
-        android:text="@string/fragment_welcome_label"
+        android:text="@string/fragment_confirmation_label"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_status_text_size"
-        app:layout_constraintBottom_toTopOf="@id/button_welcome_search"
+        app:layout_constraintBottom_toTopOf="@id/button_confirmation_yes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SpUsage" />
 
     <Button
-        android:id="@+id/button_welcome_search"
+        android:id="@+id/button_confirmation_yes"
         android:layout_width="@dimen/setup_button_width"
         android:layout_height="@dimen/setup_button_height"
         android:layout_marginBottom="16dp"
         android:background="@drawable/setup_button_background"
         android:includeFontPadding="false"
-        android:text="@string/fragment_welcome_button"
+        android:text="@string/fragment_confirmation_button_yes"
         android:textAllCaps="false"
         android:textSize="@dimen/setup_button_text_size"
-        app:layout_constraintBottom_toTopOf="@+id/button_welcome_manual"
+        app:layout_constraintBottom_toTopOf="@id/button_confirmation_no"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_setup_status"
         tools:ignore="SpUsage" />
 
     <Button
-        android:id="@+id/button_welcome_manual"
+        android:id="@+id/button_confirmation_no"
         android:layout_width="@dimen/setup_button_width"
         android:layout_height="@dimen/setup_button_height"
         android:layout_marginBottom="32dp"
         android:background="@drawable/setup_button_background"
         android:includeFontPadding="false"
-        android:text="@string/fragment_welcome_button_manual_ip"
+        android:text="@string/fragment_confirmation_button_no"
         android:textAllCaps="false"
         android:textSize="@dimen/setup_button_text_size"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_welcome_search"
+        app:layout_constraintTop_toBottomOf="@id/button_confirmation_yes"
         tools:ignore="SpUsage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

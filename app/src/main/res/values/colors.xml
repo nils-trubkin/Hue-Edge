@@ -7,7 +7,7 @@
     <color name="black">#252525</color>
     <color name="content_view_background">#664C4C4C</color>
 
-    <color name="navigation_bar_color_setup">#353535</color>
+    <color name="navigation_bar_color_setup">#2a292c</color>
     <color name="navigation_bar_color_edit">#1E1E1E</color>
 
     <color name="on_button_unfocused_color">@color/white</color>
@@ -33,6 +33,7 @@
 
     <color name="category_top_line_gray">#33FAFAFA</color>
 
+    <!--TODO remove-->
     <color name="blurry_background_under_layer">#1E1E1E</color>
     <color name="blurry_background_over_layer">#7F666666</color>
 

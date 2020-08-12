@@ -134,7 +134,7 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/button_setup_search"
+            android:id="@+id/button_welcome_search"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
             android:layout_gravity="center_horizontal"
@@ -160,7 +160,7 @@
             tools:visibility="gone" />
 
         <Button
-            android:id="@+id/button_setup_manual"
+            android:id="@+id/button_welcome_manual"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
             android:layout_gravity="center_horizontal"
@@ -251,19 +251,6 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/finish_button"
-            android:layout_width="@dimen/setup_button_width"
-            android:layout_height="@dimen/setup_button_height"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/setup_button_margin_top"
-            android:background="@drawable/setup_button_background"
-            android:includeFontPadding="false"
-            android:text="@string/fragment_final_button_finish"
-            android:textAllCaps="false"
-            android:textSize="@dimen/setup_button_text_size"
-            android:visibility="gone" />
-
-        <Button
             android:id="@+id/remove_button"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
@@ -271,7 +258,7 @@
             android:layout_marginTop="@dimen/setup_button_margin_top"
             android:background="@drawable/setup_button_background"
             android:includeFontPadding="false"
-            android:text="@string/fragment_final_button_remove"
+            android:text="@string/fragment_settings_button_remove"
             android:textAllCaps="false"
             android:textSize="@dimen/setup_button_text_size"
             android:visibility="gone" />

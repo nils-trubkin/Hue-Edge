@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:orientation="vertical"
-    tools:context=".fragment.WelcomeFragment">
+    tools:context=".fragment.ErrorFragment">
 
     <TextView
         android:id="@+id/text_setup_status"
@@ -15,7 +15,7 @@
         android:layout_marginStart="@dimen/curved_edge_margin"
         android:layout_marginEnd="@dimen/curved_edge_margin"
         android:layout_marginBottom="32dp"
-        android:text="@string/fragment_welcome_label"
+        android:text="@string/fragment_error_label"
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
@@ -33,7 +33,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/setup_button_background"
         android:includeFontPadding="false"
-        android:text="@string/fragment_welcome_button"
+        android:text="@string/fragment_error_button"
         android:textAllCaps="false"
         android:textSize="@dimen/setup_button_text_size"
         app:layout_constraintBottom_toTopOf="@+id/button_welcome_manual"

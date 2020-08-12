@@ -1,31 +1,26 @@
 package com.nilstrubkin.hueedge.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 import com.nilstrubkin.hueedge.R;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDiscoveryResultAdapter.BridgeDiscoveryViewHolder> {
     private List<DiscoveryEntry> list;
-
-    private static final String TAG = BridgeDiscoveryResultAdapter.class.getSimpleName();
+    private NavController navController;
+    private View.OnClickListener listener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -44,8 +39,11 @@ public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDis
         }
     }
 
-    public BridgeDiscoveryResultAdapter(List<DiscoveryEntry> list) {
+    public BridgeDiscoveryResultAdapter(List<DiscoveryEntry> list, NavController navController,
+                                        View.OnClickListener listener) {
         this.list = list;
+        this.navController = navController;
+        this.listener = listener;
     }
 
     // Create new views (invoked by the layout manager)
@@ -64,8 +62,16 @@ public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDis
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         DiscoveryEntry de = list.get(position);
-        holder.bridgeIp.setText(de.friendlyName);
-        holder.bridgeId.setText(holder.ctx.getResources().getString(R.string.list_view_id_label, de.serialNumber.toUpperCase()));
+        if(de.ip != null) {
+            holder.bridgeIp.setText(de.friendlyName);
+            holder.bridgeId.setText(holder.ctx.getResources().getString(R.string.list_view_id_label, de.serialNumber.toUpperCase()));
+            Bundle bundle = new Bundle();
+            bundle.putString("ip", de.ip);
+            holder.itemView.setOnClickListener(view -> {
+                listener.onClick(view);
+                navController.navigate(R.id.action_discoveryFragment_to_linkFragment, bundle);
+            });
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
