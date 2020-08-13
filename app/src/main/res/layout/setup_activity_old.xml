@@ -9,7 +9,7 @@
     tools:context=".activity.SetupActivity">
 
     <Button
-        android:id="@+id/about_button"
+        android:id="@+id/button_about"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/setup_button_height"
         android:layout_gravity="end"
@@ -292,7 +292,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/about_layout"
+        android:id="@+id/layout_about"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/about_window_margin_top"
@@ -309,7 +309,7 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/about_text_view"
+            android:id="@+id/text_view_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/about_window_margin_left_right"
@@ -323,7 +323,7 @@
             android:textSize="@dimen/about_text_text_size" />
 
         <Button
-            android:id="@+id/contact_me"
+            android:id="@+id/button_contact_me"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
             android:layout_gravity="center_horizontal"
@@ -335,7 +335,7 @@
             android:textSize="@dimen/setup_button_text_size" />
 
         <Button
-            android:id="@+id/support"
+            android:id="@+id/button_paypal"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
             android:layout_gravity="center_horizontal"
@@ -347,7 +347,7 @@
             android:textSize="@dimen/setup_button_text_size" />
 
         <Button
-            android:id="@+id/about_close_button"
+            android:id="@+id/button_about_close"
             android:layout_width="@dimen/setup_button_width"
             android:layout_height="@dimen/setup_button_height"
             android:layout_gravity="center"
@@ -362,7 +362,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/help_layout"
+        android:id="@+id/layout_manual_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/help_window_margin_top"

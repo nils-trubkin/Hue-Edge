@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Hue edge</string>
-    <string name="edge_hue_name">Hue edge</string>
+    <string name="app_name">Hue Edge</string>
+    <string name="edge_hue_name">Hue Edge</string>
     <string name="edge_hue_description">Panel to control Philips Hue</string>
 
     <string name="button_edit_text">Edit</string>
@@ -9,7 +9,7 @@
     <string name="button_help_3_text">Rooms</string>
     <string name="button_help_4_text">Zones</string>
     <string name="button_help_5_text">Scenes</string>
-    <string name="title_activity_edge_setup">Configure Hue edge</string>
+    <string name="title_activity_edge_setup">Configure Hue Edge</string>
 
     <string name="button_sliders_help_bri">Brightness</string>
     <string name="button_sliders_help_hue">Color</string>
@@ -48,10 +48,10 @@
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
-    <string name="about_button_text">About / Donate</string>
+    <string name="about_button_text">About / Support</string>
     <string name="close_about_text">Close about</string>
     <string name="close_help_text">Close help</string>
-    <string name="about_text_text">Hue edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal\n\n</string>
+    <string name="about_text_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal\n\n</string>
     <string name="about_btn_contact_me">Contact me</string>
     <string name="about_btn_support">Support via PayPal</string>
     <string name="manual_ip_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>

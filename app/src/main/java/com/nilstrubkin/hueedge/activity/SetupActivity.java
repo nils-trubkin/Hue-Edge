@@ -1,8 +1,11 @@
 package com.nilstrubkin.hueedge.activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -19,19 +22,28 @@ import com.samsung.android.sdk.look.Slook;
 
 import java.util.Objects;
 
-public class SetupActivity extends AppCompatActivity {
+public class SetupActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private final int aboutButtonId = R.id.button_about;
+    private final int aboutCloseButtonId = R.id.button_about_close;
+    private final int manualHelpCloseButtonId = R.id.button_help_close;
+    private final int contactMeButtonId = R.id.button_contact_me;
+    private final int paypalButtonId = R.id.button_paypal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.setup_activity);
+        findViewById(aboutButtonId).setOnClickListener(this);
+        findViewById(aboutCloseButtonId).setOnClickListener(this);
+        findViewById(manualHelpCloseButtonId).setOnClickListener(this);
+        findViewById(contactMeButtonId).setOnClickListener(this);
+        findViewById(paypalButtonId).setOnClickListener(this);
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setNavigationBarColor(getResources().getColor(R.color.navigation_bar_color_setup, getTheme()));
-
-        //bridgeDiscoveryResults = new ArrayList<>();
 
         // Setup the UI
         /*statusTextView = findViewById(R.id.status_text);
@@ -101,7 +113,45 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case aboutButtonId:
+                findViewById(R.id.layout_about).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_about).setVisibility(View.GONE);
+                break;
+            case aboutCloseButtonId:
+                findViewById(R.id.layout_about).setVisibility(View.GONE);
+                findViewById(R.id.button_about).setVisibility(View.VISIBLE);
+                break;
+            case manualHelpCloseButtonId:
+                findViewById(R.id.layout_manual_help).setVisibility(View.GONE);
+                break;
+            case contactMeButtonId:
+                contactMe();
+                break;
+            case paypalButtonId:
+                openPaypal();
+                break;
+        }
+    }
 
+    private void contactMe(){
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.email)});
+        //email.putExtra(Intent.EXTRA_SUBJECT, "");
+        //email.putExtra(Intent.EXTRA_TEXT, "");
+
+        //need this to prompts email client only
+        email.setType("message/rfc822");
+        startActivity(Intent.createChooser(email, "Choose an Email client :"));
+    }
+
+    private void openPaypal(){
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(getString(R.string.paypal_url)));
+        startActivity(i);
+    }
 
     public static class ProgressBarAnimation extends Animation {
         private final ProgressBar progressBar;

@@ -32,9 +32,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     private final int satBarId = R.id.seek_bar_sat;
     private SwitchCompat symbolSwitch;
     private SwitchCompat hapticSwitch;
-    private SeekBar briBar;
-    private SeekBar hueBar;
-    private SeekBar satBar;
     private TextView briStatus;
     private TextView hueStatus;
     private TextView satStatus;
@@ -60,12 +57,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(requireContext());
         symbolSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_symbols), false));
         hapticSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_haptic), false));
-        briBar = view.findViewById(briBarId);
-        hueBar = view.findViewById(hueBarId);
-        satBar = view.findViewById(satBarId);
         briStatus = view.findViewById(R.id.text_seek_bar_bri_status);
         hueStatus = view.findViewById(R.id.text_seek_bar_hue_status);
         satStatus = view.findViewById(R.id.text_seek_bar_sat_status);
+        SeekBar briBar = view.findViewById(briBarId);
+        SeekBar hueBar = view.findViewById(hueBarId);
+        SeekBar satBar = view.findViewById(satBarId);
         briBar.setOnSeekBarChangeListener(this);
         hueBar.setOnSeekBarChangeListener(this);
         satBar.setOnSeekBarChangeListener(this);

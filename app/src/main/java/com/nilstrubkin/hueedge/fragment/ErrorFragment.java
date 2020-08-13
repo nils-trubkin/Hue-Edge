@@ -37,7 +37,6 @@ public class ErrorFragment extends Fragment implements View.OnClickListener {
         view.findViewById(searchButtonId).setOnClickListener(this);
         view.findViewById(manualButtonId).setOnClickListener(this);
         setup = (SetupActivity) requireActivity();
-        ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setIndicatorColor(R.color.category_selected_blue);
     }
 
     @Override

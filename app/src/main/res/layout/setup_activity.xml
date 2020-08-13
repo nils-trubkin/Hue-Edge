@@ -5,7 +5,29 @@
     android:id="@+id/setupLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.SetupActivity">
+    tools:context=".activity.SetupActivity"
+    tools:ignore="SpUsage">
+
+    <Button
+        android:id="@+id/button_about"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:paddingLeft="@dimen/about_padding_left_right"
+        android:paddingRight="@dimen/about_padding_left_right"
+        android:text="@string/about_button_text"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
 
     <ImageView
         android:id="@+id/backgroundView"
@@ -72,7 +94,7 @@
         app:navGraph="@navigation/nav_graph" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/help_layout"
+        android:id="@+id/layout_manual_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/about_background"
@@ -139,6 +161,93 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             tools:ignore="SpUsage"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/about_background"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:text="@string/edge_hue_name"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_big_logo_text_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_view_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/about_text_text"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/about_text_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/button_contact_me"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+        <Button
+            android:id="@+id/button_contact_me"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/about_btn_contact_me"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/button_paypal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+        <Button
+            android:id="@+id/button_paypal"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/about_btn_support"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/button_about_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+        <Button
+            android:id="@+id/button_about_close"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/close_about_text"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:layout_conversion_absoluteHeight="0dp"
             tools:layout_conversion_absoluteWidth="0dp" />
 

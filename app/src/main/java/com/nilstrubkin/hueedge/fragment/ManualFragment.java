@@ -44,7 +44,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         view.findViewById(confirmButtonId).setOnClickListener(this);
         view.findViewById(helpButtonId).setOnClickListener(this);
         requireActivity().findViewById(closeButtonId).setOnClickListener(this);
-        helpLayout = requireActivity().findViewById(R.id.help_layout);
+        helpLayout = requireActivity().findViewById(R.id.layout_manual_help);
         ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
         setup = (SetupActivity) requireActivity();
 
