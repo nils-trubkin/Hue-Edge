@@ -98,7 +98,6 @@ public class SetupActivity extends AppCompatActivity {
         // The device doesn't support Edge Single Mode, Edge Single Plus Mode, and Edge Feeds Mode.
         if (!slook.isFeatureEnabled(Slook.COCKTAIL_PANEL)) {
             navController.navigate(R.id.action_welcomeFragment_to_notSupportedFragment);
-            return;
         }
     }
 
@@ -405,13 +404,11 @@ public class SetupActivity extends AppCompatActivity {
         });
     }*/
 
-    public boolean checkWifiOnAndConnected() {
-        if(true)
-            return true;
+    public boolean checkWifiNotConnected() {
         WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiMgr.isWifiEnabled())// Wi-Fi adapter is ON
-            return wifiMgr.getConnectionInfo().getNetworkId() != -1;
+            return wifiMgr.getConnectionInfo().getNetworkId() == -1;
         else
-            return false; // Wi-Fi adapter is OFF
+            return true; // Wi-Fi adapter is OFF
     }
 }

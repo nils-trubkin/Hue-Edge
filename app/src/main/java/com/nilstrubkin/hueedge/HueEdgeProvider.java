@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -169,6 +170,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 break;
             case ACTION_PULL_TO_REFRESH:
                 performPullToRefresh(ctx);
+                if (checkWifiNotConnected(ctx))
+                    break;
+                //else skip and simulate ACTION_RECEIVE_HUE_REPLY which requests a new state
             case ACTION_RECEIVE_HUE_REPLY:
                 HueBridge.requestHueState(ctx);
                 break;
@@ -216,8 +220,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
         Log.d(TAG, "onVisibilityChanged(): " + visibility);
         super.onVisibilityChanged(ctx, cocktailId, visibility);
-        if(bridgeConfigured && visibility == 1)
+        if(bridgeConfigured && visibility == 1) {
             performPullToRefresh(ctx);
+        }
     }
 
     //Create the content view, right panel. Used for buttons
@@ -483,8 +488,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
                         vibrator.vibrate(1);
                     }
+
+                    if(checkWifiNotConnected(ctx)) {
+                        Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     currentlyClicked = id;
-                    //MoshiBridgeResource br = Objects.requireNonNull(bridge.getContents().get(currentCategory)).get(id);
+
                     ResourceReference ref = Objects.requireNonNull(currentCategoryContents.get(id));
                     Objects.requireNonNull(HueBridge.getInstance(ctx)).getResource(ref).activateResource(ctx);
                 }
@@ -543,6 +554,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
                 vibrator.vibrate(1);
             }
+
+            if(checkWifiNotConnected(ctx)) {
+                Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                return;
+            }
+
             ResourceReference resRef = getSlidersResource();
             BridgeResourceSliders res = (BridgeResourceSliders) bridge.getResource(resRef);
             int value;
@@ -627,6 +644,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
                         vibrator.vibrate(1);
                     }
+
+                    if(checkWifiNotConnected(ctx)) {
+                        Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     setSlidersResource(resRef);
                     setSlidersActive(true);
                 }
@@ -648,8 +671,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
         int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
         cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
-        String toastString = ctx.getString(R.string.toast_refreshing);
-        Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        if (checkWifiNotConnected(ctx)) {
+            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            panelUpdate(ctx);
+        }
+        else
+            Toast.makeText(ctx,  ctx.getString(R.string.toast_refreshing), Toast.LENGTH_SHORT).show();
     }
 
     //The initial setup of the buttons
@@ -764,6 +791,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         //One remoteView for left/help and one for right/content
         RemoteViews contentView;
         RemoteViews helpView;
+
+        //
         if (isSlidersActive()) {
             contentView = createSlidersContentView(ctx);
             helpView = createSlidersHelpView(ctx);
@@ -952,7 +981,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             HueBridge.setInstance(ctx, bridge);
         } catch (NullPointerException e){
             Log.e(TAG, "Config file not found");
-            return;
         }
 
         // Catch old version
@@ -1001,5 +1029,13 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             return false;
         }
         return file.delete();
+    }
+
+    public boolean checkWifiNotConnected(Context ctx) {
+        WifiManager wifiMgr = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiMgr.isWifiEnabled())// Wi-Fi adapter is ON
+            return wifiMgr.getConnectionInfo().getNetworkId() == -1;
+        else
+            return true; // Wi-Fi adapter is OFF
     }
 }

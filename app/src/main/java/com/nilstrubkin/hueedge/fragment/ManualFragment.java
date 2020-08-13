@@ -55,7 +55,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case confirmButtonId:
-                if(!setup.checkWifiOnAndConnected()) {
+                if(setup.checkWifiNotConnected()) {
                     Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }

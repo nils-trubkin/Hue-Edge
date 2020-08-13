@@ -1,6 +1,5 @@
 package com.nilstrubkin.hueedge.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +42,7 @@ public class ErrorFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(!setup.checkWifiOnAndConnected()) {
+        if(setup.checkWifiNotConnected()) {
             Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
             return;
         }

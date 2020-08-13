@@ -1,6 +1,5 @@
 package com.nilstrubkin.hueedge.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.nilstrubkin.hueedge.HueBridge;
-import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 
 public class ConfirmationFragment extends Fragment implements View.OnClickListener {
