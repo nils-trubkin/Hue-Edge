@@ -46,7 +46,7 @@ public abstract class BridgeResourceSliders extends BridgeResource {
     public int getBtnTextSize(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(resources.getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(resources.getString(R.string.preference_no_symbols), false);
         if(noSymbols)
             return R.dimen.resource_btn_text_size_scene;
         else

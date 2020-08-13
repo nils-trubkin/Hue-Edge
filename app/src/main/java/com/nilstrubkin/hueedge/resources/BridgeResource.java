@@ -1,16 +1,23 @@
 package com.nilstrubkin.hueedge.resources;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.util.Log;
 
 import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -89,28 +96,37 @@ public abstract class BridgeResource implements Serializable {
 
     String post(final Context ctx, final String url, final String json) {
         ExecutorService pool = Executors.newFixedThreadPool(1);
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                RequestBody body = RequestBody.create(json, JSON);
-                Request request = new Request.Builder()
-                        .url(url)
-                        .put(body)
-                        .build();
-                final OkHttpClient client = new OkHttpClient();
-                try (Response response = client.newCall(request).execute()) {
-                    Objects.requireNonNull(HueBridge.getInstance(ctx)).getReplyIntent(ctx).send();
-                    return Objects.requireNonNull(response.body()).string();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+        Callable<String> callable = () -> {
+            RequestBody body = RequestBody.create(json, JSON);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .put(body)
+                    .build();
+            final OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .writeTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                HueEdgeProvider.getReplyIntent(ctx).send();
+                return Objects.requireNonNull(response.body()).string();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                HueEdgeProvider.getTimeoutIntent(ctx).send();
+                return null;
             }
         };
         Future<String> future = pool.submit(callable);
         try {
             return future.get();
         } catch (ExecutionException | InterruptedException e) {
+            try {
+                HueEdgeProvider.getTimeoutIntent(ctx).send();
+            } catch (PendingIntent.CanceledException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
             return null;
         }

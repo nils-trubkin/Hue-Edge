@@ -2,7 +2,6 @@ package com.nilstrubkin.hueedge;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -28,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,7 +41,6 @@ public class HueBridge implements Serializable {
 
     private final String url;
     private final String ip;
-    private final String userName;
 
     private transient JSONObject tempState;
     private transient JSONObject tempState0;
@@ -60,7 +59,6 @@ public class HueBridge implements Serializable {
     //Custom constructor for future use
     private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
         this.ip = ip;
-        this.userName = Objects.requireNonNull(userName);
         this.url =
                 Objects.requireNonNull(urlHeader) +
                         Objects.requireNonNull(ip) +
@@ -69,7 +67,7 @@ public class HueBridge implements Serializable {
 
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
         for (menuCategory m : menuCategory.values()){
-            getContents().put(m, new HashMap<Integer, ResourceReference>());
+            getContents().put(m, new HashMap<>());
         }
     }
 
@@ -93,7 +91,7 @@ public class HueBridge implements Serializable {
         requestHueState(ctx);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.bridge_configured), true);
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
         e.apply();
     }
 
@@ -102,7 +100,7 @@ public class HueBridge implements Serializable {
         instance = bridge;
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.bridge_configured), true);
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
         e.apply();
     }
 
@@ -112,7 +110,7 @@ public class HueBridge implements Serializable {
         instance = null;
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.bridge_configured), false);
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), false);
         e.apply();
         boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
         if (deleted) {
@@ -192,7 +190,7 @@ public class HueBridge implements Serializable {
     public void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
         try {
-            getStateIntent(ctx).send();
+            HueEdgeProvider.getStateIntent(ctx).send();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
@@ -238,22 +236,6 @@ public class HueBridge implements Serializable {
         }
     }
 
-    //Construct intent for incoming state JsonObject
-    private PendingIntent getStateIntent(Context context) {
-        Intent stateIntent = new Intent(context, HueEdgeProvider.class);
-        stateIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_STATE);
-        return PendingIntent.getBroadcast(context, 1, stateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    //Construct intent for incoming reply JsonArray
-    public PendingIntent getReplyIntent(Context context) {
-        Intent replyIntent = new Intent(context, HueEdgeProvider.class);
-        replyIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_REPLY);
-        return PendingIntent.getBroadcast(context, 1, replyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
     public static void requestHueState(Context ctx){
         try {
             Objects.requireNonNull(HueBridge.getInstance(ctx)).requestHueState(ctx, false);
@@ -271,26 +253,33 @@ public class HueBridge implements Serializable {
         }
 
         ExecutorService pool = Executors.newFixedThreadPool(1);
-        Callable<String> callable = new Callable<String>() {
-            @Override
-            public String call() {
-                Request request = new Request.Builder()
-                        .url(state0 ? url + "/groups/0" : url)
-                        .build();
-                final OkHttpClient client = new OkHttpClient();
-                try (Response response = client.newCall(request).execute()) {
-                    return Objects.requireNonNull(response.body()).string();
-                } catch (IOException | NullPointerException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+        Callable<String> callable = () -> {
+            Request request = new Request.Builder()
+                    .url(state0 ? url + "/groups/0" : url)
+                    .build();
+            final OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .writeTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                return Objects.requireNonNull(response.body()).string();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                HueEdgeProvider.getTimeoutIntent(ctx).send();
+                return null;
             }
         };
         Future<String> future = pool.submit(callable);
         try {
-            notifyState(ctx, new JSONObject(future.get()), state0);
+            String s = Objects.requireNonNull(future.get());
+            notifyState(ctx, new JSONObject(s), state0);
         } catch (ExecutionException | InterruptedException | JSONException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "No state reply");
         }
         if(!state0)
             requestHueState(ctx, true);

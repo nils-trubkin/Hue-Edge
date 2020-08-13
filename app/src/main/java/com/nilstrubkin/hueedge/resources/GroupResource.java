@@ -122,7 +122,7 @@ public class GroupResource extends BridgeResourceSliders {
     public String getBtnText(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_symbols), false);
         if(isAny_on())
             if(!isAll_off())
                 return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);

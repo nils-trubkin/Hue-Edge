@@ -77,7 +77,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
             @Override
             public boolean onLongClick(View v) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
                 if(!noHaptic)
                     vibrator.vibrate(1);
                 ClipData.Item item = new ClipData.Item(String.valueOf(-1));

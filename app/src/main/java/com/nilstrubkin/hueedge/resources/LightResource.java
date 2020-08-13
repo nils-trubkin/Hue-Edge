@@ -20,6 +20,7 @@ import java.util.Objects;
 class LightResource extends BridgeResourceSliders {
 
     static class State implements Serializable {
+
         boolean on;
         int bri;
         int hue;
@@ -73,8 +74,14 @@ class LightResource extends BridgeResourceSliders {
     public void activateResource(Context ctx) {
         String actionWrite = getActionWrite();
         boolean newState = !isOn();
-        String reply = sendValue(ctx, actionWrite, newState);
-        Log.e("reply is ", reply);
+        new Thread(() -> {
+            final String TAG = LightResource.class.getSimpleName();
+            String reply = sendValue(ctx, actionWrite, newState);
+            if (reply == null)
+                Log.e(TAG, "Reply is null");
+            else
+                Log.e(TAG, "Reply is" + reply);
+        }).start();
     }
 
     @Override
@@ -108,7 +115,7 @@ class LightResource extends BridgeResourceSliders {
     public String getBtnText(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_symbols), false);
         if(isOn())
             return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);
         else

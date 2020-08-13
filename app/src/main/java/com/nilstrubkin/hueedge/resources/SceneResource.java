@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.Objects;
 
-class SceneResource extends BridgeResource {
+public class SceneResource extends BridgeResource {
 
     String type;
     String group;

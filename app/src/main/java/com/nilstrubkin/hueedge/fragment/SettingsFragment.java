@@ -3,9 +3,12 @@ package com.nilstrubkin.hueedge.fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +19,7 @@ import androidx.navigation.Navigation;
 
 import com.nilstrubkin.hueedge.R;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private NavController navController;
 
     //UI elements
@@ -24,8 +27,19 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private final int backButtonId = R.id.button_settings_back;
     private final int symbolSwitchId = R.id.switch_symbols;
     private final int hapticSwitchId = R.id.switch_haptic;
+    private final int briBarId = R.id.seek_bar_bri;
+    private final int hueBarId = R.id.seek_bar_hue;
+    private final int satBarId = R.id.seek_bar_sat;
     private SwitchCompat symbolSwitch;
     private SwitchCompat hapticSwitch;
+    private SeekBar briBar;
+    private SeekBar hueBar;
+    private SeekBar satBar;
+    private TextView briStatus;
+    private TextView hueStatus;
+    private TextView satStatus;
+
+    public static final int minProgress = 10;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,8 +58,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         symbolSwitch.setOnClickListener(this);
         hapticSwitch.setOnClickListener(this);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        symbolSwitch.setChecked(s.getBoolean(getString(R.string.no_symbols_preference), false));
-        hapticSwitch.setChecked(s.getBoolean(getString(R.string.no_haptic_preference), false));
+        symbolSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_symbols), false));
+        hapticSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_haptic), false));
+        briBar = view.findViewById(briBarId);
+        hueBar = view.findViewById(hueBarId);
+        satBar = view.findViewById(satBarId);
+        briStatus = view.findViewById(R.id.text_seek_bar_bri_status);
+        hueStatus = view.findViewById(R.id.text_seek_bar_hue_status);
+        satStatus = view.findViewById(R.id.text_seek_bar_sat_status);
+        briBar.setOnSeekBarChangeListener(this);
+        hueBar.setOnSeekBarChangeListener(this);
+        satBar.setOnSeekBarChangeListener(this);
+        briBar.setProgress(s.getInt(getString(R.string.preference_bri_levels) , 15));
+        hueBar.setProgress(s.getInt(getString(R.string.preference_hue_levels), 25));
+        satBar.setProgress(s.getInt(getString(R.string.preference_sat_levels), 15));
+        briStatus.setText(String.valueOf(briBar.getProgress() + minProgress));
+        hueStatus.setText(String.valueOf(hueBar.getProgress() + minProgress));
+        satStatus.setText(String.valueOf(satBar.getProgress() + minProgress));
     }
 
     @Override
@@ -62,14 +91,59 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             case symbolSwitchId:
                 s = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 e = s.edit();
-                e.putBoolean(getResources().getString(R.string.no_symbols_preference), symbolSwitch.isChecked());
+                e.putBoolean(getResources().getString(R.string.preference_no_symbols), symbolSwitch.isChecked());
                 e.apply();
                 break;
             case hapticSwitchId:
                 s = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 e = s.edit();
-                e.putBoolean(getResources().getString(R.string.no_haptic_preference), hapticSwitch.isChecked());
+                e.putBoolean(getResources().getString(R.string.preference_no_haptic), hapticSwitch.isChecked());
                 e.apply();
+                break;
+        }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+        String levelsString = String.valueOf(i + minProgress);
+        switch (seekBar.getId()){
+            case briBarId:
+                briStatus.setText(levelsString);
+                break;
+            case hueBarId:
+                hueStatus.setText(levelsString);
+                break;
+            case satBarId:
+                satStatus.setText(levelsString);
+                break;
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        SharedPreferences.Editor e = s.edit();
+        int levels = seekBar.getProgress();
+        String levelsString = String.valueOf(levels + minProgress);
+        switch (seekBar.getId()) {
+            case briBarId:
+                e.putInt(getResources().getString(R.string.preference_bri_levels), levels);
+                e.apply();
+                briStatus.setText(levelsString);
+                break;
+            case hueBarId:
+                e.putInt(getResources().getString(R.string.preference_hue_levels), levels);
+                e.apply();
+                hueStatus.setText(levelsString);
+                break;
+            case satBarId:
+                e.putInt(getResources().getString(R.string.preference_sat_levels), levels);
+                e.apply();
+                satStatus.setText(levelsString);
                 break;
         }
     }

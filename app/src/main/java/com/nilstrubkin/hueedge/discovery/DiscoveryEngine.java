@@ -41,6 +41,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import okhttp3.MediaType;
@@ -132,7 +133,7 @@ public class DiscoveryEngine {
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-        OkHttpClient client = new OkHttpClient();
+        final OkHttpClient client = new OkHttpClient.Builder().build();
         JSONObject json;
         try {
             json = new JSONObject().put("devicetype", "HueEdge#" + android.os.Build.MODEL);
@@ -173,7 +174,7 @@ public class DiscoveryEngine {
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
         initializeSynchronousDnsSDDiscovery(ctx, executorService, callback);
-        initializeSynchronousNUPNPDiscovery(ctx, executorService, callback);
+        initializeSynchronousNUPNPDiscovery(executorService, callback);
         initializeSynchronousUPNPDiscovery(executorService, callback);
         initializeIpScan(ctx, executorService, callback);
         //initializeTest(executorService);
@@ -300,7 +301,6 @@ public class DiscoveryEngine {
     }
 
     private void initializeSynchronousNUPNPDiscovery(
-            final Context ctx,
             final ExecutorService executorService,
             final DiscoveryCallback<DiscoveryEntry> callback){
         Log.d(TAG, "Initializing NUPnP discovery...");
@@ -309,7 +309,7 @@ public class DiscoveryEngine {
             Request request = new Request.Builder()
                     .url(portal)
                     .build();
-            final OkHttpClient client = new OkHttpClient();
+            final OkHttpClient client = new OkHttpClient.Builder().build();
             try (Response response = client.newCall(request).execute()) {
                 ResponseBody responseBody = Objects.requireNonNull(response.body());
                 return responseBody.string();

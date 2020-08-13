@@ -234,7 +234,7 @@ public class EditActivity extends AppCompatActivity {
                     @Override
                     public boolean onLongClick(View v) {
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+                        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
                         if(!noHaptic)
                             vibrator.vibrate(1);
                         ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
@@ -270,7 +270,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void clearSlot (int position) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
         if(!noHaptic)
             vibrator.vibrate(1);
         final Map<Integer, ResourceReference> currentCategoryContents;
