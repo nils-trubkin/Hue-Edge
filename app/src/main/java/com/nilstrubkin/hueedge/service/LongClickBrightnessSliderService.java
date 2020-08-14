@@ -1,7 +1,6 @@
 package com.nilstrubkin.hueedge.service;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -47,7 +46,7 @@ public class LongClickBrightnessSliderService extends RemoteViewsService {
                     .getInt(getString(R.string.preference_bri_levels), 5) + SettingsFragment.minProgress;
             // create list item
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
-            int itemId = (int) (id + (mIdOffset * MAX_CHILD));
+            //int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
             int slidersResourceColor = HueEdgeProvider.getSlidersResHue();
             int slidersResourceSaturation = HueEdgeProvider.getSlidersResSat();

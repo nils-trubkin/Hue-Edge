@@ -27,7 +27,7 @@ import com.nilstrubkin.hueedge.adapter.BridgeDiscoveryResultAdapter;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEngine;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 import com.nilstrubkin.hueedge.discovery.Result;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
+import com.badoualy.stepperindicator.StepperIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 public class DiscoveryFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = DiscoveryFragment.class.getSimpleName();
     private NavController navController = null;
-    private final int searchTimeout = 5 * 1000;
+    private final int searchTimeout = 30 * 1000;
 
     //UI elements
     private TextView statusText;
@@ -138,9 +138,9 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener 
             // Happy path
             DiscoveryEntry de = ((Result.Success<DiscoveryEntry>) result).data;
             Log.i(TAG, "Result: " + de.friendlyName);
-//            for (DiscoveryEntry deInList : results)
-//                if(deInList.ip.equals(de.ip))
-//                    return;
+            for (DiscoveryEntry deInList : results)
+                if(deInList.ip.equals(de.ip))
+                    return;
             results.add(de);
             adapter.notifyItemInserted(adapter.getItemCount() - 1);
         } else {

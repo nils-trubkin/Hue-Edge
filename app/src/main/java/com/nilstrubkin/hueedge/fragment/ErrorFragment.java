@@ -14,7 +14,6 @@ import androidx.navigation.Navigation;
 
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 public class ErrorFragment extends Fragment implements View.OnClickListener {
     private NavController navController;

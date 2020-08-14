@@ -15,25 +15,27 @@ import android.widget.TextView;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 import com.nilstrubkin.hueedge.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDiscoveryResultAdapter.BridgeDiscoveryViewHolder> {
-    private List<DiscoveryEntry> list;
-    private NavController navController;
-    private View.OnClickListener listener;
+    private final List<DiscoveryEntry> list;
+    private final NavController navController;
+    private final View.OnClickListener listener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class BridgeDiscoveryViewHolder extends RecyclerView.ViewHolder{
-        public Context ctx;
-        public ConstraintLayout discoveryItem;
-        public TextView bridgeIp;
-        public TextView bridgeId;
+        public final Context ctx;
+        //public final ConstraintLayout discoveryItem;
+        public final TextView bridgeIp;
+        public final TextView bridgeId;
         public BridgeDiscoveryViewHolder(ConstraintLayout view){
             super(view);
             ctx = view.getContext();
-            discoveryItem = view;
+            //discoveryItem = view;
             bridgeIp = view.findViewById(R.id.bridge_ip);
             bridgeId = view.findViewById(R.id.bridge_id);
         }
@@ -47,6 +49,7 @@ public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDis
     }
 
     // Create new views (invoked by the layout manager)
+    @NotNull
     @Override
     public BridgeDiscoveryResultAdapter.BridgeDiscoveryViewHolder onCreateViewHolder(ViewGroup parent,
                                                      int viewType) {
@@ -58,7 +61,7 @@ public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDis
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(BridgeDiscoveryViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull BridgeDiscoveryViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         DiscoveryEntry de = list.get(position);

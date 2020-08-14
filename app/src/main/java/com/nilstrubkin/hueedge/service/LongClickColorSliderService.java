@@ -46,7 +46,7 @@ public class LongClickColorSliderService extends RemoteViewsService {
                     .getInt(getString(R.string.preference_hue_levels), 15) + SettingsFragment.minProgress;
             // create list item
             RemoteViews itemView = new RemoteViews(getPackageName(), R.layout.sliders_list_item);
-            int itemId = (int) (id + (mIdOffset * MAX_CHILD));
+            //int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title2) + itemId);
             int slidersResourceSaturation = Math.max(100, HueEdgeProvider.getSlidersResSat());
             float h = 360 * id / (float) MAX_CHILD;

@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import com.nilstrubkin.hueedge.R;
 
 public abstract class BridgeResourceSliders extends BridgeResource {
-    public abstract int getBri();
+    //public abstract int getBri();
     public abstract int getHue();
     public abstract int getSat();
     protected abstract boolean isAll_off();

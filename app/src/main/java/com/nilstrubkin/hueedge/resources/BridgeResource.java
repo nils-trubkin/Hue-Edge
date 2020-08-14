@@ -2,15 +2,11 @@ package com.nilstrubkin.hueedge.resources;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.util.Log;
 
-import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;

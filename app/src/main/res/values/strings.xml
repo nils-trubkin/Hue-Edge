@@ -48,16 +48,23 @@
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
-    <string name="about_button_text">About / Support</string>
+    <string name="about_button_text">About &amp; Support</string>
     <string name="close_about_text">Close about</string>
     <string name="close_help_text">Close help</string>
-    <string name="about_text_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal\n\n</string>
+    <string name="about_text_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
+    <string name="about_btn_license">License</string>
     <string name="about_btn_contact_me">Contact me</string>
     <string name="about_btn_support">Support via PayPal</string>
     <string name="manual_ip_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>
     <string name="switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
     <string name="switch_haptic">No haptic feedback (vibration)</string>
     <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15)</string>
+
+    <string name="license_text_text">
+        Android Jetpack - RecyclerView\n
+        \n
+
+    </string>
 
     <string name="list_view_id_label">ID: %1$s</string>
 
@@ -74,6 +81,8 @@
     <string name="preference_bri_levels">briLevels</string>
     <string name="preference_hue_levels">hueLevels</string>
     <string name="preference_sat_levels">satLevels</string>
+    <string name="preference_ip">savedIp</string>
+    <string name="preference_username">savedUsername</string>
 
     <string name="http_header">http://</string>
     <string name="api_path">/api/</string>

@@ -18,6 +18,9 @@ import java.util.Objects;
 
 public class GroupResource extends BridgeResourceSliders {
 
+    public GroupResource() {
+    }
+
     static class State implements Serializable {
         boolean all_on;
         boolean any_on;
@@ -36,9 +39,9 @@ public class GroupResource extends BridgeResourceSliders {
         int hue;
         int sat;
 
-        public int getBri() {
+        /*public int getBri() {
             return bri;
-        }
+        }*/
 
         public int getHue() {
             return hue;
@@ -73,9 +76,9 @@ public class GroupResource extends BridgeResourceSliders {
         return getState().isAny_on();
     }
 
-    public int getBri() {
+    /*public int getBri() {
         return getAction().getBri();
-    }
+    }*/
 
     public int getHue() {
         return getAction().getHue();

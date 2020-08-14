@@ -18,9 +18,9 @@
         <gradient
             android:type="sweep"
             android:useLevel="false"
-            android:startColor="@color/on_button_unfocused_color"
-            android:endColor="@color/off_button_unfocused_color"
-            android:angle="0"/>
+            android:startColor="#7FFAFAFA"
+            android:endColor="#7F404040"
+            android:angle="0" />
 
     </shape>
 

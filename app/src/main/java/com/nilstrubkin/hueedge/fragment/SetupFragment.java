@@ -1,23 +1,19 @@
 package com.nilstrubkin.hueedge.fragment;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.nilstrubkin.hueedge.HueBridge;
+import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 public class SetupFragment extends Fragment implements View.OnClickListener {
     private NavController navController;
@@ -44,8 +40,6 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        SharedPreferences s;
-        SharedPreferences.Editor e;
         switch (view.getId()){
             case quickButton:
                 HueEdgeProvider.quickSetup(requireContext());

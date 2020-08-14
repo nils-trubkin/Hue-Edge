@@ -16,9 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 public class ManualFragment extends Fragment implements View.OnClickListener {
     private NavController navController = null;

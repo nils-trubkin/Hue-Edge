@@ -49,7 +49,7 @@ public class HueBridge implements Serializable {
     private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
-    private final Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
+    private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
@@ -64,7 +64,12 @@ public class HueBridge implements Serializable {
                         Objects.requireNonNull(ip) +
                         ctx.getString(R.string.api_path) + // String "/api/"
                         Objects.requireNonNull(userName);
-
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
+        e.putString(ctx.getString(R.string.preference_ip), ip);
+        e.putString(ctx.getString(R.string.preference_username), userName);
+        e.apply();
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
         for (menuCategory m : menuCategory.values()){
             getContents().put(m, new HashMap<>());
@@ -89,10 +94,6 @@ public class HueBridge implements Serializable {
     public static synchronized void getInstance(Context ctx, String ipAddress, String userName) {
         instance = new HueBridge(ctx, ipAddress, userName);
         requestHueState(ctx);
-        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
-        e.apply();
     }
 
     //Setting the instance for config loading
@@ -110,7 +111,9 @@ public class HueBridge implements Serializable {
         instance = null;
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), false);
+        e.remove(ctx.getString(R.string.preference_bridge_configured));
+        e.remove(ctx.getString(R.string.preference_ip));
+        e.remove(ctx.getString(R.string.preference_username));
         e.apply();
         boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
         if (deleted) {
@@ -165,6 +168,10 @@ public class HueBridge implements Serializable {
 
     public Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
         return contents;
+    }
+
+    public void setContents(Map<menuCategory, Map<Integer, ResourceReference>> contents) {
+        this.contents = contents;
     }
 
     public menuCategory getCurrentCategory() {

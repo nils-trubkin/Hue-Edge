@@ -1,8 +1,10 @@
 package com.nilstrubkin.hueedge;
 
-public class ResourceReference {
-    public String category;
-    public String id;
+import java.io.Serializable;
+
+public class ResourceReference implements Serializable {
+    public final String category;
+    public final String id;
 
     public ResourceReference(String category, String id) {
         this.category = category;

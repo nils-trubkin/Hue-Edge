@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

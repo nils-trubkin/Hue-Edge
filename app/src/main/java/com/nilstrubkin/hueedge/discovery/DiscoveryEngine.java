@@ -41,7 +41,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import okhttp3.MediaType;
@@ -106,7 +105,6 @@ public class DiscoveryEngine {
             public void run() {
                 if (Thread.currentThread().isInterrupted() || executorService.isShutdown()) {
                     timer.cancel();
-                    return;
                 }
                 else
                     try {
@@ -151,10 +149,10 @@ public class DiscoveryEngine {
             Type type = Types.newParameterizedType(List.class, AuthResponse.class);
             Moshi moshi = new Moshi.Builder().build();
             JsonAdapter<List<AuthResponse>> adapter = moshi.adapter(type);
-            String responseString = response.body().string();
+            String responseString = Objects.requireNonNull(response.body()).string();
             Log.i(TAG, "response: " + responseString);
             List<AuthResponse> responses = adapter.fromJson(responseString);
-            if(!responses.isEmpty())
+            if(!Objects.requireNonNull(responses).isEmpty())
                 for (AuthResponse r : responses) {
                     if (r.success != null)
                         if (r.success.username != null) {

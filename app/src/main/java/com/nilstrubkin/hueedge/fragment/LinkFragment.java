@@ -17,13 +17,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.discovery.AuthEntry;
 import com.nilstrubkin.hueedge.discovery.DiscoveryEngine;
 import com.nilstrubkin.hueedge.discovery.Result;
-import com.rakshakhegde.stepperindicator.StepperIndicator;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeoutException;
 public class LinkFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = LinkFragment.class.getSimpleName();
     private NavController navController = null;
-    private final int authTimeout = 5 * 1000; //DiscoveryEngine.REQUEST_AMOUNT TODO
+    private final int authTimeout = DiscoveryEngine.REQUEST_AMOUNT * 1000;
     private String ip;
 
     // UI elements
@@ -98,7 +98,7 @@ public class LinkFragment extends Fragment implements View.OnClickListener {
                     navController.navigate(R.id.action_linkFragment_to_errorFragment);
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.d(TAG, "Interrupted! Most likely successfully linked");
             }
         });
     }
@@ -118,7 +118,6 @@ public class LinkFragment extends Fragment implements View.OnClickListener {
             navController.navigate(R.id.action_linkFragment_to_setupFragment);
         } else {
             // Error path
-            stopBridgeLink();
             Exception e = ((Result.Error<AuthEntry>) result).exception;
             Log.d(TAG, e.toString());
             if (e.getClass() == TimeoutException.class){

@@ -37,8 +37,12 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.VIBRATOR_SERVICE;
@@ -109,7 +113,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private static int slidersResHue;
     private static int slidersResSat;
 
-    private static int currentlyClicked = -1;
+    private static final List<Integer> currentlyClicked = new ArrayList<>();
 
     public static ResourceReference getSlidersResource() {
         return slidersResource;
@@ -175,15 +179,19 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 performRemoteClick(ctx, intent);
                 break;
             case ACTION_PULL_TO_REFRESH:
+                currentlyClicked.clear();
                 performPullToRefresh(ctx);
                 if (checkWifiNotConnected(ctx))
                     break;
                 //else skip and simulate ACTION_RECEIVE_HUE_REPLY which requests a new state
             case ACTION_RECEIVE_HUE_REPLY:
                 HueBridge.requestHueState(ctx);
+                currentlyClicked.clear();
+                panelUpdate(ctx);
                 break;
             case ACTION_TIMEOUT_HUE_REPLY:
                 Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
+                currentlyClicked.clear();
                 panelUpdate(ctx);
                 break;
             case COCKTAIL_VISIBILITY_CHANGED:
@@ -596,10 +604,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                             return;
                         }
 
-                        currentlyClicked = id;
+                        currentlyClicked.add(id);
 
                         ResourceReference ref = Objects.requireNonNull(currentCategoryContents.get(id));
-                        Objects.requireNonNull(HueBridge.getInstance(ctx)).getResource(ref).activateResource(ctx);
+                        new Thread(() -> bridge.getResource(ref).activateResource(ctx)).start();
                     } catch (NullPointerException e) {
                         Log.e(TAG, "Received a button press. The button is mapped. But, there is no instance of HueBridge or failed to get the mapping for the button");
                         e.printStackTrace();
@@ -639,8 +647,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         setSlidersActive(false);
                         break;
                     case R.id.btnEdit:
-                        //loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
-                        startEditActivity(ctx);
+                        loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
+                        //startEditActivity(ctx);
                         break;
                     default:
                         break;
@@ -666,15 +674,15 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 switch (id) {
                     case R.id.sliders_bri:
                         value = intent.getIntExtra("bri", 0);
-                        res.setBri(ctx, value);
+                        new Thread(() -> res.setBri(ctx, value)).start();
                         break;
                     case R.id.sliders_hue:
                         value = intent.getIntExtra("hue", 0);
-                        res.setHue(ctx, value);
+                        new Thread(() -> res.setHue(ctx, value)).start();
                         break;
                     case R.id.sliders_sat:
                         value = intent.getIntExtra("sat", 0);
-                        res.setSat(ctx, value);
+                        new Thread(() -> res.setSat(ctx, value)).start();
                         break;
                     default:
                         Log.e(TAG, "Unknown category!");
@@ -737,7 +745,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     res = bridge.getResource(resRef);
                     // If a scene, get resRef for the attached group and activate scene
                     if (res.getCategory().equals("scenes")) {
-                        res.activateResource(ctx);
+                        new Thread(() -> res.activateResource(ctx)).start();
                         resRef = new ResourceReference("groups", ((SceneResource) res).getGroup());
                     }
                 }
@@ -973,9 +981,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     }
                 }
             }
-            if (currentlyClicked != -1){
-                contentView.setViewVisibility(progressBarArr[currentlyClicked], View.VISIBLE);
-                currentlyClicked = -1;
+            if (!currentlyClicked.isEmpty()){
+                for(int id : currentlyClicked)
+                    contentView.setViewVisibility(progressBarArr[id], View.VISIBLE);
             }
         }
 
@@ -1030,7 +1038,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      */
     public static void saveAllConfiguration(Context ctx) {
         File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
-        //File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+        File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
         try {
             Log.d(TAG, "saveConfigurationToMemory()");
             HueBridge bridge;
@@ -1041,7 +1049,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 Log.e(TAG, "Tried to save, no instance of HueBridge found");
                 return;
             }
-            //Log.d(TAG, "attempting to save state: " + HueBridge.getInstance(ctx).getState());
 
             ObjectOutputStream preferenceOutputStream = new ObjectOutputStream(new FileOutputStream(preferenceFile));
             Moshi moshi = new Moshi.Builder().build();
@@ -1051,14 +1058,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             preferenceOutputStream.flush();
             preferenceOutputStream.close();
 
-            //recovery
-            /*ObjectOutputStream recoveryOutputStream = new ObjectOutputStream(new FileOutputStream(recoveryFile));
-            recoveryOutputStream.writeObject(bridge.getIp());
-            recoveryOutputStream.writeObject(bridge.getUserName());
+            // Recovery
+            ObjectOutputStream recoveryOutputStream = new ObjectOutputStream(new FileOutputStream(recoveryFile));
             recoveryOutputStream.writeObject(bridge.getContents());
-            recoveryOutputStream.writeObject(bridge.getBridgeState().toString());
             recoveryOutputStream.flush();
-            recoveryOutputStream.close();*/
+            recoveryOutputStream.close();
         } catch (Exception e) {
             Log.e(TAG,"Failed to save configuration");
             e.printStackTrace();
@@ -1072,7 +1076,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public static void loadAllConfiguration(Context ctx) {
         Log.d(TAG, "loadConfigurationFromMemory()");
         //loadCurrentCategory(ctx);
-
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = s.getBoolean(ctx.getString(R.string.preference_bridge_configured), false);
         if (!bridgeConfigured)
@@ -1096,48 +1099,53 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         // Load instance of HueBridge
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<HueBridge> jsonAdapter = moshi.adapter(HueBridge.class);
+        HueBridge bridge;
         try {
             String bridgeString = Objects.requireNonNull(configInputStream).readObject().toString();
-            HueBridge bridge = jsonAdapter.fromJson(bridgeString);
+            bridge = jsonAdapter.fromJson(bridgeString);
             HueBridge.setInstance(ctx, bridge);
         } catch (NullPointerException e){
             Log.e(TAG, "Config file not found");
         }
-
         // Catch old version
         catch (InvalidClassException e){
             String toastString = ctx.getString(R.string.toast_old_version);
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             Log.e(TAG, toastString);
 
-            /*File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+            File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
 
             // Open and apply recovery for HueBridge instance
             try {
                 ObjectInputStream recoveryInputStream = new ObjectInputStream(new FileInputStream(recoveryFile));
-                String ip = (String) recoveryInputStream.readObject();
-                String userName = (String) recoveryInputStream.readObject();
-                HashMap<HueEdgeProvider.menuCategory, HashMap<Integer, BridgeResource>> contents =
-                        (HashMap<menuCategory, HashMap<Integer, BridgeResource>>) recoveryInputStream.readObject();
-                bridge = HueBridge.getInstance(ctx, ip, userName);
+                String ip = Objects.requireNonNull(s.getString(ctx.getString(R.string.preference_ip), ""));
+                String userName = Objects.requireNonNull(s.getString(ctx.getString(R.string.preference_username), ""));
+                if(ip.equals("") || userName.equals(""))
+                    return;
+                Map<menuCategory, Map<Integer, ResourceReference>> contents =
+                        Objects.requireNonNull(
+                            (HashMap<menuCategory, Map<Integer, ResourceReference>>)
+                                    recoveryInputStream.readObject());
+                HueBridge.getInstance(ctx, ip, userName);
+                bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
                 bridge.setContents(contents);
-                String state = (String) recoveryInputStream.readObject();
-                bridge.setState(new JSONObject(state));
-                bridge.requestHueState(ctx);
+                HueBridge.requestHueState(ctx);
                 Log.i(TAG,"Recovery successful");
-            } catch (FileNotFoundException ex2){
+            } catch (FileNotFoundException ex){
                 Log.e(TAG, "Recovery file not found");
-            } catch (ClassCastException | ClassNotFoundException | IOException | JSONException ex2){
-                ex2.printStackTrace();
-            }*/
-            deleteAllConfiguration(ctx);
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to load configuration for other reason");
+                deleteAllConfiguration(ctx);
+            } catch (ClassCastException | ClassNotFoundException | IOException ex){
+                ex.printStackTrace();
+                deleteAllConfiguration(ctx);
+            }
+            //toastString = "Recovery successful";
+            //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        } catch (ClassNotFoundException | IOException e){
             e.printStackTrace();
         }
 
-        /*String toastString = "Loading successful";
-        Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();*/
+        //String toastString = "Loading successful";
+        //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean deleteAllConfiguration(Context ctx){

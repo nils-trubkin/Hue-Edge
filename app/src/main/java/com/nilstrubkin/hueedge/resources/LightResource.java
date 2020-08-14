@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -30,9 +29,9 @@ class LightResource extends BridgeResourceSliders {
             return on;
         }
 
-        public int getBri() {
+        /*public int getBri() {
             return bri;
-        }
+        }*/
 
         public int getHue() {
             return hue;
@@ -58,9 +57,9 @@ class LightResource extends BridgeResourceSliders {
         return !getState().isOn();
     }
 
-    public int getBri() {
+    /*public int getBri() {
         return getState().getBri();
-    }
+    }*/
 
     public int getHue() {
         return getState().getHue();
@@ -74,14 +73,7 @@ class LightResource extends BridgeResourceSliders {
     public void activateResource(Context ctx) {
         String actionWrite = getActionWrite();
         boolean newState = !isOn();
-        new Thread(() -> {
-            final String TAG = LightResource.class.getSimpleName();
-            String reply = sendValue(ctx, actionWrite, newState);
-            if (reply == null)
-                Log.e(TAG, "Reply is null");
-            else
-                Log.e(TAG, "Reply is" + reply);
-        }).start();
+        sendValue(ctx, actionWrite, newState);
     }
 
     @Override
