@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.nilstrubkin.hueedge.activity.SetupActivity;
-import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeResourceSliders;
 import com.nilstrubkin.hueedge.resources.SceneResource;
@@ -42,13 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider {
-
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
 
     private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
@@ -107,13 +104,24 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     private static boolean slidersActive = false;
-    private static boolean bridgeConfigured = false;
+
+    private static HueBridge bridge;
 
     private static ResourceReference slidersResource;
     private static int slidersResHue;
     private static int slidersResSat;
 
     private static final List<Integer> currentlyClicked = new ArrayList<>();
+
+    private static HueBridge getBridge(Context ctx) {
+        if (bridge == null)
+            bridge = HueBridge.getInstance(ctx);
+        return bridge;
+    }
+
+    private static boolean isBridgeNull(){
+        return bridge == null;
+    }
 
     public static ResourceReference getSlidersResource() {
         return slidersResource;
@@ -154,12 +162,20 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         super.onReceive(ctx, intent);
         Log.d(TAG, "onReceive()");
 
-        if (HueBridge.getInstance(ctx) == null) {
-            bridgeConfigured = false;
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
+
+        if (!bridgeConfigured)
+            bridge = null;
+        else if (isBridgeNull()) {
+            panelUpdate(ctx);
+            getBridge(ctx);
+            if (isBridgeNull()){
+                Log.e(TAG, "preference_bridge_configured incorrectly set to true, no HueBridge found");
+                HueBridge.deleteInstance(ctx);
+            }
             panelUpdate(ctx);
         }
-        else
-            bridgeConfigured = true;
 
         String action;
         try {
@@ -251,7 +267,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public void onVisibilityChanged(Context ctx, int cocktailId, int visibility) {
         super.onVisibilityChanged(ctx, cocktailId, visibility);
         Log.d(TAG, "onVisibilityChanged(): " + visibility);
-        if(bridgeConfigured && visibility == 1) {
+        if(bridge != null && visibility == 1) {
             performPullToRefresh(ctx);
         }
     }
@@ -262,20 +278,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @return RemoteViews
      */
     private RemoteViews createContentView(Context ctx) {
-        RemoteViews contentView;
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
-            contentView = new RemoteViews(ctx.getPackageName(),
-                    R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
-            contentView.setOnClickPendingIntent(R.id.configureButton,
-                    getClickIntent(ctx, R.id.configureButton, 1));
-            return contentView;
-        }
-
-        contentView = new RemoteViews(ctx.getPackageName(), R.layout.main_view);
+        RemoteViews contentView = new RemoteViews(ctx.getPackageName(), R.layout.main_view);
 
         int i = 0;
         for ( int button : btnArr ){
@@ -332,23 +335,15 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private RemoteViews createHelpView(Context ctx) {
         RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
                 R.layout.help_view);
-        for( int button : btnCategoryArr){
+        for(int button : btnCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
         }
         for (int line : btnCategoryLineArr){
             helpView.setInt(line, "setBackgroundResource", 0);
         }
-        if(bridgeConfigured){
-            int selectedNumber;
-            try {
-                HueBridge bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-                selectedNumber = bridge.getCurrentCategory().ordinal();
-            } catch (NullPointerException e){
-                Log.e(TAG, "Creating help view but no HueBridge instance is found");
-                e.printStackTrace();
-                return helpView;
-            }
+        if(bridge != null){
+            int selectedNumber = bridge.getCurrentCategory().ordinal();
             int currentButton = btnCategoryArr[selectedNumber];
             int currentLine = btnCategoryLineArr[selectedNumber];
             helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
@@ -365,14 +360,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private RemoteViews createSlidersContentView(Context ctx) {
         Log.d(TAG, "createSlidersContentView()");
         RemoteViews remoteListView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_main_view);
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Creating sliders content view but no HueBridge instance is found");
-            e.printStackTrace();
-            return remoteListView;
-        }
+
         ResourceReference resRef = getSlidersResource();
         BridgeResourceSliders res = (BridgeResourceSliders) bridge.getResource(resRef);
         setSlidersResHue(res.getHue());
@@ -425,14 +413,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private RemoteViews createSlidersHelpView(Context ctx) {
         RemoteViews helpView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_help_view);
         helpView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Creating sliders help view but no HueBridge instance is found");
-            e.printStackTrace();
-            return helpView;
-        }
+
         for( int button : btnSlidersCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
@@ -563,17 +544,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         if (id == R.id.configureButton)
             startSetupActivity(ctx);
 
-        if(!bridgeConfigured)
+        if(bridge == null)
             return;
-
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Performing click on but no HueBridge instance is found");
-            e.printStackTrace();
-            return;
-        }
 
         switch (key) {
             // Key 0 for round buttons in content view
@@ -701,21 +673,13 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @param intent Intent
      */
     private void performRemoteLongClick(Context ctx, Intent intent) {
-        if(!bridgeConfigured)
+        if(bridge == null)
             return;
         Log.d(TAG, "performRemoteLongClick()");
 
         int id = intent.getIntExtra("id", -1);
         int key = intent.getIntExtra("key", -1);
 
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Performing long click on but no HueBridge instance is found");
-            e.printStackTrace();
-            return;
-        }
         menuCategory currentCategory = bridge.getCurrentCategory();
         if(key == 0){
             boolean buttonIsMapped = false;
@@ -795,147 +759,44 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     /**
-     * Perform the quick setup for the buttons
-     * @param ctx Context
-     */
-    public static void quickSetup(Context ctx) {
-        Log.d(TAG, "quickSetup entered");
-
-        //The HueBridge instance
-        HueBridge bridge;
-        try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Tried to perform quick setup but no instance of HueBridge was found");
-            e.printStackTrace();
-            return;
-        }
-        Map<String, ? extends BridgeResource> map;
-        Map<Integer, ResourceReference> quickAccessContents;
-        Map<Integer, ResourceReference> lightsContents;
-        Map<Integer, ResourceReference> roomsContents;
-        Map<Integer, ResourceReference> zonesContents;
-        Map<Integer, ResourceReference> scenesContents;
-        Map<menuCategory, Map<Integer, ResourceReference>> contents = bridge.getContents();
-        try {
-            quickAccessContents = Objects.requireNonNull(contents.get(menuCategory.QUICK_ACCESS));
-            lightsContents = Objects.requireNonNull(contents.get(menuCategory.LIGHTS));
-            roomsContents = Objects.requireNonNull(contents.get(menuCategory.ROOMS));
-            zonesContents = Objects.requireNonNull(contents.get(menuCategory.ZONES));
-            scenesContents = Objects.requireNonNull(contents.get(menuCategory.SCENES));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Tried to perform quick setup but no instance of HueBridge was found");
-            e.printStackTrace();
-            return;
-        }
-
-        ResourceReference allResRef = BridgeCatalogue.getGroup0Ref();
-
-        int buttonIndex = 0;
-        int qaButtonIndex = 0;
-
-        quickAccessContents.put(qaButtonIndex++, allResRef);
-        map = bridge.getBridgeState().getLights();
-        Log.d(TAG, "quickSetup getLights() size: " + map.size());
-        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-            if(buttonIndex >= 10)
-                break;
-            Log.d(TAG, "quickSetup for lights on id: " + entry.getKey());
-            BridgeResource res = entry.getValue();
-            ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
-            lightsContents.put(buttonIndex++, resRef);
-            if(qaButtonIndex < 3) {
-                quickAccessContents.put(qaButtonIndex++, resRef);
-            }
-        }
-
-        buttonIndex = 0;
-        roomsContents.put(buttonIndex++, allResRef);
-        map = bridge.getBridgeState().getRooms();
-        Log.d(TAG, "quickSetup getRooms() size: " + map.size());
-        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-            if(buttonIndex >= 10)
-                break;
-            Log.d(TAG, "quickSetup for rooms on id: " + entry.getKey());
-            if (!entry.getKey().equals("0")) {
-                BridgeResource res = entry.getValue();
-                ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
-                roomsContents.put(buttonIndex++, resRef);
-                if (qaButtonIndex < 5) {
-                    quickAccessContents.put(qaButtonIndex++, resRef);
-                }
-            }
-        }
-
-        buttonIndex = 0;
-        zonesContents.put(buttonIndex++, allResRef);
-        map = bridge.getBridgeState().getZones();
-        Log.d(TAG, "quickSetup getZones() size: " + map.size());
-        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-            if(buttonIndex >= 10)
-                break;
-            Log.d(TAG, "quickSetup for zones on id: " + entry.getKey());
-            if (!entry.getKey().equals("0")) {
-                BridgeResource res = entry.getValue();
-                ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
-                zonesContents.put(buttonIndex++, resRef);
-                if (qaButtonIndex < 7) {
-                    quickAccessContents.put(qaButtonIndex++, resRef);
-                }
-            }
-        }
-
-        buttonIndex = 0;
-        map = bridge.getBridgeState().getScenes();
-        Log.d(TAG, "quickSetup getScenes() size: " + map.size());
-        for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-            if(buttonIndex >= 10)
-                break;
-            Log.d(TAG, "quickSetup for scenes on id: " + entry.getKey());
-            BridgeResource res = entry.getValue();
-            ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
-            scenesContents.put(buttonIndex++, resRef);
-            if(qaButtonIndex < 9) {
-                quickAccessContents.put(qaButtonIndex++, resRef);
-            }
-        }
-        saveAllConfiguration(ctx);
-    }
-
-    /**
      * Update both help and content panels
      * @param ctx Context
      */
     private void panelUpdate(Context ctx){
         Log.d(TAG, "panelUpdate()");
 
-        //One remoteView for left/help and one for right/content
+        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
+        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
+
         RemoteViews contentView;
         RemoteViews helpView;
 
-        //
-        if (isSlidersActive()) {
+        if (isBridgeNull()){
+            helpView = createHelpView(ctx);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+            boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
+            if (bridgeConfigured)
+                contentView = new RemoteViews(ctx.getPackageName(),R.layout.main_view_loading);
+            else {
+                Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
+                contentView = new RemoteViews(ctx.getPackageName(),
+                        R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
+                contentView.setOnClickPendingIntent(R.id.configureButton,
+                        getClickIntent(ctx, R.id.configureButton, 1));
+            }
+        } else if (isSlidersActive()){
             contentView = createSlidersContentView(ctx);
             helpView = createSlidersHelpView(ctx);
+        } else {
+            //One remoteView for left/help and one for right/content
+            contentView = createContentView(ctx);
+            helpView = createHelpView(ctx);
 
-            final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-            final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
-            cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
-            return;
-        }
+            //Set pull refresh
+            PendingIntent pendingIntent = getRefreshIntent(ctx);
+            SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
-        contentView = createContentView(ctx);
-        helpView = createHelpView(ctx);
-
-        if(bridgeConfigured) {
-            HueBridge bridge;
-            try {
-                bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-            } catch (NullPointerException e){
-                Log.e(TAG, "Updating panel. bridgeConfigured is true but no HueBridge instance is found");
-                e.printStackTrace();
-                return;
-            }
             menuCategory currentCategory = bridge.getCurrentCategory();
             for (int i = 0; i < 10; i++) {
                 if (bridge.getContents().containsKey(currentCategory)) {
@@ -987,13 +848,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             }
         }
 
-        final SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(ctx);
-        final int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
-
-        //Set pull refresh
-        PendingIntent pendingIntent = getRefreshIntent(ctx);
-        SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
-
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
 
@@ -1039,16 +893,13 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public static void saveAllConfiguration(Context ctx) {
         File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+
+        if (bridge == null){
+            Log.e(TAG, "saveAllConfiguration() bridge is null");
+            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+        }
         try {
             Log.d(TAG, "saveConfigurationToMemory()");
-            HueBridge bridge;
-            try {
-                bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
-            }
-            catch (NullPointerException e){
-                Log.e(TAG, "Tried to save, no instance of HueBridge found");
-                return;
-            }
 
             ObjectOutputStream preferenceOutputStream = new ObjectOutputStream(new FileOutputStream(preferenceFile));
             Moshi moshi = new Moshi.Builder().build();
@@ -1063,7 +914,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             recoveryOutputStream.writeObject(bridge.getContents());
             recoveryOutputStream.flush();
             recoveryOutputStream.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.e(TAG,"Failed to save configuration");
             e.printStackTrace();
         }
@@ -1099,11 +950,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         // Load instance of HueBridge
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<HueBridge> jsonAdapter = moshi.adapter(HueBridge.class);
-        HueBridge bridge;
+        HueBridge loadedBridge;
         try {
             String bridgeString = Objects.requireNonNull(configInputStream).readObject().toString();
-            bridge = jsonAdapter.fromJson(bridgeString);
-            HueBridge.setInstance(ctx, bridge);
+            loadedBridge = jsonAdapter.fromJson(bridgeString);
+            HueBridge.setInstance(ctx, loadedBridge);
+            bridge = HueBridge.getInstance(ctx); // TODO check
         } catch (NullPointerException e){
             Log.e(TAG, "Config file not found");
         }
@@ -1138,14 +990,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 ex.printStackTrace();
                 deleteAllConfiguration(ctx);
             }
-            //toastString = "Recovery successful";
-            //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+            toastString = "Recovery successful"; //TODO remove
+            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
         } catch (ClassNotFoundException | IOException e){
             e.printStackTrace();
         }
 
-        //String toastString = "Loading successful";
-        //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        String toastString = "Loading successful"; //TODO remove
+        Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean deleteAllConfiguration(Context ctx){

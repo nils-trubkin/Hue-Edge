@@ -1,6 +1,7 @@
 package com.nilstrubkin.hueedge.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,14 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.badoualy.stepperindicator.StepperIndicator;
+import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 
+import java.util.Objects;
+
 public class SetupFragment extends Fragment implements View.OnClickListener {
+    private transient static final String TAG = SetupFragment.class.getSimpleName();
     private NavController navController;
 
     //UI elements
@@ -42,7 +47,13 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case quickButton:
-                HueEdgeProvider.quickSetup(requireContext());
+                try {
+                    HueBridge br = Objects.requireNonNull(HueBridge.getInstance(requireContext()));
+                    br.quickSetup(requireContext());
+                } catch (NullPointerException e){
+                    Log.e(TAG, "Tried to perform quickSetup but no bridge was found");
+                    e.printStackTrace();
+                }
             case customButton:
                 navController.navigate(R.id.action_setupFragment_to_finalFragment);
                 break;
