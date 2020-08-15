@@ -95,14 +95,13 @@ public class GroupResource extends BridgeResourceSliders {
         sendValue(ctx, actionWrite, newState);
     }
 
-    public String sendValue(Context ctx, String key, Object value){
+    public void sendValue(Context ctx, String key, Object value){
         try {
             String bridgeUrl = Objects.requireNonNull(HueBridge.getInstance(ctx)).getUrl();
             JSONObject jsonObject = new JSONObject().put(key, value);
-            return post(ctx,bridgeUrl + getActionUrl(), jsonObject.toString());
+            post(ctx,bridgeUrl + getActionUrl(), jsonObject.toString());
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            return null;
         }
     }
 

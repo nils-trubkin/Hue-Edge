@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class HueBridge implements Serializable {
     private transient static final String TAG = HueBridge.class.getSimpleName();
@@ -270,7 +271,10 @@ public class HueBridge implements Serializable {
                     .readTimeout(3, TimeUnit.SECONDS)
                     .build();
             try (Response response = client.newCall(request).execute()) {
-                return Objects.requireNonNull(response.body()).string();
+                ResponseBody rb = Objects.requireNonNull(response.body());
+                String resp = rb.string();
+                rb.close();
+                return resp;
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 return null;

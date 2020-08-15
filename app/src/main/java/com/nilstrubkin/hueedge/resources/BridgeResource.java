@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -90,7 +94,7 @@ public abstract class BridgeResource implements Serializable {
         return "/" + getCategory() + "/" + getId() + "/action";
     }
 
-    String post(final Context ctx, final String url, final String json) {
+    /*String post(final Context ctx, final String url, final String json) {
         ExecutorService pool = Executors.newFixedThreadPool(1);
         Callable<String> callable = () -> {
             RequestBody body = RequestBody.create(json, JSON);
@@ -105,7 +109,7 @@ public abstract class BridgeResource implements Serializable {
                     .build();
             try (Response response = client.newCall(request).execute()) {
                 HueEdgeProvider.getReplyIntent(ctx).send();
-                return Objects.requireNonNull(response.body()).string();
+                return Objects.requireNonNull(response.body()).string(); //TODO CLOSE!!
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 return null;
@@ -126,6 +130,40 @@ public abstract class BridgeResource implements Serializable {
             e.printStackTrace();
             return null;
         }
+    }*/
+
+    final transient OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .build();
+
+    void post(final Context ctx, final String url, final String json){
+        RequestBody body = RequestBody.create(json, JSON);
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+                try {
+                    HueEdgeProvider.getReplyIntent(ctx).send();
+                } catch (PendingIntent.CanceledException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                try {
+                    HueEdgeProvider.getTimeoutIntent(ctx).send();
+                } catch (PendingIntent.CanceledException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
+
 }
 

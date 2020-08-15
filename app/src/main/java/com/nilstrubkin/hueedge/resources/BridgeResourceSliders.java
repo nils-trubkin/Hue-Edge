@@ -12,7 +12,7 @@ public abstract class BridgeResourceSliders extends BridgeResource {
     public abstract int getHue();
     public abstract int getSat();
     protected abstract boolean isAll_off();
-    protected abstract String sendValue(Context ctx, String key, Object value);
+    protected abstract void sendValue(Context ctx, String key, Object value);
 
     private void enableResource(Context ctx) {
         String actionWrite = getActionWrite();

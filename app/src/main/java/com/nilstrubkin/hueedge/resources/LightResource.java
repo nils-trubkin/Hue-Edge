@@ -77,14 +77,13 @@ class LightResource extends BridgeResourceSliders {
     }
 
     @Override
-    protected String sendValue(Context ctx, String key, Object value){
+    protected void sendValue(Context ctx, String key, Object value){
         try {
             String bridgeUrl = Objects.requireNonNull(HueBridge.getInstance(ctx)).getUrl();
             JSONObject jsonObject = new JSONObject().put(key, value);
-            return post(ctx,bridgeUrl + getStateUrl(), jsonObject.toString());
+            post(ctx,bridgeUrl + getStateUrl(), jsonObject.toString());
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            return null;
         }
     }
 

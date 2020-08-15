@@ -149,9 +149,11 @@ public class DiscoveryEngine {
             Type type = Types.newParameterizedType(List.class, AuthResponse.class);
             Moshi moshi = new Moshi.Builder().build();
             JsonAdapter<List<AuthResponse>> adapter = moshi.adapter(type);
-            String responseString = Objects.requireNonNull(response.body()).string();
-            Log.i(TAG, "response: " + responseString);
-            List<AuthResponse> responses = adapter.fromJson(responseString);
+            ResponseBody rb = Objects.requireNonNull(response.body());
+            String resp = rb.string();
+            rb.close();
+            Log.d(TAG, "response: " + resp);
+            List<AuthResponse> responses = adapter.fromJson(resp);
             if(!Objects.requireNonNull(responses).isEmpty())
                 for (AuthResponse r : responses) {
                     if (r.success != null)
@@ -309,8 +311,10 @@ public class DiscoveryEngine {
                     .build();
             final OkHttpClient client = new OkHttpClient.Builder().build();
             try (Response response = client.newCall(request).execute()) {
-                ResponseBody responseBody = Objects.requireNonNull(response.body());
-                return responseBody.string();
+                ResponseBody rb = Objects.requireNonNull(response.body());
+                String resp = rb.string();
+                rb.close();
+                return resp;
             } catch (UnknownHostException e){
                 Log.e(TAG, portal + " not reachable");
             } catch (IOException | NullPointerException e) {
