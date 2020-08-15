@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- General -->
     <color name="colorPrimary">#252525</color>
     <color name="colorPrimaryDark">#1E1E1E</color>
     <color name="colorAccent">#FAFAFA</color>
@@ -7,9 +8,11 @@
     <color name="black">#252525</color>
     <color name="content_view_background">#664C4C4C</color>
 
+    <!-- Bottom nav bar -->
     <color name="navigation_bar_color_setup">#2a292c</color>
     <color name="navigation_bar_color_edit">#1E1E1E</color>
 
+    <!-- Panel buttons -->
     <color name="on_button_unfocused_color">@color/white</color>
     <color name="on_button_unfocused_stroke_color">#808080</color>
     <color name="on_button_press_color">#A5A5A5</color>
@@ -24,17 +27,13 @@
     <color name="add_button_unfocused_color">#50252525</color>
     <color name="add_button_press_color">#65656565</color>
 
-    <color name="setup_button_unfocused_color">@color/white</color>
-    <color name="setup_button_press_color">#BABABA</color>
-
-    <color name="discovery_list_color">#50FAFAFA</color>
+    <!-- Category panel -->
     <color name="category_unselected_gray">#99FAFAFA</color>
     <color name="category_selected_blue">#2187F3</color>
-
     <color name="category_top_line_gray">#33FAFAFA</color>
 
-    <!--TODO remove-->
-    <color name="blurry_background_under_layer">#1E1E1E</color>
-    <color name="blurry_background_over_layer">#7F666666</color>
-
+    <!-- Setup -->
+    <color name="setup_button_unfocused_color">@color/white</color>
+    <color name="setup_button_press_color">#BABABA</color>
+    <color name="discovery_list_color">#50FAFAFA</color>
 </resources>

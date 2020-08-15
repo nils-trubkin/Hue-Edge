@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,7 +15,6 @@ import androidx.navigation.Navigation;
 
 import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueBridge;
-import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 
 import java.util.Objects;
@@ -49,6 +49,10 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             case quickButton:
                 try {
                     HueBridge br = Objects.requireNonNull(HueBridge.getInstance(requireContext()));
+                    if (br.getBridgeState().getLights().isEmpty()){
+                        Toast.makeText(requireContext(), getString(R.string.toast_no_lights), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     br.quickSetup(requireContext());
                 } catch (NullPointerException e){
                     Log.e(TAG, "Tried to perform quickSetup but no bridge was found");

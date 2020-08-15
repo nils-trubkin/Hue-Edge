@@ -27,60 +27,37 @@ public class DragEventListener implements View.OnDragListener {
     // This is the method that the system calls when it dispatches a drag event to the
     // listener.
     public boolean onDrag(View v, DragEvent event) {
-
         // Defines a variable to store the action type for the incoming event
         final int action = event.getAction();
         EditActivity instance = (EditActivity) ctx;
         BridgeResource br;
         // Handles each of the expected events
         switch(action) {
-
             case DragEvent.ACTION_DRAG_STARTED:
                 // Determines if this View can accept the dragged data
-                if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-
-                    // Invalidate the view to force a redraw in the new tint
-                    v.invalidate();
-
-
-                    // returns true to indicate that the View can accept the dragged data.
-                    return true;
-
-                }
-
-                // Returns false. During the current drag and drop operation, this View will
+                // returns true to indicate that the View can accept the dragged data.
+                return event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
+                // If it returns false, during the current drag and drop operation, this View will
                 // not receive events again until ACTION_DRAG_ENDED is sent.
-                return false;
 
             case DragEvent.ACTION_DRAG_ENTERED:
                 br = (BridgeResource) event.getLocalState();
                 instance.displaySlotAsFull(index, br);
-                v.invalidate();
-
                 return true;
 
             case DragEvent.ACTION_DRAG_LOCATION:
-
                 // Ignore the event
                 return true;
 
             case DragEvent.ACTION_DRAG_EXITED:
-
-                // Invalidate the view to force a redraw in the new tint
                 instance.panelUpdateIndex(index);
-                v.invalidate();
-
                 return true;
 
             case DragEvent.ACTION_DROP:
-
-                // Gets the item containing the dragged data
                 // Gets the item containing the dragged data
                 ClipData.Item item = event.getClipData().getItemAt(0);
-
                 // Gets the text data from the item.
                 int dragData = Integer.parseInt((String) item.getText());
-
                 if (dragData >= 0){
                     instance.clearSlot(dragData);
                 }
@@ -93,28 +70,18 @@ public class DragEventListener implements View.OnDragListener {
                     e.printStackTrace();
                     return false;
                 }
-
-                bridge.addToCategory(ctx, instance.getCurrentCategory(), br, index);
+                bridge.addToCurrentCategory(ctx, br, index);
                 instance.panelUpdateIndex(index);
-                // Invalidates the view to force a redraw
-                v.invalidate();
-
                 // Returns true. DragEvent.getResult() will return true.
                 return true;
 
             case DragEvent.ACTION_DRAG_ENDED:
-
-
-                // Invalidates the view to force a redraw
-                v.invalidate();
-
                 // Does a getResult(), and displays what happened.
                 if (event.getResult()) {
-                    Log.e(TAG,"The drop was handled.");
+                    Log.d(TAG,"The drop was handled.");
                 } else {
                     Log.e(TAG,"The drop didn't work.");
                 }
-
                 // returns true; the value is ignored.
                 return true;
 
@@ -123,7 +90,6 @@ public class DragEventListener implements View.OnDragListener {
                 Log.e(TAG,"Unknown action type received by OnDragListener.");
                 break;
         }
-
         return false;
     }
 }

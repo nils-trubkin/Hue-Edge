@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.nilstrubkin.hueedge.HueEdgeProvider.menuCategory;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogueAdapter;
@@ -17,7 +19,14 @@ import com.squareup.moshi.Moshi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +43,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.nilstrubkin.hueedge.HueEdgeProvider.*;
+
 public class HueBridge implements Serializable {
     private transient static final String TAG = HueBridge.class.getSimpleName();
 
@@ -46,15 +58,15 @@ public class HueBridge implements Serializable {
     private transient JSONObject tempState;
     private transient JSONObject tempState0;
 
-    private menuCategory currentCategory = menuCategory.QUICK_ACCESS;
-    private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
+//    private menuCategory currentCategory = menuCategory.QUICK_ACCESS;
+//    private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
     private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
 
     //Default constructor with http header
     private HueBridge(Context ctx, String ip, String userName) {
-        this(ctx, ip, userName, ctx.getString(R.string.http_header)); // String "http://"
+        this(ctx, ip, userName, "http://");
     }
 
     //Custom constructor for future use
@@ -63,7 +75,7 @@ public class HueBridge implements Serializable {
         this.url =
                 Objects.requireNonNull(urlHeader) +
                         Objects.requireNonNull(ip) +
-                        ctx.getString(R.string.api_path) + // String "/api/"
+                        "/api/" +
                         Objects.requireNonNull(userName);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
@@ -81,7 +93,7 @@ public class HueBridge implements Serializable {
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
             Log.i(TAG, "HueBridge instance or state is null. Attempting to load config...");
-            HueEdgeProvider.loadAllConfiguration(ctx);
+            loadAllConfiguration(ctx);
             if (instance == null) {
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
                 return null;
@@ -100,6 +112,7 @@ public class HueBridge implements Serializable {
     //Setting the instance for config loading
     public static synchronized void setInstance(Context ctx, HueBridge bridge) {
         instance = bridge;
+        setBridge(getInstance(ctx));
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
         e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
@@ -116,7 +129,7 @@ public class HueBridge implements Serializable {
         e.remove(ctx.getString(R.string.preference_ip));
         e.remove(ctx.getString(R.string.preference_username));
         e.apply();
-        boolean deleted = HueEdgeProvider.deleteAllConfiguration(ctx);
+        boolean deleted = deleteAllConfiguration(ctx);
         if (deleted) {
             String toastString = ctx.getString(R.string.toast_configuration_deleted);
             Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
@@ -175,20 +188,31 @@ public class HueBridge implements Serializable {
         this.contents = contents;
     }
 
-    public menuCategory getCurrentCategory() {
-        return currentCategory;
+    @NonNull
+    public menuCategory getCurrentCategory(Context ctx) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        int i = settings.getInt(ctx.getResources().getString(R.string.preference_current_category), 0);
+        return menuCategory.values()[i];
     }
 
-    public void setCurrentCategory(menuCategory currentCategory) {
-        this.currentCategory = currentCategory;
+    public void setCurrentCategory(Context ctx, menuCategory currentCategory) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(ctx.getResources().getString(R.string.preference_current_category), currentCategory.ordinal());
+        editor.apply();
     }
 
-    public HueEdgeProvider.slidersCategory getCurrentSlidersCategory() {
-        return currentSlidersCategory;
+    public slidersCategory getCurrentSlidersCategory(Context ctx) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        int i = settings.getInt(ctx.getResources().getString(R.string.preference_current_category_sliders), 0);
+        return slidersCategory.values()[i];
     }
 
-    public void setCurrentSlidersCategory(HueEdgeProvider.slidersCategory currentSlidersCategory) {
-        this.currentSlidersCategory = currentSlidersCategory;
+    public void setCurrentSlidersCategory(Context ctx, slidersCategory currentSlidersCategory) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(ctx.getResources().getString(R.string.preference_current_category_sliders), currentSlidersCategory.ordinal());
+        editor.apply();
     }
 
     public BridgeCatalogue getBridgeState(){
@@ -198,7 +222,7 @@ public class HueBridge implements Serializable {
     public void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
         try {
-            HueEdgeProvider.getStateIntent(ctx).send();
+            getStateIntent(ctx).send();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
@@ -215,18 +239,11 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public void addToCategory(Context ctx, menuCategory category, BridgeResource br, int index){
+    public void addToCurrentCategory(Context ctx, BridgeResource br, int index){
+        menuCategory category = getCurrentCategory(ctx);
         Log.d(TAG, "addToCurrentCategory()");
-        HueBridge bridge;
-        try{
-            bridge = Objects.requireNonNull(getInstance(ctx));
-        } catch (NullPointerException e){
-            Log.e(TAG, "Tried to add to current category but no instance of HueBridge was found");
-            e.printStackTrace();
-            return;
-        }
-        if (bridge.getContents().containsKey(category)) {
-            Map<Integer, ResourceReference> categoryContents = bridge.getContents().get(category);
+        if (getContents().containsKey(category)) {
+            Map<Integer, ResourceReference> categoryContents = getContents().get(category);
             boolean slotIsEmpty = false;
             try {
                 slotIsEmpty = !Objects.requireNonNull(categoryContents).containsKey(index);
@@ -279,7 +296,7 @@ public class HueBridge implements Serializable {
                 e.printStackTrace();
                 return null;
             } catch (IOException e) {
-                HueEdgeProvider.getTimeoutIntent(ctx).send();
+                getTimeoutIntent(ctx).send();
                 return null;
             }
         };
@@ -392,6 +409,131 @@ public class HueBridge implements Serializable {
                 quickAccessContents.put(qaButtonIndex++, resRef);
             }
         }
-        HueEdgeProvider.saveAllConfiguration(ctx);
+        saveAllConfiguration(ctx);
+    }
+
+    /**
+     * Save and write the HueBridge instance to the memory
+     * @param ctx Context
+     */
+    public static void saveAllConfiguration(Context ctx) {
+        Log.d(TAG, "saveConfigurationToMemory()");
+
+        HueBridge instanceToSave = getInstance(ctx);
+        if (instanceToSave == null) {
+            Log.e(TAG, "saveAllConfiguration() bridge is null");
+            return;
+        }
+        File preferenceFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+        try {
+            ObjectOutputStream preferenceOutputStream = new ObjectOutputStream(new FileOutputStream(preferenceFile));
+            Moshi moshi = new Moshi.Builder().build();
+            JsonAdapter<HueBridge> jsonAdapter = moshi.adapter(HueBridge.class);
+            String bridgeString = jsonAdapter.toJson(instanceToSave);
+            preferenceOutputStream.writeObject(bridgeString);
+            preferenceOutputStream.flush();
+            preferenceOutputStream.close();
+
+            // Recovery
+            ObjectOutputStream recoveryOutputStream = new ObjectOutputStream(new FileOutputStream(recoveryFile));
+            recoveryOutputStream.writeObject(instanceToSave.getContents());
+            recoveryOutputStream.flush();
+            recoveryOutputStream.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to save configuration");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Read and set the HueBridge instance from the memory
+     * @param ctx Context
+     */
+    public static void loadAllConfiguration(Context ctx) {
+        Log.d(TAG, "loadConfigurationFromMemory()");
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean bridgeConfigured = s.getBoolean(ctx.getString(R.string.preference_bridge_configured), false);
+        if (!bridgeConfigured)
+            return;
+
+        File configFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        ObjectInputStream configInputStream;
+
+        // Load config file
+        try {
+            configInputStream = new ObjectInputStream(new FileInputStream(configFile));
+        } catch (FileNotFoundException e){
+            Log.e(TAG, "Config file not found");
+            return;
+        } catch (IOException e) {
+            Log.e(TAG, "IOException");
+            e.printStackTrace();
+            return;
+        }
+
+        // Load instance of HueBridge
+        Moshi moshi = new Moshi.Builder().build();
+        JsonAdapter<HueBridge> jsonAdapter = moshi.adapter(HueBridge.class);
+        try {
+            String bridgeString = Objects.requireNonNull(configInputStream).readObject().toString();
+            HueBridge loadedBridge = jsonAdapter.fromJson(bridgeString);
+            setInstance(ctx, loadedBridge);
+        } catch (NullPointerException e){
+            Log.e(TAG, "Config file not found");
+        }
+        // Catch old version
+        catch (InvalidClassException e){
+            String toastString = ctx.getString(R.string.toast_old_version);
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
+            Log.e(TAG, toastString);
+
+            File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
+
+            // Open and apply recovery for HueBridge instance
+            try {
+                ObjectInputStream recoveryInputStream = new ObjectInputStream(new FileInputStream(recoveryFile));
+                String ip = Objects.requireNonNull(s.getString(ctx.getString(R.string.preference_ip), ""));
+                String userName = Objects.requireNonNull(s.getString(ctx.getString(R.string.preference_username), ""));
+                if(ip.equals("") || userName.equals("")) {
+                    Log.e(TAG, "Tried to load preferences, ip or username are not found, can not recover");
+                    return;
+                }
+                Map<menuCategory, Map<Integer, ResourceReference>> contents =
+                        Objects.requireNonNull(
+                                (HashMap<menuCategory, Map<Integer, ResourceReference>>)
+                                        recoveryInputStream.readObject());
+                getInstance(ctx, ip, userName);
+                Objects.requireNonNull(getInstance(ctx)).setContents(contents);
+                requestHueState(ctx);
+                Log.i(TAG,"Recovery successful");
+            } catch (FileNotFoundException ex){
+                Log.e(TAG, "Recovery file not found");
+                deleteAllConfiguration(ctx);
+            } catch (ClassCastException | ClassNotFoundException | IOException | NullPointerException ex){
+                ex.printStackTrace();
+                deleteAllConfiguration(ctx);
+            }
+
+            toastString = "Recovery successful"; //TODO remove
+            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        } catch (ClassNotFoundException | IOException e){
+            e.printStackTrace();
+        }
+
+        String toastString = "Loading successful"; //TODO remove
+        Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+    }
+
+    public static boolean deleteAllConfiguration(Context ctx){
+        File file;
+        try {
+            file = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
+        }
+        catch (NullPointerException e) {
+            Log.e(TAG, "deleteAllConfig could not find configuration");
+            return false;
+        }
+        return file.delete();
     }
 }

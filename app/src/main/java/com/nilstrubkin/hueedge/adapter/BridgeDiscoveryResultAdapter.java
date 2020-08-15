@@ -67,7 +67,7 @@ public class BridgeDiscoveryResultAdapter extends RecyclerView.Adapter<BridgeDis
         DiscoveryEntry de = list.get(position);
         if(de.ip != null) {
             holder.bridgeIp.setText(de.friendlyName);
-            holder.bridgeId.setText(holder.ctx.getResources().getString(R.string.list_view_id_label, de.serialNumber.toUpperCase()));
+            holder.bridgeId.setText(holder.ctx.getResources().getString(R.string.discovery_item_label_id, de.serialNumber.toUpperCase()));
             Bundle bundle = new Bundle();
             bundle.putString("ip", de.ip);
             holder.itemView.setOnClickListener(view -> {

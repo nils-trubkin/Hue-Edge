@@ -76,12 +76,12 @@ public class EditActivity extends AppCompatActivity {
         TextView hueStatus = findViewById(R.id.hueStatus);
 
         vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-        currentCategory = bridge.getCurrentCategory();
+        currentCategory = bridge.getCurrentCategory(ctx);
         contents = bridge.getContents();
 
         btnSave.setOnClickListener(v -> {
             if(HueBridge.getInstance(ctx) != null){
-                HueEdgeProvider.saveAllConfiguration(ctx);
+                HueBridge.saveAllConfiguration(ctx);
                 String toastString = ctx.getString(R.string.toast_saved);
                 Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
             }
@@ -259,7 +259,7 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
         currentCategoryContents.remove(position);
-        HueEdgeProvider.saveAllConfiguration(ctx);
+        HueBridge.saveAllConfiguration(ctx);
         Button btn = findViewById(HueEdgeProvider.btnArr[position]);
         TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
         TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);

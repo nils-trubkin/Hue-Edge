@@ -118,7 +118,7 @@ public class DiscoveryFragment extends Fragment implements View.OnClickListener 
                     if (results.isEmpty())
                         navController.navigate(R.id.errorFragment);
                     else {
-                        statusText.setText(getResources().getString(R.string.fragment_results_label));
+                        statusText.setText(getResources().getString(R.string.fragment_discovery_label_select));
                         cancelButton.setText(getResources().getString(R.string.button_back_text));
                     }
                 }
