@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 
@@ -40,7 +41,7 @@ public class ErrorFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(setup.checkWifiNotConnected()) {
+        if(HueEdgeProvider.checkWifiNotEnabled(requireContext())) {
             Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
             return;
         }

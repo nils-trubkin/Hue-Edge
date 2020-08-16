@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 import static android.content.Context.VIBRATOR_SERVICE;
 
@@ -101,6 +104,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
     private static final List<Integer> currentlyClicked = new ArrayList<>();
 
+    private static OkHttpClient client;
+
     private static HueBridge getBridge(Context ctx) {
         if (bridge == null)
             bridge = HueBridge.getInstance(ctx);
@@ -109,6 +114,16 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
     public static void setBridge(HueBridge bridge) {
         HueEdgeProvider.bridge = bridge;
+    }
+
+    public static OkHttpClient getClient() {
+        if (client == null)
+            client = new OkHttpClient.Builder()
+                    .connectTimeout(3, TimeUnit.SECONDS)
+                    .writeTimeout(3, TimeUnit.SECONDS)
+                    .readTimeout(3, TimeUnit.SECONDS)
+                    .build();
+        return client;
     }
 
     private static boolean isBridgeNull(){
@@ -185,7 +200,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             case ACTION_PULL_TO_REFRESH:
                 currentlyClicked.clear();
                 panelUpdate(ctx);
-                if (checkWifiNotConnected(ctx)){
+                if (checkWifiNotEnabled(ctx)){
                     Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     performPullToRefresh(ctx);
                 }
@@ -193,8 +208,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 break;
             case ACTION_RECEIVE_HUE_REPLY:
                 HueBridge.requestHueState(ctx);
-                currentlyClicked.clear();
-                panelUpdate(ctx);
                 break;
             case ACTION_TIMEOUT_HUE_REPLY:
                 Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
@@ -206,6 +219,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 performPullToRefresh(ctx);
+                currentlyClicked.clear();
                 panelUpdate(ctx);
                 HueBridge.saveAllConfiguration(ctx);
                 break;
@@ -269,7 +283,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             currentlyClicked.clear();
             panelUpdate(ctx);
             displayTips(ctx);
-            if (checkWifiNotConnected(ctx))
+            if (checkWifiNotEnabled(ctx))
                 Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
             else HueBridge.requestHueState(ctx);
         }
@@ -576,7 +590,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                             vibrator.vibrate(1);
                         }
 
-                        if (checkWifiNotConnected(ctx)) {
+                        if (checkWifiNotEnabled(ctx)) {
                             Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                             return;
                         }
@@ -642,7 +656,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     vibrator.vibrate(1);
                 }
 
-                if (checkWifiNotConnected(ctx)) {
+                if (checkWifiNotEnabled(ctx)) {
                     Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -735,7 +749,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     vibrator.vibrate(1);
                 }
 
-                if(checkWifiNotConnected(ctx)) {
+                if(checkWifiNotEnabled(ctx)) {
                     Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -760,7 +774,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
         cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
         // If no wifi connected, show Toast
-        if (checkWifiNotConnected(ctx)) {
+        if (checkWifiNotEnabled(ctx)) {
             Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
             // Update panel to attach a new pull to refresh intent
             panelUpdate(ctx);
@@ -860,12 +874,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
     }
 
-    public boolean checkWifiNotConnected(Context ctx) {
+    public static boolean checkWifiNotEnabled(Context ctx) {
         WifiManager wifiMgr = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiMgr.isWifiEnabled())// Wi-Fi adapter is ON
-            return wifiMgr.getConnectionInfo().getNetworkId() == -1;
-        else
-            return true; // Wi-Fi adapter is OFF
+        return !wifiMgr.isWifiEnabled();
     }
 
     private void displayTips(Context ctx){

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -143,13 +144,5 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             float value = from + (to - from) * interpolatedTime;
             progressBar.setProgress((int) value);
         }
-    }
-
-    public boolean checkWifiNotConnected() {
-        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wifiMgr.isWifiEnabled())// Wi-Fi adapter is ON
-            return wifiMgr.getConnectionInfo().getNetworkId() == -1;
-        else
-            return true; // Wi-Fi adapter is OFF
     }
 }

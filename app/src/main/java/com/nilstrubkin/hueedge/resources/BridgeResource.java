@@ -88,19 +88,13 @@ public abstract class BridgeResource implements Serializable {
         return "/" + getCategory() + "/" + getId() + "/action";
     }
 
-    final transient OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(3, TimeUnit.SECONDS)
-            .writeTimeout(3, TimeUnit.SECONDS)
-            .readTimeout(3, TimeUnit.SECONDS)
-            .build();
-
     void post(final Context ctx, final String url, final String json){
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
                 .build();
-        client.newCall(request).enqueue(new Callback() {
+        HueEdgeProvider.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) {
                 try {

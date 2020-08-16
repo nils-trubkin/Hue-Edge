@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueBridge;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 
@@ -53,7 +54,7 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        if(setup.checkWifiNotConnected())
+        if(HueEdgeProvider.checkWifiNotEnabled(requireContext()))
             Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
     }
 
@@ -62,12 +63,12 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case searchButtonId:
                 navController.navigate(R.id.action_welcomeFragment_to_discoveryFragment);
-                if(setup.checkWifiNotConnected())
+                if(HueEdgeProvider.checkWifiNotEnabled(requireContext()))
                     Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                 break;
             case manualButtonId:
                 navController.navigate(R.id.action_welcomeFragment_to_manualFragment);
-                if(setup.checkWifiNotConnected())
+                if(HueEdgeProvider.checkWifiNotEnabled(requireContext()))
                     Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                 break;
         }

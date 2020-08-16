@@ -17,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.badoualy.stepperindicator.StepperIndicator;
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 
@@ -55,7 +56,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()){
             case confirmButtonId:
-                if(setup.checkWifiNotConnected()) {
+                if(HueEdgeProvider.checkWifiNotEnabled(requireContext())) {
                     Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }

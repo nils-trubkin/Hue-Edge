@@ -1,5 +1,6 @@
 package com.nilstrubkin.hueedge.discovery;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.DhcpInfo;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.Xml;
 
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -131,7 +133,6 @@ public class DiscoveryEngine {
             final String ip,
             final DiscoveryCallback<AuthEntry> callback){
         final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-        final OkHttpClient client = new OkHttpClient.Builder().build();
         JSONObject json;
         try {
             json = new JSONObject().put("devicetype", "HueEdge#" + android.os.Build.MODEL);
@@ -145,7 +146,7 @@ public class DiscoveryEngine {
                 .url("http://" + ip + "/api")
                 .post(body)
                 .build();
-        try (Response response = client.newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
+        try (Response response = HueEdgeProvider.getClient().newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
             Type type = Types.newParameterizedType(List.class, AuthResponse.class);
             Moshi moshi = new Moshi.Builder().build();
             JsonAdapter<List<AuthResponse>> adapter = moshi.adapter(type);
@@ -307,8 +308,7 @@ public class DiscoveryEngine {
             Request request = new Request.Builder()
                     .url(portal)
                     .build();
-            final OkHttpClient client = new OkHttpClient.Builder().build();
-            try (Response response = client.newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
+            try (Response response = HueEdgeProvider.getClient().newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
                 String resp = rb.string();
                 rb.close();
                 return resp;
@@ -505,9 +505,9 @@ public class DiscoveryEngine {
         return gateway & netmask;
     }
 
+    @SuppressLint("DefaultLocale")
     private String getStringIpAddress(int address){
         return String.format(
-                Locale.ENGLISH,
                 "%d.%d.%d.%d",
                 (address & 0xff),
                 (address >> 8 & 0xff),

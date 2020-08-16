@@ -16,6 +16,7 @@ import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,13 +32,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -272,42 +270,41 @@ public class HueBridge implements Serializable {
 
     //GET method
     public void requestHueState(final Context ctx, final boolean state0) {
-        if(!state0) {
+        if (!state0) {
             tempState = null;
             tempState0 = null;
         }
 
-        ExecutorService pool = Executors.newFixedThreadPool(1);
-        Callable<String> callable = () -> {
-            Request request = new Request.Builder()
-                    .url(state0 ? url + "/groups/0" : url)
-                    .build();
-            final OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .writeTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
-                    .build();
-            try (Response response = client.newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
-                return rb.string();
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
-                getTimeoutIntent(ctx).send();
-                return null;
+        Request request = new Request.Builder()
+                .url(state0 ? url + "/groups/0" : url)
+                .build();
+        HueEdgeProvider.getClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
+                try (ResponseBody rb = Objects.requireNonNull(response.body())) {
+                    String s = rb.string();
+                    notifyState(ctx, new JSONObject(s), state0);
+                } catch (JSONException | NullPointerException | IOException e) {
+                    e.printStackTrace();
+                    try {
+                        if (!state0) getTimeoutIntent(ctx).send();
+                    } catch (PendingIntent.CanceledException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
-        };
-        Future<String> future = pool.submit(callable);
-        try {
-            String s = Objects.requireNonNull(future.get());
-            notifyState(ctx, new JSONObject(s), state0);
-        } catch (ExecutionException | InterruptedException | JSONException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            Log.e(TAG, "No state reply");
-        }
-        if(!state0)
-            requestHueState(ctx, true);
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                try {
+                    if (!state0) getTimeoutIntent(ctx).send();
+                } catch (PendingIntent.CanceledException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        if(!state0) requestHueState(ctx, true);
     }
 
     /**
