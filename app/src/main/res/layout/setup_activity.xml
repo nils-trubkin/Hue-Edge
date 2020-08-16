@@ -179,7 +179,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -199,44 +199,10 @@
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="@dimen/about_text_text_size"
-            app:layout_constraintBottom_toTopOf="@id/button_license"
+            app:layout_constraintBottom_toTopOf="@id/button_paypal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_conversion_absoluteHeight="0dp"
-            tools:layout_conversion_absoluteWidth="0dp" />
-
-        <Button
-            android:id="@+id/button_license"
-            android:layout_width="@dimen/setup_button_width"
-            android:layout_height="@dimen/setup_button_height"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/setup_button_background"
-            android:includeFontPadding="false"
-            android:text="@string/setup_button_license"
-            android:textAllCaps="false"
-            android:textSize="@dimen/setup_button_text_size"
-            app:layout_constraintBottom_toTopOf="@+id/button_contact_me"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_about"
-            tools:layout_conversion_absoluteHeight="0dp"
-            tools:layout_conversion_absoluteWidth="0dp" />
-
-        <Button
-            android:id="@+id/button_contact_me"
-            android:layout_width="@dimen/setup_button_width"
-            android:layout_height="@dimen/setup_button_height"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/setup_button_background"
-            android:includeFontPadding="false"
-            android:text="@string/setup_button_contact"
-            android:textAllCaps="false"
-            android:textSize="@dimen/setup_button_text_size"
-            app:layout_constraintBottom_toTopOf="@+id/button_paypal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_license"
             tools:layout_conversion_absoluteHeight="0dp"
             tools:layout_conversion_absoluteWidth="0dp" />
 
@@ -250,9 +216,44 @@
             android:text="@string/setup_button_support"
             android:textAllCaps="false"
             android:textSize="@dimen/setup_button_text_size"
-            app:layout_constraintBottom_toTopOf="@+id/button_about_close"
+            app:layout_constraintBottom_toTopOf="@id/button_contact_me"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_about"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+        <Button
+            android:id="@+id/button_contact_me"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/setup_button_contact"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@id/button_license"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_paypal"
+            tools:layout_conversion_absoluteHeight="0dp"
+            tools:layout_conversion_absoluteWidth="0dp" />
+
+        <Button
+            android:id="@+id/button_license"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/setup_button_license"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@id/button_about_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_contact_me"
             tools:layout_conversion_absoluteHeight="0dp"
             tools:layout_conversion_absoluteWidth="0dp" />
 
@@ -269,6 +270,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_license"
             tools:layout_conversion_absoluteHeight="0dp"
             tools:layout_conversion_absoluteWidth="0dp" />
 
