@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.nilstrubkin.hueedge.DragEventListener;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
@@ -31,7 +32,6 @@ import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -76,21 +76,18 @@ public class EditActivity extends AppCompatActivity {
         TextView hueStatus = findViewById(R.id.hueStatus);
 
         vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-        currentCategory = bridge.getCurrentCategory();
+        currentCategory = bridge.getCurrentCategory(ctx);
         contents = bridge.getContents();
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(HueBridge.getInstance(ctx) != null){
-                    HueEdgeProvider.saveAllConfiguration(ctx);
-                    String toastString = ctx.getString(R.string.toast_saved);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
-                }
-                else
-                    Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
-                finish();
+        btnSave.setOnClickListener(v -> {
+            if(HueBridge.getInstance(ctx) != null){
+                HueBridge.saveAllConfiguration(ctx);
+                String toastString = ctx.getString(R.string.toast_saved);
+                Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
             }
+            else
+                Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
+            finish();
         });
 
         String ip;
@@ -103,13 +100,10 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
         hueStatus.setText(ctx.getString(R.string.hue_status, ip));
-        hueStatus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent setupIntent = new Intent(ctx, SetupActivity.class);
-                setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                ctx.startActivity(setupIntent);
-            }
+        hueStatus.setOnClickListener(v -> {
+            Intent setupIntent = new Intent(ctx, SetupActivity.class);
+            setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            ctx.startActivity(setupIntent);
         });
 
         panelUpdate();
@@ -158,12 +152,7 @@ public class EditActivity extends AppCompatActivity {
 
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
                 this, R.layout.edit_activity_adapter_view_layout, resources, vibrator);
-        adapter.sort(new Comparator<BridgeResource>() {
-            @Override
-            public int compare(BridgeResource br1, BridgeResource br2) {
-                return br1.compareTo(br2);
-            }
-        });
+        adapter.sort(BridgeResource::compareTo);
         mListView.setAdapter(adapter);
 
         /*Toolbar toolbar = findViewById(R.id.toolbar);
@@ -214,49 +203,36 @@ public class EditActivity extends AppCompatActivity {
                 }
                 displaySlotAsFull(i, res);
                 final int finalI = i;
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clearSlot(finalI);
-                    }
-                });
-                btnDelete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clearSlot(finalI);
-                    }
-                });
+                btn.setOnClickListener(v -> clearSlot(finalI));
+                btnDelete.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setVisibility(View.VISIBLE);
                 btnDeleteTopText.setVisibility(View.VISIBLE);
                 btn.setOnDragListener(null);
                 btnText.setOnDragListener(null);
-                btn.setOnLongClickListener(new View.OnLongClickListener(){
-                    @Override
-                    public boolean onLongClick(View v) {
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
-                        if(!noHaptic)
-                            vibrator.vibrate(1);
-                        ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
-                        ClipData dragData = new ClipData(
-                                res.getName(),
-                                new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
-                                item);
-                        View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
-                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                            return v.startDragAndDrop(dragData,  // the data to be dragged
-                                    myShadow,  // the drag shadow builder
-                                    res,      // pass resource
-                                    0          // flags (not currently used, set to 0)
-                            );
-                        else
-                            //noinspection deprecation
-                            return v.startDrag(dragData,  // the data to be dragged
-                                    myShadow,  // the drag shadow builder
-                                    res,      // pass resource
-                                    0          // flags (not currently used, set to 0)
-                            );
-                    }
+                btn.setOnLongClickListener(v -> {
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
+                    if(!noHaptic)
+                        vibrator.vibrate(1);
+                    ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
+                    ClipData dragData = new ClipData(
+                            res.getName(),
+                            new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                            item);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        return v.startDragAndDrop(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                res,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
+                    else
+                        //noinspection deprecation
+                        return v.startDrag(dragData,  // the data to be dragged
+                                myShadow,  // the drag shadow builder
+                                res,      // pass resource
+                                0          // flags (not currently used, set to 0)
+                        );
                 });
             } else {
                 displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText);
@@ -270,7 +246,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void clearSlot (int position) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
+        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
         if(!noHaptic)
             vibrator.vibrate(1);
         final Map<Integer, ResourceReference> currentCategoryContents;
@@ -283,7 +259,7 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
         currentCategoryContents.remove(position);
-        HueEdgeProvider.saveAllConfiguration(ctx);
+        HueBridge.saveAllConfiguration(ctx);
         Button btn = findViewById(HueEdgeProvider.btnArr[position]);
         TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
         TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
@@ -301,7 +277,7 @@ public class EditActivity extends AppCompatActivity {
     public void displaySlotAsEmpty (Button btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText) {
         btnTopText.setText("");
         btnText.setText("");
-        btn.setBackground(getResources().getDrawable(R.drawable.edit_add_button_background, getTheme()));
+        btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
         btnDelete.setVisibility(View.GONE);
         btnDeleteTopText.setVisibility(View.GONE);
     }

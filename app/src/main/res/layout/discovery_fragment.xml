@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".fragment.DiscoveryFragment">
+
+    <TextView
+        android:id="@+id/text_setup_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="32dp"
+        android:text="@string/fragment_discovery_label_scanning"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/list_setup_results"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_setup_results"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setup_discovery_results_height"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/list_background"
+        android:overScrollMode="never"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/progress_bar_setup_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_setup_status" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_setup_search"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button_setup_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_setup_results" />
+
+    <Button
+        android:id="@+id/button_setup_cancel"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_discovery_button_cancel"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar_setup_search"
+        tools:ignore="SpUsage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

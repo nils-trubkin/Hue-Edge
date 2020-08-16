@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -20,6 +19,7 @@ import java.util.Objects;
 class LightResource extends BridgeResourceSliders {
 
     static class State implements Serializable {
+
         boolean on;
         int bri;
         int hue;
@@ -29,9 +29,9 @@ class LightResource extends BridgeResourceSliders {
             return on;
         }
 
-        public int getBri() {
+        /*public int getBri() {
             return bri;
-        }
+        }*/
 
         public int getHue() {
             return hue;
@@ -57,9 +57,9 @@ class LightResource extends BridgeResourceSliders {
         return !getState().isOn();
     }
 
-    public int getBri() {
+    /*public int getBri() {
         return getState().getBri();
-    }
+    }*/
 
     public int getHue() {
         return getState().getHue();
@@ -73,19 +73,17 @@ class LightResource extends BridgeResourceSliders {
     public void activateResource(Context ctx) {
         String actionWrite = getActionWrite();
         boolean newState = !isOn();
-        String reply = sendValue(ctx, actionWrite, newState);
-        Log.e("reply is ", reply);
+        sendValue(ctx, actionWrite, newState);
     }
 
     @Override
-    protected String sendValue(Context ctx, String key, Object value){
+    protected void sendValue(Context ctx, String key, Object value){
         try {
             String bridgeUrl = Objects.requireNonNull(HueBridge.getInstance(ctx)).getUrl();
             JSONObject jsonObject = new JSONObject().put(key, value);
-            return post(ctx,bridgeUrl + getStateUrl(), jsonObject.toString());
+            post(ctx,bridgeUrl + getStateUrl(), jsonObject.toString());
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -108,7 +106,7 @@ class LightResource extends BridgeResourceSliders {
     public String getBtnText(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_symbols), false);
         if(isOn())
             return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);
         else

@@ -52,6 +52,7 @@
                 <action android:name="com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH" />
                 <action android:name="com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE" />
                 <action android:name="com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY" />
+                <action android:name="com.nilstrubkin.hueedge.ACTION_TIMEOUT_HUE_REPLY" />
             </intent-filter>
 
             <meta-data
@@ -80,6 +81,9 @@
         <meta-data
             android:name="com.samsung.android.cocktail.mode"
             android:value="edge_single_plus" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

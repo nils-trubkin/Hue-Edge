@@ -18,6 +18,9 @@ import java.util.Objects;
 
 public class GroupResource extends BridgeResourceSliders {
 
+    public GroupResource() {
+    }
+
     static class State implements Serializable {
         boolean all_on;
         boolean any_on;
@@ -36,9 +39,9 @@ public class GroupResource extends BridgeResourceSliders {
         int hue;
         int sat;
 
-        public int getBri() {
+        /*public int getBri() {
             return bri;
-        }
+        }*/
 
         public int getHue() {
             return hue;
@@ -73,9 +76,9 @@ public class GroupResource extends BridgeResourceSliders {
         return getState().isAny_on();
     }
 
-    public int getBri() {
+    /*public int getBri() {
         return getAction().getBri();
-    }
+    }*/
 
     public int getHue() {
         return getAction().getHue();
@@ -92,14 +95,13 @@ public class GroupResource extends BridgeResourceSliders {
         sendValue(ctx, actionWrite, newState);
     }
 
-    public String sendValue(Context ctx, String key, Object value){
+    public void sendValue(Context ctx, String key, Object value){
         try {
             String bridgeUrl = Objects.requireNonNull(HueBridge.getInstance(ctx)).getUrl();
             JSONObject jsonObject = new JSONObject().put(key, value);
-            return post(ctx,bridgeUrl + getActionUrl(), jsonObject.toString());
+            post(ctx,bridgeUrl + getActionUrl(), jsonObject.toString());
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
@@ -122,7 +124,7 @@ public class GroupResource extends BridgeResourceSliders {
     public String getBtnText(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_symbols), false);
         if(isAny_on())
             if(!isAll_off())
                 return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);

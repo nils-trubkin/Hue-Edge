@@ -1,118 +1,141 @@
 <resources>
-    <string name="app_name">Hue edge</string>
-    <string name="edge_hue_name">Hue edge</string>
-    <string name="edge_hue_description">Panel to control Philips Hue</string>
+    <!-- General -->
+    <string name="app_name">Hue Edge</string>
+    <string name="app_description">Panel to control Philips Hue</string>
+    <string name="title_activity_edge_setup">Configure Hue Edge</string>
 
-    <string name="button_edit_text">Edit</string>
+    <!-- Panel buttons -->
     <string name="button_help_1_text">Quick access</string>
     <string name="button_help_2_text">Lights</string>
     <string name="button_help_3_text">Rooms</string>
     <string name="button_help_4_text">Zones</string>
     <string name="button_help_5_text">Scenes</string>
-    <string name="title_activity_edge_setup">Configure Hue edge</string>
-
-    <string name="button_sliders_help_1_text">Brightness</string>
-    <string name="button_sliders_help_2_text">Color</string>
-    <string name="button_sliders_help_3_text">Saturation</string>
+    <string name="button_edit_text">Edit</string>
+    <string name="button_sliders_help_bri">Brightness</string>
+    <string name="button_sliders_help_hue">Color</string>
+    <string name="button_sliders_help_sat">Saturation</string>
     <string name="button_back_text">Back</string>
 
+    <!-- Other panels -->
+    <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
+    <string name="loading">Loading…</string>
 
-    <!-- Strings used for fragments for navigation -->
-    <string name="fragment_welcome_label">Welcome!\n\nWe need to perform first time setup\n\nLet\'s connect to your Philips Hue Bridge</string>
-    <string name="fragment_manual_label">Please enter the IP address of your Philips Hue Bridge</string>
-    <string name="fragment_search_label">Scanning the network for Hue Bridges</string>
-    <string name="fragment_results_label">Please select your Hue Bridge</string>
-    <string name="fragment_connect_label">Connecting to the Hue Bridge</string>
-    <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\nTry the manual IP setup\n\nIf you believe this is a bug please report</string>
-    <string name="fragment_auth_label">Press the link button to authenticate\n\n%1$d</string>
-    <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
-    <string name="fragment_final_label">The configuration is finished\n\nEdge panel is ready for use\n\nTap to toggle\nHold to adjust\nPull-down along the buttons to refresh\n</string>
-    <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
-    <string name="fragment_welcome_button">Search for bridge</string>
-    <string name="fragment_welcome_button_cheat">Debug</string>
+    <!-- Categories line -->
+    <string name="dots">..................</string>
+
+    <!-- Fragments and navigation -->
+    <string name="setup_button_about">About &amp; Support</string>
+    <string name="setup_button_close_about">Close about</string>
+    <string name="setup_button_close_help">Close help</string>
+    <string name="setup_about_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
+    <string name="setup_button_license">License</string>
+    <string name="setup_button_contact">Contact me</string>
+    <string name="setup_button_support">Support via PayPal</string>
+    <string name="email">hueedgepanel@gmail.com</string>
+    <string name="paypal_url">https://paypal.me/NilsTrubkin?locale.x=en_US</string>
+    <string-array name="step_labels">
+        <item>Welcome</item>
+        <item>Search</item>
+        <item>Link</item>
+        <item>Setup</item>
+        <item>Finish</item>
+    </string-array>
+
+    <!-- WelcomeFragment -->
+    <string name="fragment_welcome_label">Welcome!\n\nWe need to perform the first time setup\n\nLet\'s connect to your Philips Hue Bridge</string>
+    <string name="fragment_welcome_button_search">Search for bridge</string>
     <string name="fragment_welcome_button_manual_ip">Manual IP setup</string>
-    <string name="fragment_welcome_button_manual_ip_confirm">Connect to the IP</string>
-    <string name="fragment_welcome_button_manual_ip_help">Where do I find the IP?</string>
-    <string name="fragment_welcome_button_manual_ip_back">Back</string>
+
+    <!-- DiscoveryFragment -->
+    <string name="fragment_discovery_label_scanning">Scanning the network for Hue Bridges</string>
+    <string name="fragment_discovery_label_select">Please select your Hue Bridge</string>
+    <string name="fragment_discovery_button_cancel">Cancel search</string>
+    <string name="discovery_item_label_id">ID: %1$s</string>
+
+    <!-- ManualFragment -->
+    <string name="fragment_manual_label">Please enter the IP address of your Philips Hue Bridge</string>
     <string name="fragment_manual_ip_field">192.168.1.10</string>
-    <string name="fragment_search_button">Cancel search</string>
-    <string name="fragment_error_button">Re-run bridge discovery</string>
-    <string name="fragment_result_button">Re-run bridge discovery</string>
-    <string name="fragment_settings_button_quick">Quick setup</string>
-    <string name="fragment_settings_button_custom">Leave empty</string>
-    <string name="fragment_final_button_finish">Finish</string>
-    <string name="fragment_final_button_remove">Remove configuration</string>
+    <string name="fragment_manual_button_confirm">Connect to the IP</string>
+    <string name="fragment_manual_button_help">Where do I find the IP?</string>
+    <string name="fragment_manual_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>
+
+    <!-- ErrorFragment -->
+    <string name="fragment_error_label">Connecting to the Hue Bridge failed\n\nMake sure that Hue Bridge is on the same network as your device\n\nTry the manual IP setup\n\nIf you believe this is a bug please report</string>
+    <string name="fragment_error_button_rerun">Re-run bridge discovery</string>
+
+    <!-- LinkFragment -->
+    <string name="fragment_link_label">Press the link button on the Hue Bridge</string>
+    <string name="fragment_link_button_cancel">Cancel linking</string>
+
+    <!-- SetupFragment -->
+    <string name="fragment_setup_button_quick">Quick setup</string>
+    <string name="fragment_setup_button_custom">Leave empty</string>
+
+    <!-- FinalFragment -->
+    <string name="fragment_final_label">The configuration is finished\nEdge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
+    <string name="fragment_final_button_settings">Preferences</string>
+
+    <!-- ConfirmationFragment -->
+    <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
+
+    <!-- SettingsFragment -->
+    <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
+    <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15)</string>
+    <string name="fragment_settings_switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
+    <string name="fragment_settings_switch_haptic">No haptic feedback (vibration)</string>
+    <string name="fragment_settings_button_remove">Remove configuration</string>
+    <string name="fragment_settings_button_back">Back</string>
+
+    <!-- NotSupportedFragment -->
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
-    <string name="about_button_text">About / Donate</string>
-    <string name="close_about_text">Close about</string>
-    <string name="close_help_text">Close help</string>
-    <string name="about_text_text">Hue edge v 1.0\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal\n\n</string>
-    <string name="about_btn_contact_me">Contact me</string>
-    <string name="about_btn_support">Support via PayPal</string>
-    <string name="manual_ip_help_text">Open the official Philips Hue app\n\nSelect \'Settings\'\n\nSelect \'Hue Bridges\'\n\nPress the \'i\' symbol next to your bridge\n\nFind the IP address field</string>
-    <string name="switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
-    <string name="switch_haptic">No haptic feedback (vibration)</string>
 
-    <string name="list_view_id_label">ID: %1$s</string>
-
-    <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
+    <!-- Edit activity -->
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
 
+    <!-- Config files -->
     <string name="preference_file_key">HueEdgeConfig</string>
     <string name="recovery_file_key">HueEdgeRecovery</string>
 
-    <string name="no_symbols_preference">noSymbols</string>
-    <string name="no_haptic_preference">noHaptic</string>
+    <!-- SharedPreferences -->
+    <string name="preference_no_symbols">noSymbols</string>
+    <string name="preference_no_haptic">noHaptic</string>
+    <string name="preference_bridge_configured">bridgeConfigured</string>
+    <string name="preference_bri_levels">briLevels</string>
+    <string name="preference_hue_levels">hueLevels</string>
+    <string name="preference_sat_levels">satLevels</string>
+    <string name="preference_ip">savedIp</string>
+    <string name="preference_username">savedUsername</string>
+    <string name="preference_current_category">currentCategory</string>
+    <string name="preference_current_category_sliders">currentCategorySliders</string>
+    <string name="preference_tips_shown">tipsShown</string>
 
-    <string name="http_header">http://</string>
-    <string name="api_path">/api/</string>
-
+    <!-- Image description -->
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue Bridge</string>
     <string name="ip_help_description">A screenshot displaying the ip and other details of the bridge inside the official Philips Hue app</string>
 
+    <!-- Button symbols -->
     <string name="some_symbol">—</string>
     <string name="plus_symbol">+</string>
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>
     <string name="question_symbol">\?</string>
 
+    <!-- Button no-symbols -->
     <string name="some_no_symbol">Some</string>
     <string name="on_no_symbol">On</string>
     <string name="off_no_symbol">Off</string>
 
-    <!--string name="remote_list_item_title">Brightness #</string>
-    <string name="remote_list_item_title2">Hue #</string>
-    <string name="remote_list_item_title3">Saturation #</string>
-    <string name="remote_list_item_clicked">Item no.%d clicked</string-->
-
-    <string name="hue_api_name">name</string>
-    <string name="hue_api_lights">lights</string>
-    <string name="hue_api_groups">groups</string>
-    <string name="hue_api_scenes">scenes</string>
-    <string name="hue_api_on">on</string>
-    <string name="hue_api_any_on">any_on</string>
-    <string name="hue_api_type">type</string>
-    <string name="hue_api_Room">Room</string>
-    <string name="hue_api_Zone">Zone</string>
-    <string name="hue_api_group">group</string>
-    <string name="hue_api_scene">scene</string>
-    <string name="hue_api_state">state</string>
-    <string name="hue_api_success">success</string>
-
     <!-- Toasts -->
     <string name="toast_saved">Saved</string>
-    <string name="toast_refreshing">Refreshing</string>
-    <string name="toast_add_over_ten_buttons">Can\'t add more than 10 buttons</string>
-    <string name="toast_sliders_not_available">Sliders not available for scenes</string>
-    <string name="toast_adding">Adding: "%1$s"</string>
     <string name="toast_configuration_deleted">Configuration was deleted</string>
     <string name="toast_old_version">App updated, please re-configure</string>
     <string name="toast_ip_mistake">Please enter the IP address e.g. 192.168.1.10</string>
     <string name="toast_no_lights">Still downloading, wait one moment please</string>
-
-    <string name="email">hueedgepanel@gmail.com</string>
-    <string name="paypal_url">https://paypal.me/NilsTrubkin?locale.x=en_US</string>
+    <string name="toast_no_wifi">No Wi-Fi connection! Please connect to your Wi-Fi</string>
+    <string name="toast_timeout_reply">Hue Bridge can not be reached, make sure you are on the same Wi-Fi</string>
+    <string name="toast_tips_toggle">Press a button to toggle</string>
+    <string name="toast_tips_long">Long-hold a button to adjust</string>
 </resources>

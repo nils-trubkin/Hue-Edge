@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".fragment.ManualFragment">
+
+    <TextView
+        android:id="@+id/text_setup_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="32dp"
+        android:text="@string/fragment_manual_label"
+        android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/text_manual_input_ip_field"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage" />
+
+    <EditText
+        android:id="@+id/text_manual_input_ip_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="16dp"
+        android:autofillHints="ipAddress, ip"
+        android:background="@drawable/setup_button_background"
+        android:digits="0123456789."
+        android:elegantTextHeight="true"
+        android:ems="10"
+        android:hint="@string/fragment_manual_ip_field"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button_manual_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_setup_status" />
+
+    <Button
+        android:id="@+id/button_manual_confirm"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_manual_button_confirm"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button_manual_help"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_manual_input_ip_field"
+        tools:ignore="SpUsage" />
+
+    <Button
+        android:id="@+id/button_manual_help"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_manual_button_help"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_manual_confirm"
+        tools:ignore="SpUsage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

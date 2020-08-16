@@ -5,116 +5,121 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="@dimen/category_view_root_padding_top">
+    android:paddingTop="@dimen/category_view_root_padding_top"
+    tools:ignore="ContentDescription, SpUsage, RtlSymmetry">
 
     <ImageView
         android:layout_width="@dimen/category_view_top_line_width"
         android:layout_height="@dimen/category_view_top_line_height"
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/category_view_top_line_margin_bottom"
-        android:background="@color/category_top_line_gray"
-        tools:ignore="ContentDescription" />
+        android:background="@color/category_top_line_gray" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/category_btn_height"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/btnSlidersCategory1"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/category_btn_height"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
-            android:fontFamily="sans-serif-thin"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
-            android:text="@string/button_sliders_help_1_text"
+            android:text="@string/button_sliders_help_bri"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
-        <ImageView
+        <TextView
             android:id="@+id/btnSlidersCategoryLine1"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/category_btn_line_height"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/zero"
-            tools:ignore="ContentDescription" />
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue"
+            android:textSize="18dp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/category_btn_height"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/btnSlidersCategory2"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/category_btn_height"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
-            android:fontFamily="sans-serif-thin"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
-            android:text="@string/button_sliders_help_2_text"
+            android:text="@string/button_sliders_help_hue"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
-        <ImageView
+        <TextView
             android:id="@+id/btnSlidersCategoryLine2"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/category_btn_line_height"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/zero"
-            tools:ignore="ContentDescription" />
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue"
+            android:textSize="18dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/category_btn_height"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/btnSlidersCategory3"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/category_btn_height"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
-            android:fontFamily="sans-serif-thin"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
-            android:text="@string/button_sliders_help_3_text"
+            android:text="@string/button_sliders_help_sat"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textColor="@color/category_unselected_gray"
             android:textSize="@dimen/category_btn_text_size" />
 
-        <ImageView
+        <TextView
             android:id="@+id/btnSlidersCategoryLine3"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/category_btn_line_height"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/zero"
-            tools:ignore="ContentDescription" />
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue"
+            android:textSize="18dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/category_btn_height"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/btnBack"
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/category_btn_height"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
-            android:fontFamily="sans-serif-thin"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
             android:text="@string/button_back_text"

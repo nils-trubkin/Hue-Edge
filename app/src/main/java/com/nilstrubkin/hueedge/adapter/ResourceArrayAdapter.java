@@ -73,33 +73,30 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
                 ctx.getResources().getDimensionPixelSize(btnTextSizeRes));
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(underBtnText);
-        gridBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.no_haptic_preference), false);
-                if(!noHaptic)
-                    vibrator.vibrate(1);
-                ClipData.Item item = new ClipData.Item(String.valueOf(-1));
-                ClipData dragData = new ClipData(
-                        name,
-                        new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
-                        item);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    return v.startDragAndDrop(dragData,  // the data to be dragged
-                            myShadow,  // the drag shadow builder
-                            resource,      // pass resource
-                            0          // flags (not currently used, set to 0)
-                    );
-                else
-                    //noinspection deprecation
-                    return v.startDrag(dragData,  // the data to be dragged
-                            myShadow,  // the drag shadow builder
-                            resource,      // pass resource
-                            0          // flags (not currently used, set to 0)
-                    );
-            }
+        gridBtn.setOnLongClickListener(v -> {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+            boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
+            if(!noHaptic)
+                vibrator.vibrate(1);
+            ClipData.Item item = new ClipData.Item(String.valueOf(-1));
+            ClipData dragData = new ClipData(
+                    name,
+                    new String[]{ClipDescription.MIMETYPE_TEXT_PLAIN},
+                    item);
+            View.DragShadowBuilder myShadow = new View.DragShadowBuilder(gridBtn);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                return v.startDragAndDrop(dragData,  // the data to be dragged
+                        myShadow,  // the drag shadow builder
+                        resource,      // pass resource
+                        0          // flags (not currently used, set to 0)
+                );
+            else
+                //noinspection deprecation
+                return v.startDrag(dragData,  // the data to be dragged
+                        myShadow,  // the drag shadow builder
+                        resource,      // pass resource
+                        0          // flags (not currently used, set to 0)
+                );
         });
         return convertView;
     }

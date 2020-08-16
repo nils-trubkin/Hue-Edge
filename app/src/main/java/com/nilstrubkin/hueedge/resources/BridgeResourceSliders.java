@@ -8,11 +8,11 @@ import android.preference.PreferenceManager;
 import com.nilstrubkin.hueedge.R;
 
 public abstract class BridgeResourceSliders extends BridgeResource {
-    public abstract int getBri();
+    //public abstract int getBri();
     public abstract int getHue();
     public abstract int getSat();
     protected abstract boolean isAll_off();
-    protected abstract String sendValue(Context ctx, String key, Object value);
+    protected abstract void sendValue(Context ctx, String key, Object value);
 
     private void enableResource(Context ctx) {
         String actionWrite = getActionWrite();
@@ -46,7 +46,7 @@ public abstract class BridgeResourceSliders extends BridgeResource {
     public int getBtnTextSize(Context ctx) {
         Resources resources = ctx.getResources();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        boolean noSymbols = settings.getBoolean(resources.getString(R.string.no_symbols_preference), false);
+        boolean noSymbols = settings.getBoolean(resources.getString(R.string.preference_no_symbols), false);
         if(noSymbols)
             return R.dimen.resource_btn_text_size_scene;
         else

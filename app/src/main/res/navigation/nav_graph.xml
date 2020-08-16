@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/welcomeFragment">
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.WelcomeFragment"
+        android:label="WelcomeFragment"
+        tools:layout="@layout/welcome_fragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_discoveryFragment"
+            app:destination="@id/discoveryFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_manualFragment"
+            app:destination="@id/manualFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_finalFragment"
+            app:destination="@id/finalFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_welcomeFragment_to_notSupportedFragment"
+            app:destination="@id/notSupportedFragment"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/discoveryFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.DiscoveryFragment"
+        android:label="DiscoveryFragment"
+        tools:layout="@layout/discovery_fragment">
+        <action
+            android:id="@+id/action_discoveryFragment_to_linkFragment"
+            app:destination="@id/linkFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_discoveryFragment_to_errorFragment"
+            app:destination="@id/errorFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/manualFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.ManualFragment"
+        android:label="ManualFragment"
+        tools:layout="@layout/manual_fragment">
+        <action
+            android:id="@+id/action_manualFragment_to_linkFragment"
+            app:destination="@id/linkFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
+        <action
+            android:id="@+id/action_manualFragment_to_errorFragment"
+            app:destination="@id/errorFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/linkFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.LinkFragment"
+        android:label="LinkFragment"
+        tools:layout="@layout/link_fragment">
+
+        <argument android:name="ip"
+            android:defaultValue="None"/>
+        <action
+            android:id="@+id/action_linkFragment_to_errorFragment"
+            app:destination="@id/errorFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/linkFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_linkFragment_to_setupFragment"
+            app:destination="@id/setupFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/errorFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.ErrorFragment"
+        android:label="error_fragment"
+        tools:layout="@layout/error_fragment" >
+        <action
+            android:id="@+id/action_errorFragment_to_manualFragment"
+            app:destination="@id/manualFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_errorFragment_to_discoveryFragment"
+            app:destination="@id/discoveryFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/welcomeFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/finalFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.FinalFragment"
+        android:label="final_fragment"
+        tools:layout="@layout/final_fragment" >
+        <action
+            android:id="@+id/action_finalFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.SettingsFragment"
+        android:label="settings_fragment"
+        tools:layout="@layout/settings_fragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_confirmationFragment"
+            app:destination="@id/confirmationFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/setupFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.SetupFragment"
+        android:label="setup_fragment"
+        tools:layout="@layout/setup_fragment" >
+        <action
+            android:id="@+id/action_setupFragment_to_finalFragment"
+            app:destination="@id/finalFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/notSupportedFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.NotSupportedFragment"
+        android:label="not_supported_fragment"
+        tools:layout="@layout/not_supported_fragment" />
+    <fragment
+        android:id="@+id/confirmationFragment"
+        android:name="com.nilstrubkin.hueedge.fragment.ConfirmationFragment"
+        android:label="confirmation_fragment"
+        tools:layout="@layout/confirmation_fragment" >
+        <action
+            android:id="@+id/action_confirmationFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

@@ -5,7 +5,7 @@
     <!-- content view -->
     <dimen name="resource_button_dimen">@dimen/_40sdp</dimen>
     <dimen name="resource_button_margin_top">20dp</dimen>
-    <dimen name="resource_button_padding">2dp</dimen>
+    <dimen name="resource_button_padding">3dp</dimen>
     <dimen name="resource_btn_text_size_symbol">14dp</dimen>
     <dimen name="resource_btn_text_size_scene">12dp</dimen>
     <dimen name="resource_btn_text_text_size">@dimen/_10sdp</dimen>
@@ -19,7 +19,6 @@
     <dimen name="no_bridge_text_padding">10dp</dimen>
 
     <!-- help view -->
-    <!-- help view -->
     <dimen name="category_view_root_padding_top">15dp</dimen>
     <!-- help view top line -->
     <dimen name="category_view_top_line_width">200dp</dimen>
@@ -28,9 +27,10 @@
     <!-- help view category buttons -->
     <dimen name="category_btn_text_size">@dimen/_12sdp</dimen>
     <dimen name="category_btn_height">40dp</dimen>
-    <dimen name="category_btn_margin_bottom">-7dp</dimen>
+    <dimen name="category_btn_margin_bottom">-20dp</dimen>
+    <dimen name="category_btn_padding_end">-10dp</dimen>
     <!-- help view category button lines -->
-    <dimen name="category_btn_line_height">3dp</dimen>
+    <dimen name="category_btn_line_height">30dp</dimen>
 
     <!-- edit activity -->
     <dimen name="resource_button_delete_dimen">24dp</dimen>
@@ -52,9 +52,10 @@
     <dimen name="setup_button_text_size">16dp</dimen>
     <dimen name="setup_discovery_results_height">150dp</dimen>
     <dimen name="setup_discovery_results_margin_bottom">30dp</dimen>
+    <dimen name="setup_discovery_results_margin_left_right">16dp</dimen>
     <dimen name="setup_discovery_results_ip_size">24dp</dimen>
     <dimen name="setup_discovery_results_id_size">18dp</dimen>
-    <dimen name="setup_progress_bar_padding_bottom">20dp</dimen>
+    <dimen name="setup_progress_bar_margin_top_bottom">20dp</dimen>
     <dimen name="setup_pushlink_image_dimen">200dp</dimen>
     <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
     <dimen name="setup_big_logo_height">400dp</dimen>

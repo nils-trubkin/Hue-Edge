@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".fragment.SettingsFragment">
+
+    <TextView
+        android:id="@+id/text_seek_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="16dp"
+        android:text="@string/fragment_settings_seek_bar"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/seek_bar_bri"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_bri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:text="@string/button_sliders_help_bri"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_bri"
+        app:layout_constraintEnd_toStartOf="@id/seek_bar_bri"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_bri"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_bri_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        tools:text="12"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_bri"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/seek_bar_bri"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_bri"
+        tools:ignore="SpUsage" />
+
+    <SeekBar
+        android:id="@+id/seek_bar_bri"
+        style="@android:style/Widget.Material.Light.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:max="40"
+        android:progress="5"
+        app:layout_constraintBottom_toTopOf="@id/seek_bar_hue"
+        app:layout_constraintEnd_toStartOf="@id/text_seek_bar_bri_status"
+        app:layout_constraintStart_toEndOf="@id/text_seek_bar_bri"
+        app:layout_constraintTop_toBottomOf="@id/text_seek_bar" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_hue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="16dp"
+        android:text="@string/button_sliders_help_hue"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_hue"
+        app:layout_constraintEnd_toStartOf="@+id/seek_bar_hue"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_hue"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_hue_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        tools:text="12"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_hue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/seek_bar_hue"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_hue"
+        tools:ignore="SpUsage" />
+
+    <SeekBar
+        android:id="@+id/seek_bar_hue"
+        style="@android:style/Widget.Material.Light.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:max="40"
+        android:progress="15"
+        app:layout_constraintBottom_toTopOf="@id/seek_bar_sat"
+        app:layout_constraintEnd_toEndOf="@+id/seek_bar_bri"
+        app:layout_constraintStart_toStartOf="@+id/seek_bar_bri"
+        app:layout_constraintTop_toBottomOf="@id/seek_bar_bri" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_sat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="16dp"
+        android:text="@string/button_sliders_help_sat"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_sat"
+        app:layout_constraintEnd_toStartOf="@id/seek_bar_sat"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_sat"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_sat_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        tools:text="12"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_sat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/seek_bar_sat"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_sat"
+        tools:ignore="SpUsage" />
+
+    <SeekBar
+        android:id="@+id/seek_bar_sat"
+        style="@android:style/Widget.Material.Light.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:max="40"
+        android:progress="5"
+        app:layout_constraintBottom_toTopOf="@id/switch_symbols"
+        app:layout_constraintEnd_toEndOf="@+id/seek_bar_hue"
+        app:layout_constraintStart_toStartOf="@+id/seek_bar_hue"
+        app:layout_constraintTop_toBottomOf="@id/seek_bar_hue" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_symbols"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="16dp"
+        android:text="@string/fragment_settings_switch_symbols"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/switch_haptic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seek_bar_sat"
+        tools:ignore="SpUsage" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_haptic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:layout_marginBottom="32dp"
+        android:text="@string/fragment_settings_switch_haptic"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/button_settings_remove"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_symbols"
+        tools:ignore="SpUsage" />
+
+    <Button
+        android:id="@+id/button_settings_remove"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_settings_button_remove"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/button_settings_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_haptic"
+        tools:ignore="SpUsage" />
+
+    <Button
+        android:id="@+id/button_settings_back"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_settings_button_back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_settings_remove"
+        tools:ignore="SpUsage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
