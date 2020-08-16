@@ -88,44 +88,6 @@ public abstract class BridgeResource implements Serializable {
         return "/" + getCategory() + "/" + getId() + "/action";
     }
 
-    /*String post(final Context ctx, final String url, final String json) {
-        ExecutorService pool = Executors.newFixedThreadPool(1);
-        Callable<String> callable = () -> {
-            RequestBody body = RequestBody.create(json, JSON);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .put(body)
-                    .build();
-            final OkHttpClient client = new OkHttpClient.Builder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .writeTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
-                    .build();
-            try (Response response = client.newCall(request).execute()) {
-                HueEdgeProvider.getReplyIntent(ctx).send();
-                return Objects.requireNonNull(response.body()).string(); //TODO CLOSE!!
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
-                HueEdgeProvider.getTimeoutIntent(ctx).send();
-                return null;
-            }
-        };
-        Future<String> future = pool.submit(callable);
-        try {
-            return future.get();
-        } catch (ExecutionException | InterruptedException e) {
-            try {
-                HueEdgeProvider.getTimeoutIntent(ctx).send();
-            } catch (PendingIntent.CanceledException ex) {
-                ex.printStackTrace();
-            }
-            e.printStackTrace();
-            return null;
-        }
-    }*/
-
     final transient OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(3, TimeUnit.SECONDS)
             .writeTimeout(3, TimeUnit.SECONDS)
@@ -143,6 +105,7 @@ public abstract class BridgeResource implements Serializable {
             public void onResponse(@NotNull Call call, @NotNull Response response) {
                 try {
                     HueEdgeProvider.getReplyIntent(ctx).send();
+                    response.close();
                 } catch (PendingIntent.CanceledException e) {
                     e.printStackTrace();
                 }

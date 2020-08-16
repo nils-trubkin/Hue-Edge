@@ -287,11 +287,8 @@ public class HueBridge implements Serializable {
                     .writeTimeout(3, TimeUnit.SECONDS)
                     .readTimeout(3, TimeUnit.SECONDS)
                     .build();
-            try (Response response = client.newCall(request).execute()) {
-                ResponseBody rb = Objects.requireNonNull(response.body());
-                String resp = rb.string();
-                rb.close();
-                return resp;
+            try (Response response = client.newCall(request).execute(); ResponseBody rb = Objects.requireNonNull(response.body())) {
+                return rb.string();
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 return null;
@@ -507,6 +504,7 @@ public class HueBridge implements Serializable {
                 Objects.requireNonNull(getInstance(ctx)).setContents(contents);
                 requestHueState(ctx);
                 Log.i(TAG,"Recovery successful");
+
             } catch (FileNotFoundException ex){
                 Log.e(TAG, "Recovery file not found");
                 deleteAllConfiguration(ctx);
@@ -514,15 +512,13 @@ public class HueBridge implements Serializable {
                 ex.printStackTrace();
                 deleteAllConfiguration(ctx);
             }
-
-            toastString = "Recovery successful"; //TODO remove
-            Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+            //toastString = "Recovery successful";
+            //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
         } catch (ClassNotFoundException | IOException e){
             e.printStackTrace();
         }
-
-        String toastString = "Loading successful"; //TODO remove
-        Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        //String toastString = "Loading successful";
+        //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean deleteAllConfiguration(Context ctx){
