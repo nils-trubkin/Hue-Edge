@@ -624,8 +624,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         setSlidersActive(false);
                         break;
                     case R.id.btnEdit:
-                        HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
-                        //startEditActivity(ctx);
+                        //HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
+                        startEditActivity(ctx);
                         break;
                     default:
                         break;

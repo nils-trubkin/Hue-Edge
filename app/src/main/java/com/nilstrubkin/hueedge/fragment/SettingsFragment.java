@@ -65,9 +65,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         briBar.setOnSeekBarChangeListener(this);
         hueBar.setOnSeekBarChangeListener(this);
         satBar.setOnSeekBarChangeListener(this);
-        briBar.setProgress(s.getInt(getString(R.string.preference_bri_levels) , 15));
-        hueBar.setProgress(s.getInt(getString(R.string.preference_hue_levels), 25));
-        satBar.setProgress(s.getInt(getString(R.string.preference_sat_levels), 15));
+        briBar.setProgress(s.getInt(getString(R.string.preference_bri_levels) , 5));
+        hueBar.setProgress(s.getInt(getString(R.string.preference_hue_levels), 15));
+        satBar.setProgress(s.getInt(getString(R.string.preference_sat_levels), 5));
         briStatus.setText(String.valueOf(briBar.getProgress() + minProgress));
         hueStatus.setText(String.valueOf(hueBar.getProgress() + minProgress));
         satStatus.setText(String.valueOf(satBar.getProgress() + minProgress));
