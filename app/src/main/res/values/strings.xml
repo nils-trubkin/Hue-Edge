@@ -16,6 +16,13 @@
     <string name="button_sliders_help_sat">Saturation</string>
     <string name="button_back_text">Back</string>
 
+    <!-- Other panels -->
+    <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
+    <string name="loading">Loading…</string>
+
+    <!-- Categories line -->
+    <string name="dots">..................</string>
+
     <!-- Fragments and navigation -->
     <string name="setup_button_about">About &amp; Support</string>
     <string name="setup_button_close_about">Close about</string>
@@ -84,9 +91,6 @@
     <!-- NotSupportedFragment -->
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
 
-    <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
-    <string name="loading">Loading…</string>
-
     <!-- Edit activity -->
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
@@ -106,6 +110,7 @@
     <string name="preference_username">savedUsername</string>
     <string name="preference_current_category">currentCategory</string>
     <string name="preference_current_category_sliders">currentCategorySliders</string>
+    <string name="preference_tips_shown">tipsShown</string>
 
     <!-- Image description -->
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue Bridge</string>
@@ -131,4 +136,6 @@
     <string name="toast_no_lights">Still downloading, wait one moment please</string>
     <string name="toast_no_wifi">No Wi-Fi connection! Please connect to your Wi-Fi</string>
     <string name="toast_timeout_reply">Hue Bridge can not be reached, make sure you are on the same Wi-Fi</string>
+    <string name="toast_tips_toggle">Press a button to toggle</string>
+    <string name="toast_tips_long">Long-hold a button to adjust</string>
 </resources>

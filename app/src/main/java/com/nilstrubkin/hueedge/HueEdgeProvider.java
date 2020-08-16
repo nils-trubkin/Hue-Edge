@@ -226,31 +226,33 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
 
-    /*
+    /**
      * Samsung SDK
      * This method is called when the instance of Edge Single Plus Mode is deleted from the enabled list
      * @param ctx Context
      */
-    /*
     @Override
     public void onDisabled(Context ctx) {
         super.onDisabled(ctx);
-    }*/
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.remove(ctx.getString(R.string.preference_tips_shown));
+        e.apply();
+    }
 
-    /*
+    /**
      * Samsung SDK
      * This method is called every now and then
      * @param ctx Context
      * @param cocktailManager ignored
      * @param cocktailIds ignored
      */
-    /*
     @Override
     public void onUpdate(Context ctx, SlookCocktailManager cocktailManager, int[] cocktailIds) {
         super.onUpdate(ctx, cocktailManager, cocktailIds);
         Log.d(TAG, "onUpdate()");
         panelUpdate(ctx);
-    }*/
+    }
 
     /**
      * Samsung SDK
@@ -266,6 +268,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         if(!isBridgeNull() && visibility == 1) {
             currentlyClicked.clear();
             panelUpdate(ctx);
+            displayTips(ctx);
             if (checkWifiNotConnected(ctx))
                 Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
             else HueBridge.requestHueState(ctx);
@@ -340,14 +343,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
         }
         for (int line : btnCategoryLineArr){
-            helpView.setInt(line, "setBackgroundResource", 0);
+            helpView.setViewVisibility(line, View.GONE);
         }
         if(!isBridgeNull()){
             int selectedNumber = getBridge(ctx).getCurrentCategory(ctx).ordinal();
             int currentButton = btnCategoryArr[selectedNumber];
             int currentLine = btnCategoryLineArr[selectedNumber];
             helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
-            helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
+            helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;
     }
@@ -419,14 +422,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
         }
         for (int line : btnSlidersCategoryLineArr){
-            helpView.setInt(line, "setBackgroundResource", 0);
+            helpView.setViewVisibility(line, View.GONE);
         }
         slidersCategory currentSlidersCategory = getBridge(ctx).getCurrentSlidersCategory(ctx);
         if(currentSlidersCategory != null){
             int currentButton = btnSlidersCategoryArr[currentSlidersCategory.ordinal()];
             int currentLine = btnSlidersCategoryLineArr[currentSlidersCategory.ordinal()];
             helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
-            helpView.setInt(currentLine, "setBackgroundResource", R.drawable.dotted);
+            helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;
     }
@@ -564,6 +567,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 }
                 if (buttonIsMapped)
                     try {
+                        setTipsDone(ctx, 1);
                         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
                         boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
 
@@ -701,6 +705,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 e.printStackTrace();
             }
             if(buttonIsMapped){
+                setTipsDone(ctx, 2);
                 ResourceReference resRef;
                 BridgeResource res;
                 try {
@@ -861,5 +866,40 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             return wifiMgr.getConnectionInfo().getNetworkId() == -1;
         else
             return true; // Wi-Fi adapter is OFF
+    }
+
+    private void displayTips(Context ctx){
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        int tipsShown = s.getInt(ctx.getString(R.string.preference_tips_shown), 0);
+        if (tipsShown < 6){
+            SharedPreferences.Editor e = s.edit();
+            if (tipsShown < 3)
+                Toast.makeText(ctx, ctx.getString(R.string.toast_tips_toggle), Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(ctx, ctx.getString(R.string.toast_tips_long), Toast.LENGTH_LONG).show();
+            e.putInt(ctx.getString(R.string.preference_tips_shown), ++tipsShown);
+            e.apply();
+        }
+    }
+
+    private void setTipsDone(Context ctx, int i){
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        int tipsShown = s.getInt(ctx.getString(R.string.preference_tips_shown), 0);
+        if (tipsShown < 6) {
+            SharedPreferences.Editor e = s.edit();
+            switch (i) {
+                case 1:
+                    if (tipsShown < 3) {
+                        tipsShown = 3;
+                    }
+                    break;
+                case 2:
+                    tipsShown = 6;
+                    break;
+            }
+            e.putInt(ctx.getString(R.string.preference_tips_shown), tipsShown);
+            e.apply();
+            displayTips(ctx);
+        }
     }
 }

@@ -81,6 +81,9 @@
         <meta-data
             android:name="com.samsung.android.cocktail.mode"
             android:value="edge_single_plus" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>
