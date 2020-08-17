@@ -74,10 +74,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
         gridBtn.setBackgroundResource(btnResource);
         gridBtnText.setText(underBtnText);
         gridBtn.setOnLongClickListener(v -> {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-            boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-            if(!noHaptic)
-                vibrator.vibrate(1);
+            HueEdgeProvider.vibrate(ctx);
             ClipData.Item item = new ClipData.Item(String.valueOf(-1));
             ClipData dragData = new ClipData(
                     name,

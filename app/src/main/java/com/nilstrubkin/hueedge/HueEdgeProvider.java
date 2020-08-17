@@ -581,14 +581,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 }
                 if (buttonIsMapped)
                     try {
-                        setTipsDone(ctx, 1);
-                        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-
-                        if (!noHaptic) {
-                            Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-                            vibrator.vibrate(1);
-                        }
+                        vibrate(ctx);
 
                         if (checkWifiNotEnabled(ctx)) {
                             Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
@@ -597,6 +590,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
                         currentlyClicked.add(id);
 
+                        setTipsDone(ctx, 1);
                         ResourceReference ref = Objects.requireNonNull(currentCategoryContents.get(id));
                         new Thread(() -> getBridge(ctx).getResource(ref).activateResource(ctx)).start();
                     } catch (NullPointerException e) {
@@ -645,16 +639,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         break;
                 }
                 //HueBridge.saveAllConfiguration(ctx);
-                new Thread(() -> HueBridge.requestHueState(ctx)).start();
+                if (!checkWifiNotEnabled(ctx))
+                    new Thread(() -> HueBridge.requestHueState(ctx)).start();
                 currentlyClicked.clear();
                 break;
             case 2:
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-                if (!noHaptic) {
-                    Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-                    vibrator.vibrate(1);
-                }
+                vibrate(ctx);
 
                 if (checkWifiNotEnabled(ctx)) {
                     Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
@@ -719,7 +709,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 e.printStackTrace();
             }
             if(buttonIsMapped){
-                setTipsDone(ctx, 2);
+                vibrate(ctx);
                 ResourceReference resRef;
                 BridgeResource res;
                 try {
@@ -732,7 +722,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     res = getBridge(ctx).getResource(resRef);
                     // If a scene, get resRef for the attached group and activate scene
                     if (res.getCategory().equals("scenes")) {
-                        new Thread(() -> res.activateResource(ctx)).start();
+                        if(checkWifiNotEnabled(ctx))
+                            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        else
+                            new Thread(() -> res.activateResource(ctx)).start();
                         resRef = new ResourceReference("groups", ((SceneResource) res).getGroup());
                     }
                 }
@@ -741,19 +734,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     e.printStackTrace();
                     return;
                 }
-
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-                if(!noHaptic) {
-                    Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-                    vibrator.vibrate(1);
-                }
-
-                if(checkWifiNotEnabled(ctx)) {
-                    Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
-                    return;
-                }
-
+                setTipsDone(ctx, 2);
                 setSlidersResource(resRef);
                 setSlidersActive(true);
             }
@@ -774,11 +755,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(ctx, HueEdgeProvider.class));
         cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.refreshArea);
         // If no wifi connected, show Toast
-        if (checkWifiNotEnabled(ctx)) {
-            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+        if (checkWifiNotEnabled(ctx))
             // Update panel to attach a new pull to refresh intent
             panelUpdate(ctx);
-        }
     }
 
     /**
@@ -910,7 +889,15 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             }
             e.putInt(ctx.getString(R.string.preference_tips_shown), tipsShown);
             e.apply();
-            displayTips(ctx);
+        }
+    }
+
+    public static void vibrate(Context ctx){
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
+        if(!noHaptic) {
+            Vibrator vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
+            vibrator.vibrate(1);
         }
     }
 }

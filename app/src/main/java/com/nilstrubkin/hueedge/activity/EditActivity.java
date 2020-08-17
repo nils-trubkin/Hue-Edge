@@ -210,10 +210,7 @@ public class EditActivity extends AppCompatActivity {
                 btn.setOnDragListener(null);
                 btnText.setOnDragListener(null);
                 btn.setOnLongClickListener(v -> {
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-                    boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-                    if(!noHaptic)
-                        vibrator.vibrate(1);
+                    HueEdgeProvider.vibrate(ctx);
                     ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
                     ClipData dragData = new ClipData(
                             res.getName(),
@@ -245,10 +242,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void clearSlot (int position) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean noHaptic = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_haptic), false);
-        if(!noHaptic)
-            vibrator.vibrate(1);
+        HueEdgeProvider.vibrate(ctx);
         final Map<Integer, ResourceReference> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
