@@ -91,26 +91,26 @@ public class HueBridge implements Serializable {
     public static synchronized HueBridge getInstance(Context ctx) {
         if (instance == null) {
             Log.i(TAG, "HueBridge instance or state is null. Attempting to load config...");
-            loadAllConfiguration(ctx);
-            if (instance == null) {
+            setInstance(ctx, loadAllConfiguration(ctx));
+            if (instance == null)
                 Log.w(TAG, "HueBridge instance is still null after loading config. Is this the first startup?");
-                return null;
-            }
             else requestHueState(ctx);
         }
         return instance;
     }
 
     //Constructor for instance, first time setup
-    public static synchronized void getInstance(Context ctx, String ipAddress, String userName) {
+    public static synchronized HueBridge getInstance(Context ctx, String ipAddress, String userName) {
         instance = new HueBridge(ctx, ipAddress, userName);
         requestHueState(ctx);
+        return instance;
     }
 
     //Setting the instance for config loading
     public static synchronized void setInstance(Context ctx, HueBridge bridge) {
         instance = bridge;
-        setBridge(getInstance(ctx));
+        //HueEdgeProvider update
+        setBridge(instance);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
         e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
@@ -444,12 +444,12 @@ public class HueBridge implements Serializable {
      * Read and set the HueBridge instance from the memory
      * @param ctx Context
      */
-    public static void loadAllConfiguration(Context ctx) {
+    public static synchronized HueBridge loadAllConfiguration(Context ctx) {
         Log.d(TAG, "loadConfigurationFromMemory()");
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = s.getBoolean(ctx.getString(R.string.preference_bridge_configured), false);
         if (!bridgeConfigured)
-            return;
+            return null;
 
         File configFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.preference_file_key));
         ObjectInputStream configInputStream;
@@ -459,11 +459,11 @@ public class HueBridge implements Serializable {
             configInputStream = new ObjectInputStream(new FileInputStream(configFile));
         } catch (FileNotFoundException e){
             Log.e(TAG, "Config file not found");
-            return;
+            return null;
         } catch (IOException e) {
             Log.e(TAG, "IOException");
             e.printStackTrace();
-            return;
+            return null;
         }
 
         // Load instance of HueBridge
@@ -471,8 +471,7 @@ public class HueBridge implements Serializable {
         JsonAdapter<HueBridge> jsonAdapter = moshi.adapter(HueBridge.class);
         try {
             String bridgeString = Objects.requireNonNull(configInputStream).readObject().toString();
-            HueBridge loadedBridge = jsonAdapter.fromJson(bridgeString);
-            setInstance(ctx, loadedBridge);
+            return jsonAdapter.fromJson(bridgeString);
         } catch (NullPointerException e){
             Log.e(TAG, "Config file not found");
         }
@@ -481,7 +480,6 @@ public class HueBridge implements Serializable {
             String toastString = ctx.getString(R.string.toast_old_version);
             Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
             Log.e(TAG, toastString);
-
             File recoveryFile = new File(ctx.getDir("data", MODE_PRIVATE), ctx.getResources().getString(R.string.recovery_file_key));
 
             // Open and apply recovery for HueBridge instance
@@ -491,17 +489,16 @@ public class HueBridge implements Serializable {
                 String userName = Objects.requireNonNull(s.getString(ctx.getString(R.string.preference_username), ""));
                 if(ip.equals("") || userName.equals("")) {
                     Log.e(TAG, "Tried to load preferences, ip or username are not found, can not recover");
-                    return;
+                    return null;
                 }
                 Map<menuCategory, Map<Integer, ResourceReference>> contents =
                         Objects.requireNonNull(
                                 (HashMap<menuCategory, Map<Integer, ResourceReference>>)
                                         recoveryInputStream.readObject());
-                getInstance(ctx, ip, userName);
-                Objects.requireNonNull(getInstance(ctx)).setContents(contents);
-                requestHueState(ctx);
+                HueBridge newBridge = getInstance(ctx, ip, userName);
+                newBridge.setContents(contents);
                 Log.i(TAG,"Recovery successful");
-
+                return newBridge;
             } catch (FileNotFoundException ex){
                 Log.e(TAG, "Recovery file not found");
                 deleteAllConfiguration(ctx);
@@ -516,6 +513,7 @@ public class HueBridge implements Serializable {
         }
         //String toastString = "Loading successful";
         //Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
+        return null;
     }
 
     public static boolean deleteAllConfiguration(Context ctx){
