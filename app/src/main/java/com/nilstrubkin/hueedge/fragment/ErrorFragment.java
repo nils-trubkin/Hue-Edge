@@ -14,11 +14,9 @@ import androidx.navigation.Navigation;
 
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.activity.SetupActivity;
 
 public class ErrorFragment extends Fragment implements View.OnClickListener {
     private NavController navController;
-    private SetupActivity setup;
 
     //UI elements
     private final int searchButtonId = R.id.button_welcome_search;
@@ -36,7 +34,6 @@ public class ErrorFragment extends Fragment implements View.OnClickListener {
         navController = Navigation.findNavController(view);
         view.findViewById(searchButtonId).setOnClickListener(this);
         view.findViewById(manualButtonId).setOnClickListener(this);
-        setup = (SetupActivity) requireActivity();
     }
 
     @Override

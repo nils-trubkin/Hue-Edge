@@ -3,10 +3,7 @@ package com.nilstrubkin.hueedge.adapter;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -30,13 +27,11 @@ public class ResourceArrayAdapter extends ArrayAdapter<BridgeResource> {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
     private final Context ctx;
     private final int mResource;
-    private final Vibrator vibrator;
 
-    public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects, Vibrator vib) {
+    public ResourceArrayAdapter(Context context, int resource, ArrayList<BridgeResource> objects) {
         super(context, resource, objects);
         ctx = context;
         mResource = resource;
-        vibrator = vib;
     }
 
     @NonNull

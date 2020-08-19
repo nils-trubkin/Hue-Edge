@@ -121,7 +121,6 @@
     <string name="plus_symbol">+</string>
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>
-    <string name="question_symbol">\?</string>
 
     <!-- Button no-symbols -->
     <string name="some_no_symbol">Some</string>

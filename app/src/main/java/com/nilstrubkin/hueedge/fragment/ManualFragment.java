@@ -19,11 +19,9 @@ import androidx.navigation.Navigation;
 import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.activity.SetupActivity;
 
 public class ManualFragment extends Fragment implements View.OnClickListener {
     private NavController navController = null;
-    private SetupActivity setup;
 
     // UI elements
     private final int confirmButtonId = R.id.button_manual_confirm;
@@ -47,7 +45,6 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         requireActivity().findViewById(closeButtonId).setOnClickListener(this);
         helpLayout = requireActivity().findViewById(R.id.layout_manual_help);
         ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
-        setup = (SetupActivity) requireActivity();
 
         ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(1);
     }

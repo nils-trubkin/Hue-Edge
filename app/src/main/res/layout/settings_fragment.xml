@@ -69,7 +69,6 @@
         app:layout_constraintTop_toBottomOf="@id/text_seek_bar" />
 
     <TextView
-        android:id="@+id/text_seek_bar_hue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/curved_edge_margin"
@@ -113,7 +112,6 @@
         app:layout_constraintTop_toBottomOf="@id/seek_bar_bri" />
 
     <TextView
-        android:id="@+id/text_seek_bar_sat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/curved_edge_margin"

@@ -30,7 +30,6 @@
     <dimen name="category_btn_margin_bottom">-20dp</dimen>
     <dimen name="category_btn_padding_end">-10dp</dimen>
     <!-- help view category button lines -->
-    <dimen name="category_btn_line_height">30dp</dimen>
 
     <!-- edit activity -->
     <dimen name="resource_button_delete_dimen">24dp</dimen>
@@ -43,36 +42,18 @@
     <dimen name="hue_status_text_size">14dp</dimen>
 
     <!-- setup activity -->
-    <dimen name="setup_root_layout_height">500dp</dimen>
     <dimen name="setup_status_text_size">18dp</dimen>
-    <dimen name="setup_status_text_padding_bottom">40dp</dimen>
     <dimen name="setup_button_width">200dp</dimen>
     <dimen name="setup_button_height">40dp</dimen>
-    <dimen name="setup_button_margin_top">16dp</dimen>
     <dimen name="setup_button_text_size">16dp</dimen>
     <dimen name="setup_discovery_results_height">150dp</dimen>
-    <dimen name="setup_discovery_results_margin_bottom">30dp</dimen>
     <dimen name="setup_discovery_results_margin_left_right">16dp</dimen>
     <dimen name="setup_discovery_results_ip_size">24dp</dimen>
     <dimen name="setup_discovery_results_id_size">18dp</dimen>
-    <dimen name="setup_progress_bar_margin_top_bottom">20dp</dimen>
     <dimen name="setup_pushlink_image_dimen">200dp</dimen>
-    <dimen name="setup_pushlink_image_translation_x">20dp</dimen>
-    <dimen name="setup_big_logo_height">400dp</dimen>
     <dimen name="discovery_item_texts_padding_top_bottom">8dp</dimen>
-    <dimen name="about_right_margin">@dimen/curved_edge_margin</dimen>
-    <dimen name="about_top_margin">50dp</dimen>
     <dimen name="about_padding_left_right">20dp</dimen>
-    <dimen name="about_button_width">150dp</dimen>
-    <dimen name="about_window_margin_top">30dp</dimen>
-    <dimen name="about_window_margin_bottom">100dp</dimen>
-    <dimen name="about_window_margin_left_right">@dimen/curved_edge_margin</dimen>
-    <dimen name="about_text_margin_top">70dp</dimen>
     <dimen name="about_text_text_size">18dp</dimen>
-    <dimen name="help_window_margin_top">100dp</dimen>
-    <dimen name="help_window_padding_bottom">20dp</dimen>
-    <dimen name="ip_help_close_button_margin_top_bottom">20dp</dimen>
-    <dimen name="switch_padding_bottom">20dp</dimen>
 
     <!-- bridge discovery -->
     <dimen name="setup_big_logo_text_size">56dp</dimen>

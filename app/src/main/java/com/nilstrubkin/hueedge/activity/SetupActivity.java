@@ -1,11 +1,8 @@
 package com.nilstrubkin.hueedge.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;

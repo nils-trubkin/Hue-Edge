@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.nilstrubkin.hueedge.HueEdgeProvider.menuCategory;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogueAdapter;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
@@ -32,11 +31,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -62,19 +59,10 @@ public class HueBridge implements Serializable {
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
     private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
 
-    //Default constructor with http header
+    //Constructor
     private HueBridge(Context ctx, String ip, String userName) {
-        this(ctx, ip, userName, "http://");
-    }
-
-    //Custom constructor for future use
-    private HueBridge(Context ctx, String ip, String userName, String urlHeader) {
         this.ip = ip;
-        this.url =
-                Objects.requireNonNull(urlHeader) +
-                        Objects.requireNonNull(ip) +
-                        "/api/" +
-                        Objects.requireNonNull(userName);
+        this.url = "http://" + ip + "/api/" + userName;
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
         e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
@@ -491,10 +479,23 @@ public class HueBridge implements Serializable {
                     Log.e(TAG, "Tried to load preferences, ip or username are not found, can not recover");
                     return null;
                 }
+                // Voodoo-area, proceed with caution
+                @SuppressWarnings("unchecked")
+                // Unsafe cast
                 Map<menuCategory, Map<Integer, ResourceReference>> contents =
                         Objects.requireNonNull(
                                 (HashMap<menuCategory, Map<Integer, ResourceReference>>)
                                         recoveryInputStream.readObject());
+                // Empty body of for loop to fail-fast in case of any issue with members of the maps
+                //noinspection StatementWithEmptyBody
+                for (menuCategory m_ignored : contents.keySet());
+                for (Map<Integer, ResourceReference> c : contents.values()) {
+                    //noinspection StatementWithEmptyBody
+                    for (Integer i_ignored : c.keySet());
+                    //noinspection StatementWithEmptyBody
+                    for (ResourceReference r_ignored : c.values());
+                }
+                // Voodoo-area ends here
                 HueBridge newBridge = getInstance(ctx, ip, userName);
                 newBridge.setContents(contents);
                 Log.i(TAG,"Recovery successful");

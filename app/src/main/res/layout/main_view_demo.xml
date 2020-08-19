@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:ignore="NestedWeights">
+    tools:ignore="NestedWeights,UnusedResources">
 
     <ImageView
         android:id="@+id/main_background"
@@ -342,7 +341,8 @@
                         android:text="Bedroom"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/resource_btn_text_text_size" />
+                        android:textSize="@dimen/resource_btn_text_text_size"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -456,7 +456,8 @@
                             android:textAlignment="center"
                             android:textColor="@color/white"
                             android:textSize="@dimen/resource_btn_text_size_symbol"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="SpUsage" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar2"
@@ -475,7 +476,8 @@
                         android:text="Bedroom"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/resource_btn_text_text_size" />
+                        android:textSize="@dimen/resource_btn_text_text_size"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -578,7 +580,8 @@
                             android:textAlignment="center"
                             android:textColor="@color/black"
                             android:textSize="@dimen/resource_btn_text_size_symbol"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            tools:ignore="SpUsage" />
 
                         <ProgressBar
                             android:id="@+id/progress_bar4"

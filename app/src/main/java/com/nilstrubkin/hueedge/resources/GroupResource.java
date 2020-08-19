@@ -35,7 +35,7 @@ public class GroupResource extends BridgeResourceSliders {
     }
 
     static class Action implements Serializable{
-        int bri;
+        //int bri;
         int hue;
         int sat;
 

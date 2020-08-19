@@ -21,7 +21,7 @@ class LightResource extends BridgeResourceSliders {
     static class State implements Serializable {
 
         boolean on;
-        int bri;
+        //int bri;
         int hue;
         int sat;
 

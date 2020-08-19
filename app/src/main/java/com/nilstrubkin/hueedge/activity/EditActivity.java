@@ -4,11 +4,8 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -41,12 +38,32 @@ public class EditActivity extends AppCompatActivity {
     private final Context ctx = this;
 
     private HueBridge bridge;
-    private Vibrator vibrator;
     private HueEdgeProvider.menuCategory currentCategory;
     private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents;
 
-    public HueEdgeProvider.menuCategory getCurrentCategory() {
+
+    private void setBridge(HueBridge bridge) {
+        this.bridge = bridge;
+    }
+
+    private HueBridge getBridge() {
+        return bridge;
+    }
+
+    private HueEdgeProvider.menuCategory getCurrentCategory() {
         return currentCategory;
+    }
+
+    private void setCurrentCategory(HueEdgeProvider.menuCategory currentCategory) {
+        this.currentCategory = currentCategory;
+    }
+
+    private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> getContents() {
+        return contents;
+    }
+
+    private void setContents(Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents) {
+        this.contents = contents;
     }
 
     @Override
@@ -55,7 +72,7 @@ public class EditActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Started.");
 
         try {
-            bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
+            setBridge(Objects.requireNonNull(HueBridge.getInstance(ctx)));
         } catch (NullPointerException e){
             // If no bridge is found, start setup activity
             Log.e(TAG, "Entering edit activity but no HueBridge instance was found, starting setup activity");
@@ -75,9 +92,9 @@ public class EditActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
 
-        vibrator = (Vibrator) ctx.getSystemService(VIBRATOR_SERVICE);
-        currentCategory = bridge.getCurrentCategory(ctx);
-        contents = bridge.getContents();
+        HueBridge br = getBridge();
+        setCurrentCategory(br.getCurrentCategory(ctx));
+        setContents(br.getContents());
 
         btnSave.setOnClickListener(v -> {
             if(HueBridge.getInstance(ctx) != null){
@@ -110,8 +127,8 @@ public class EditActivity extends AppCompatActivity {
 
         ArrayList<BridgeResource> resources = new ArrayList<>();
         Map<String, ? extends BridgeResource> map = null;
-        BridgeCatalogue bridgeState = bridge.getBridgeState();
-        switch (currentCategory) {
+        BridgeCatalogue bridgeState = getBridge().getBridgeState();
+        switch (getCurrentCategory()) {
             case QUICK_ACCESS:
                 map = bridgeState.getLights();
                 for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
@@ -151,7 +168,7 @@ public class EditActivity extends AppCompatActivity {
         }
 
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
-                this, R.layout.edit_activity_adapter_view_layout, resources, vibrator);
+                this, R.layout.edit_activity_adapter_view_layout, resources);
         adapter.sort(BridgeResource::compareTo);
         mListView.setAdapter(adapter);
 
@@ -163,7 +180,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show(); //TODO snackbar
+                        .setAction("Action", null).show(); //TODO some snackbar code
             }
         });*/
     }
@@ -175,10 +192,12 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void panelUpdateIndex (int i){
-        if (contents.containsKey(currentCategory)) {
+        HueEdgeProvider.menuCategory cc = getCurrentCategory();
+        Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents = getContents();
+        if (contents.containsKey(getCurrentCategory())) {
             Map<Integer, ResourceReference> currentCategoryContents;
             try {
-                currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
+                currentCategoryContents = Objects.requireNonNull(contents.get(cc));
             } catch (NullPointerException e) {
                 Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
                 e.printStackTrace();
@@ -195,7 +214,7 @@ public class EditActivity extends AppCompatActivity {
                 final BridgeResource res;
                 try {
                     ResourceReference resRef = Objects.requireNonNull(currentCategoryContents.get(i));
-                    res = bridge.getResource(resRef);
+                    res = getBridge().getResource(resRef);
                 } catch (NullPointerException e) {
                     Log.e(TAG, "Failed to load filled slot");
                     e.printStackTrace();
@@ -245,7 +264,7 @@ public class EditActivity extends AppCompatActivity {
         HueEdgeProvider.vibrate(ctx);
         final Map<Integer, ResourceReference> currentCategoryContents;
         try {
-            currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
+            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
         }
         catch (NullPointerException e){
             Log.e(TAG, "Failed to get contents of current category");

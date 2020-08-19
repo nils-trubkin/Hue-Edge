@@ -10,7 +10,6 @@ import com.badoualy.stepperindicator.StepperIndicator;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.activity.SetupActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,6 @@ import androidx.navigation.Navigation;
 
 public class WelcomeFragment extends Fragment implements View.OnClickListener {
     private NavController navController;
-    private SetupActivity setup;
 
     //UI elements
     private final int searchButtonId = R.id.button_welcome_search;
@@ -41,7 +39,6 @@ public class WelcomeFragment extends Fragment implements View.OnClickListener {
         //navController = navHostFragment.getNavController();
         view.findViewById(searchButtonId).setOnClickListener(this);
         view.findViewById(manualButtonId).setOnClickListener(this);
-        setup = (SetupActivity) requireActivity();
 
         ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(0);
 
