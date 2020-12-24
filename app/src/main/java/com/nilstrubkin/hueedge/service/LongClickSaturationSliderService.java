@@ -50,7 +50,7 @@ public class LongClickSaturationSliderService extends RemoteViewsService {
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title3) + itemId);
             int slidersResourceColor = HueEdgeProvider.getSlidersResHue();
             float h = slidersResourceColor * 360f / 65536f;
-            float s = id / (float) MAX_CHILD;
+            float s = 1f - id / (float) MAX_CHILD;
             float v = 1f;
             int bgColor = Color.HSVToColor(new float[]{h, s, v});
             itemView.setInt(R.id.item_text1, "setBackgroundColor", bgColor);
