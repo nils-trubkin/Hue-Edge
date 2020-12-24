@@ -236,7 +236,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     @Override
     public void onEnabled(Context ctx) {
         super.onEnabled(ctx);
-        startSetupActivity(ctx);
     }
 
 
