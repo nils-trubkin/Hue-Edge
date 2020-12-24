@@ -78,6 +78,12 @@
             android:permission="android.permission.BIND_REMOTEVIEWS"
             />
 
+        <service
+            android:name="com.nilstrubkin.hueedge.service.LongClickCtSliderService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
+
         <meta-data
             android:name="com.samsung.android.cocktail.mode"
             android:value="edge_single_plus" />

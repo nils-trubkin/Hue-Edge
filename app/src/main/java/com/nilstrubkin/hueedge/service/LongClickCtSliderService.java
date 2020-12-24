@@ -49,14 +49,14 @@ public class LongClickCtSliderService extends RemoteViewsService {
             //int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
             //int slidersResourceColor = HueEdgeProvider.getSlidersResHue();
-            //float ct = (500f - 153f) * id / (float) MAX_CHILD + 153f;
-            //float kelvin = 1_000_000f / ct;
+            float ct = (500f - 153f) * id / (float) MAX_CHILD + 153f;
+            float kelvin = 1_000_000f / ct;
             //float h = 1f;
             //float s = 1f;
             //float v = 1f;
-            //int bgColor = colorTemperatureToColor(kelvin);
-            int bgColor = 0;
-            int ct = 0;
+            int bgColor = colorTemperatureToColor(kelvin);
+            Log.e(TAG, "kalvin " + kelvin + " bgColor " + String.format("0x%08X", bgColor));
+
             itemView.setInt(R.id.item_text1, "setBackgroundColor", bgColor);
 
             // set fill in intent
@@ -73,7 +73,7 @@ public class LongClickCtSliderService extends RemoteViewsService {
 
         private int colorTemperatureToColor(float kelvin){
 
-            float temp = kelvin / 100;
+            float temp = kelvin / 50;
             float red, green, blue;
 
             if( temp <= 66 ){
@@ -97,11 +97,11 @@ public class LongClickCtSliderService extends RemoteViewsService {
 
                 blue = 255;
             }
-            return Color.argb(255, (int) red, (int) green, (int) blue);
+            return Color.argb(255, (int) clamp(red), (int) clamp(green), (int) clamp(blue));
         }
 
-        public float clamp(float val, float min, float max) {
-            return Math.max(min, Math.min(max, val));
+        public float clamp(float val) {
+            return Math.max(0f, Math.min(255f, val));
         }
 
         @Override
