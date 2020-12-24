@@ -38,6 +38,13 @@ public abstract class BridgeResourceSliders extends BridgeResource {
         sendValue(ctx, satAction, value);
     }
 
+    public void setCt(Context ctx, int value) {
+        String ctAction = "ct";
+        if(isAll_off())
+            enableResource(ctx);
+        sendValue(ctx, ctAction, value);
+    }
+
     public String getStateUrl() {
         return "/" + getCategory() + "/" + getId() + "/state";
     }

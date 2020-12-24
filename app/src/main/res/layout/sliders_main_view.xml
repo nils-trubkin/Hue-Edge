@@ -30,4 +30,10 @@
         android:layout_height="match_parent"
         android:longClickable="true" />
 
+    <ListView
+        android:id="@+id/sliders_ct"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:longClickable="true" />
+
 </RelativeLayout>

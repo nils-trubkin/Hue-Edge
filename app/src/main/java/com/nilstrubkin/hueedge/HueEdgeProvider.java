@@ -20,9 +20,7 @@ import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeResourceSliders;
 import com.nilstrubkin.hueedge.resources.SceneResource;
-import com.nilstrubkin.hueedge.service.LongClickBrightnessSliderService;
-import com.nilstrubkin.hueedge.service.LongClickColorSliderService;
-import com.nilstrubkin.hueedge.service.LongClickSaturationSliderService;
+import com.nilstrubkin.hueedge.service.*;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -70,10 +68,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             R.id.btn6deleteTopText, R.id.btn7deleteTopText, R.id.btn8deleteTopText, R.id.btn9deleteTopText, R.id.btn10deleteTopText};
     //Array of references to category buttons
     public static final int[] btnSlidersCategoryArr = {R.id.btnSlidersCategory1, R.id.btnSlidersCategory2,
-            R.id.btnSlidersCategory3};
+            R.id.btnSlidersCategory3, R.id.btnSlidersCategory4};
     //Array of references to category buttons underlines
     public static final int[] btnSlidersCategoryLineArr = {R.id.btnSlidersCategoryLine1, R.id.btnSlidersCategoryLine2,
-            R.id.btnSlidersCategoryLine3};
+            R.id.btnSlidersCategoryLine3, R.id.btnSlidersCategoryLine4};
     //Array of references to progress bars
     public static final int[] progressBarArr = {R.id.progress_bar1, R.id.progress_bar2, R.id.progress_bar3, R.id.progress_bar4,
             R.id.progress_bar5, R.id.progress_bar6, R.id.progress_bar7, R.id.progress_bar8, R.id.progress_bar9, R.id.progress_bar10};
@@ -91,7 +89,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public enum slidersCategory {
         BRIGHTNESS,
         COLOR,
-        SATURATION
+        SATURATION,
+        TEMPERATURE
     }
 
     private static boolean slidersActive = false;
@@ -388,6 +387,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         remoteListView.setViewVisibility(R.id.sliders_bri, View.GONE);
         remoteListView.setViewVisibility(R.id.sliders_hue, View.GONE);
         remoteListView.setViewVisibility(R.id.sliders_sat, View.GONE);
+        remoteListView.setViewVisibility(R.id.sliders_ct, View.GONE);
 
         switch (getBridge(ctx).getCurrentSlidersCategory(ctx)) {
             case BRIGHTNESS:
@@ -408,6 +408,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_sat);
                 remoteListView.setViewVisibility(R.id.sliders_sat, View.VISIBLE);
                 break;
+            case TEMPERATURE:
+                Intent temperatureIntent = new Intent(ctx, LongClickCtSliderService.class);
+                remoteListView.setRemoteAdapter(R.id.sliders_ct, temperatureIntent);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_ct);
+                remoteListView.setViewVisibility(R.id.sliders_ct, View.VISIBLE);
+                break;
             default:
                 Log.e(TAG,"Unknown category!");
                 break;
@@ -418,6 +424,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         remoteListView.setPendingIntentTemplate(R.id.sliders_bri, getClickIntent(ctx, R.id.sliders_bri, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_hue, getClickIntent(ctx, R.id.sliders_hue, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_sat, getClickIntent(ctx, R.id.sliders_sat, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_ct, getClickIntent(ctx, R.id.sliders_ct, 2));
         return remoteListView;
     }
 
@@ -627,6 +634,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     case R.id.btnSlidersCategory3:
                         getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.SATURATION);
                         break;
+                    case R.id.btnSlidersCategory4:
+                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.TEMPERATURE);
+                        break;
                     case R.id.btnBack:
                         setSlidersActive(false);
                         break;
@@ -665,6 +675,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     case R.id.sliders_sat:
                         value = intent.getIntExtra("sat", 0);
                         new Thread(() -> res.setSat(ctx, value)).start();
+                        break;
+                    case R.id.sliders_ct:
+                        value = intent.getIntExtra("ct", 0);
+                        new Thread(() -> res.setCt(ctx, value)).start();
                         break;
                     default:
                         Log.e(TAG, "Unknown category!");

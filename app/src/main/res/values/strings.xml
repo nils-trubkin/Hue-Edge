@@ -14,6 +14,7 @@
     <string name="button_sliders_help_bri">Brightness</string>
     <string name="button_sliders_help_hue">Color</string>
     <string name="button_sliders_help_sat">Saturation</string>
+    <string name="button_sliders_help_ct">Temperature</string>
     <string name="button_back_text">Back</string>
 
     <!-- Other panels -->
@@ -106,6 +107,7 @@
     <string name="preference_bri_levels">briLevels</string>
     <string name="preference_hue_levels">hueLevels</string>
     <string name="preference_sat_levels">satLevels</string>
+    <string name="preference_ct_levels">ctLevels</string>
     <string name="preference_ip">savedIp</string>
     <string name="preference_username">savedUsername</string>
     <string name="preference_current_category">currentCategory</string>

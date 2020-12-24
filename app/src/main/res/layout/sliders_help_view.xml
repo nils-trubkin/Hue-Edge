@@ -108,6 +108,38 @@
             android:textSize="18dp" />
     </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnSlidersCategory4"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_sliders_help_ct"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size" />
+
+        <TextView
+            android:id="@+id/btnSlidersCategoryLine4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue"
+            android:textSize="18dp" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/category_btn_height"
