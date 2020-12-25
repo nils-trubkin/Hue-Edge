@@ -55,7 +55,7 @@ public class LongClickCtSliderService extends RemoteViewsService {
             //float s = 1f;
             //float v = 1f;
             int bgColor = colorTemperatureToColor(kelvin);
-            Log.e(TAG, "kalvin " + kelvin + " bgColor " + String.format("0x%08X", bgColor));
+            //Log.e(TAG, "ct " + ct + " kelvin " + kelvin + " bgColor " + String.format("0x%08X", bgColor));
 
             itemView.setInt(R.id.item_text1, "setBackgroundColor", bgColor);
 
@@ -73,6 +73,7 @@ public class LongClickCtSliderService extends RemoteViewsService {
 
         private int colorTemperatureToColor(float kelvin){
 
+            // adjusted from 100 to 50 to shift the spectrum into cold
             float temp = kelvin / 50;
             float red, green, blue;
 
@@ -97,7 +98,12 @@ public class LongClickCtSliderService extends RemoteViewsService {
 
                 blue = 255;
             }
-            return Color.argb(255, (int) clamp(red), (int) clamp(green), (int) clamp(blue));
+
+            // adjusted to have higher saturation
+            float[] hsv = new float[3];
+            Color.RGBToHSV((int) clamp(red), (int) clamp(green), (int) clamp(blue), hsv);
+            hsv[1] *= 2;
+            return Color.HSVToColor(hsv);
         }
 
         public float clamp(float val) {
