@@ -74,10 +74,11 @@
 
     <!-- FinalFragment -->
     <string name="fragment_final_label">The configuration is finished\nEdge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
+    <string name="fragment_final_button_howto">How to use this?</string>
     <string name="fragment_final_button_settings">Preferences</string>
 
     <!-- ConfirmationFragment -->
-    <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
+    <string name="fragment_confirmation_label">Removing Hue Edge configuration will clear the saved button order. This does not affect your bridge's configuration.\n\nAre you sure?</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
 
@@ -88,6 +89,10 @@
     <string name="fragment_settings_switch_haptic">No haptic feedback (vibration)</string>
     <string name="fragment_settings_button_remove">Remove configuration</string>
     <string name="fragment_settings_button_back">Back</string>
+
+    <!-- HowTo -->
+    <string name="fragment_howto_text">Make sure that the Hue Edge panel is enabled in the edge panel settings.\n\n</string>
+    <string name="fragment_howto_button_back">Back</string>
 
     <!-- NotSupportedFragment -->
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
