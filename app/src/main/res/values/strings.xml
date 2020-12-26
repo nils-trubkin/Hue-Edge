@@ -87,7 +87,9 @@
     <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15, 15)</string>
     <string name="fragment_settings_switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
     <string name="fragment_settings_switch_haptic">No haptic feedback (vibration)</string>
-    <string name="fragment_settings_button_remove">Remove configuration</string>
+    <string name="fragment_settings_switch_wifi_err_msg">No wifi error messages</string>
+    <string name="fragment_settings_switch_legacy_help_view">Legacy menu (left) panel</string>
+    <string name="fragment_settings_button_remove">Forget bridge</string>
     <string name="fragment_settings_button_back">Back</string>
 
     <!-- HowTo -->
@@ -109,6 +111,8 @@
     <!-- SharedPreferences -->
     <string name="preference_no_symbols">noSymbols</string>
     <string name="preference_no_haptic">noHaptic</string>
+    <string name="preference_no_wifi_err_msg">noWifiErrMsg</string>
+    <string name="preference_legacy_help_view">legacyHelpView</string>
     <string name="preference_bridge_configured">bridgeConfigured</string>
     <string name="preference_bri_levels">briLevels</string>
     <string name="preference_hue_levels">hueLevels</string>

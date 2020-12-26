@@ -200,7 +200,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 currentlyClicked.clear();
                 panelUpdate(ctx);
                 if (checkWifiNotEnabled(ctx)){
-                    Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                    boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                    if(!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     performPullToRefresh(ctx);
                 }
                 else HueBridge.requestHueState(ctx);
@@ -209,7 +210,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 HueBridge.requestHueState(ctx);
                 break;
             case ACTION_TIMEOUT_HUE_REPLY:
-                Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
+                boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
                 currentlyClicked.clear();
                 panelUpdate(ctx);
                 break;
@@ -281,8 +283,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             currentlyClicked.clear();
             panelUpdate(ctx);
             displayTips(ctx);
-            if (checkWifiNotEnabled(ctx))
-                Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            if (checkWifiNotEnabled(ctx)) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            }
             else HueBridge.requestHueState(ctx);
         }
     }
@@ -590,7 +595,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         vibrate(ctx);
 
                         if (checkWifiNotEnabled(ctx)) {
-                            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                            if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -656,7 +663,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 vibrate(ctx);
 
                 if (checkWifiNotEnabled(ctx)) {
-                    Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                    if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -735,8 +744,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     res = getBridge(ctx).getResource(resRef);
                     // If a scene, get resRef for the attached group and activate scene
                     if (res.getCategory().equals("scenes")) {
-                        if(checkWifiNotEnabled(ctx))
-                            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        if(checkWifiNotEnabled(ctx)) {
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                            if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        }
                         else
                             new Thread(() -> res.activateResource(ctx)).start();
                         resRef = new ResourceReference("groups", ((SceneResource) res).getGroup());

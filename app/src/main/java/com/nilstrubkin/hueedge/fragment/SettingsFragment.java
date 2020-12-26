@@ -26,12 +26,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     private final int backButtonId = R.id.button_settings_back;
     private final int symbolSwitchId = R.id.switch_symbols;
     private final int hapticSwitchId = R.id.switch_haptic;
+    private final int wifiErrMsgSwitchId = R.id.switch_wifi_err_msg;
+    private final int legacyHelpViewSwitchId = R.id.switch_legacy_help_view;
     private final int briBarId = R.id.seek_bar_bri;
     private final int hueBarId = R.id.seek_bar_hue;
     private final int satBarId = R.id.seek_bar_sat;
     private final int ctBarId = R.id.seek_bar_ct;
     private SwitchCompat symbolSwitch;
     private SwitchCompat hapticSwitch;
+    private SwitchCompat wifiErrMsgSwitch;
+    private SwitchCompat legacyHelpViewSwitch;
     private TextView briStatus;
     private TextView hueStatus;
     private TextView satStatus;
@@ -53,11 +57,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         view.findViewById(backButtonId).setOnClickListener(this);
         symbolSwitch = view.findViewById(symbolSwitchId);
         hapticSwitch = view.findViewById(hapticSwitchId);
+        wifiErrMsgSwitch = view.findViewById(wifiErrMsgSwitchId);
+        legacyHelpViewSwitch = view.findViewById(legacyHelpViewSwitchId);
         symbolSwitch.setOnClickListener(this);
         hapticSwitch.setOnClickListener(this);
+        wifiErrMsgSwitch.setOnClickListener(this);
+        legacyHelpViewSwitch.setOnClickListener(this);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(requireContext());
         symbolSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_symbols), false));
         hapticSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_haptic), false));
+        wifiErrMsgSwitch.setChecked(s.getBoolean(getString(R.string.preference_no_wifi_err_msg), false));
+        legacyHelpViewSwitch.setChecked(s.getBoolean(getString(R.string.preference_legacy_help_view), false));
         briStatus = view.findViewById(R.id.text_seek_bar_bri_status);
         hueStatus = view.findViewById(R.id.text_seek_bar_hue_status);
         satStatus = view.findViewById(R.id.text_seek_bar_sat_status);
@@ -101,6 +111,18 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 s = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 e = s.edit();
                 e.putBoolean(getResources().getString(R.string.preference_no_haptic), hapticSwitch.isChecked());
+                e.apply();
+                break;
+            case wifiErrMsgSwitchId:
+                s = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                e = s.edit();
+                e.putBoolean(getResources().getString(R.string.preference_no_wifi_err_msg), wifiErrMsgSwitch.isChecked());
+                e.apply();
+                break;
+            case legacyHelpViewSwitchId:
+                s = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                e = s.edit();
+                e.putBoolean(getResources().getString(R.string.preference_legacy_help_view), legacyHelpViewSwitch.isChecked());
                 e.apply();
                 break;
         }

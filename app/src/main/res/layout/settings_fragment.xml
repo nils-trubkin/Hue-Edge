@@ -245,15 +245,49 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/curved_edge_margin"
                 android:layout_marginEnd="@dimen/curved_edge_margin"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/fragment_settings_switch_haptic"
+                android:textColor="@color/white"
+                android:textSize="@dimen/setup_status_text_size"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@id/switch_wifi_err_msg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_symbols"
+                tools:ignore="SpUsage" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_wifi_err_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/curved_edge_margin"
+                android:layout_marginEnd="@dimen/curved_edge_margin"
+                android:layout_marginBottom="16dp"
+                android:text="@string/fragment_settings_switch_wifi_err_msg"
+                android:textColor="@color/white"
+                android:textSize="@dimen/setup_status_text_size"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@id/switch_legacy_help_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_haptic"
+                tools:ignore="SpUsage" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_legacy_help_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/curved_edge_margin"
+                android:layout_marginEnd="@dimen/curved_edge_margin"
+                android:layout_marginBottom="16dp"
+                android:text="@string/fragment_settings_switch_legacy_help_view"
                 android:textColor="@color/white"
                 android:textSize="@dimen/setup_status_text_size"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_symbols"
+                app:layout_constraintTop_toBottomOf="@id/switch_wifi_err_msg"
                 tools:ignore="SpUsage" />
 
 
