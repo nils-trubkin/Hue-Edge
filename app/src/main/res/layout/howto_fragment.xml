@@ -7,15 +7,18 @@
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
     android:orientation="vertical"
-    tools:context=".fragment.SettingsFragment">
+    tools:context=".fragment.HowtoFragment">
 
     <ScrollView
         android:id="@+id/scroll_view_howto"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/scrollable_background"
+        android:fadeScrollbars="false"
         android:scrollbarThumbVertical="@color/white"
+        android:scrollbarTrackVertical="@color/category_unselected_gray"
         app:layout_constraintBottom_toTopOf="@+id/button_howto_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,15 +28,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            tools:context=".fragment.SettingsFragment">
+            tools:context=".fragment.HowtoFragment">
 
             <TextView
                 android:id="@+id/text_setup_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/curved_edge_margin"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="@dimen/curved_edge_margin"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/fragment_howto_text"
                 android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceLarge"
@@ -49,6 +53,7 @@
                 android:id="@+id/gif_edgeswipe"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/howto_gif_height"
+                android:layout_marginBottom="16dp"
                 android:contentDescription="@string/fragment_howto_gif_description"
                 android:src="@drawable/edgeswipe"
                 app:layout_constraintBottom_toBottomOf="parent"
