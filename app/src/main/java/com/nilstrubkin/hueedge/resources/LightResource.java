@@ -24,7 +24,6 @@ class LightResource extends BridgeResourceSliders {
         //int bri;
         int hue;
         int sat;
-        int ct;
 
         public boolean isOn() {
             return on;
