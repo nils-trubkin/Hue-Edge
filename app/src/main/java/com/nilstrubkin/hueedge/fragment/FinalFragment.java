@@ -19,6 +19,7 @@ public class FinalFragment extends Fragment implements View.OnClickListener {
 
     //UI elements
     private final int settingsButtonId = R.id.button_final_settings;
+    private final int howtoButtonId = R.id.button_final_howto;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,6 +32,7 @@ public class FinalFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
         view.findViewById(settingsButtonId).setOnClickListener(this);
+        view.findViewById(howtoButtonId).setOnClickListener(this);
 
         ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(4);
     }
@@ -38,9 +40,15 @@ public class FinalFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == settingsButtonId) {
-            navController.navigate(R.id.action_finalFragment_to_settingsFragment);
-            requireActivity().findViewById(R.id.steps_wizard).setVisibility(View.GONE);
+        switch (view.getId()){
+            case settingsButtonId:
+                navController.navigate(R.id.action_finalFragment_to_settingsFragment);
+                requireActivity().findViewById(R.id.steps_wizard).setVisibility(View.GONE);
+                break;
+            case howtoButtonId:
+                navController.navigate(R.id.action_finalFragment_to_howtoFragment);
+                requireActivity().findViewById(R.id.steps_wizard).setVisibility(View.GONE);
+                break;
         }
     }
 }
