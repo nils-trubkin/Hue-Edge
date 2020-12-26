@@ -94,11 +94,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     private void showAbout(){
         findViewById(R.id.layout_about).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_tint).setVisibility(View.VISIBLE);
         findViewById(R.id.button_about).setVisibility(View.GONE);
     }
 
     private void closeAbout(){
         findViewById(R.id.layout_about).setVisibility(View.GONE);
+        findViewById(R.id.layout_tint).setVisibility(View.GONE);
         findViewById(R.id.button_about).setVisibility(View.VISIBLE);
     }
 

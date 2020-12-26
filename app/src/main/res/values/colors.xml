@@ -36,4 +36,5 @@
     <color name="setup_button_unfocused_color">@color/white</color>
     <color name="setup_button_press_color">#BABABA</color>
     <color name="discovery_list_color">#50FAFAFA</color>
+    <color name="setup_tint">#50000000</color>
 </resources>

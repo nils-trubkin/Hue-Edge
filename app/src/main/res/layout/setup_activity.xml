@@ -93,6 +93,26 @@
         app:navGraph="@navigation/nav_graph" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_tint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/setup_tint"
+        android:clickable="true"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_big_logo_text_size"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_manual_help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,6 +120,7 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:orientation="vertical"
+        android:paddingBottom="16dp"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"
@@ -175,6 +196,7 @@
         android:fontFamily="sans-serif-light"
         android:gravity="center"
         android:orientation="vertical"
+        android:paddingBottom="16dp"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_big_logo_text_size"

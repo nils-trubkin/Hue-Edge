@@ -28,6 +28,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
     private final int helpButtonId = R.id.button_manual_help;
     private final int closeButtonId = R.id.button_help_close;
     private ConstraintLayout helpLayout;
+    private ConstraintLayout tint;
     private EditText ipField;
 
     @Override
@@ -44,6 +45,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         view.findViewById(helpButtonId).setOnClickListener(this);
         requireActivity().findViewById(closeButtonId).setOnClickListener(this);
         helpLayout = requireActivity().findViewById(R.id.layout_manual_help);
+        tint = requireActivity().findViewById(R.id.layout_tint);
         ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
 
         ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(1);
@@ -71,9 +73,11 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
                 break;
             case helpButtonId:
                 helpLayout.setVisibility(View.VISIBLE);
+                tint.setVisibility(View.VISIBLE);
                 break;
             case closeButtonId:
                 helpLayout.setVisibility(View.GONE);
+                tint.setVisibility(View.GONE);
                 break;
         }
     }
