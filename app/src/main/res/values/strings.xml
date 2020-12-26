@@ -28,7 +28,7 @@
     <string name="setup_button_about">About &amp; Support</string>
     <string name="setup_button_close_about">Close about</string>
     <string name="setup_button_close_help">Close help</string>
-    <string name="setup_about_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
+    <string name="setup_about_text">Hue Edge v 1.2\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
     <string name="setup_button_license">License</string>
     <string name="setup_button_contact">Contact me</string>
     <string name="setup_button_support">Support via PayPal</string>
