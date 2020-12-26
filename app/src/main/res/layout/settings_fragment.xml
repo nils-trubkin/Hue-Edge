@@ -29,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="16dp"
         android:text="@string/button_sliders_help_bri"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_status_text_size"
@@ -149,10 +150,53 @@
         android:layout_marginBottom="16dp"
         android:max="40"
         android:progress="5"
-        app:layout_constraintBottom_toTopOf="@id/switch_symbols"
+        app:layout_constraintBottom_toTopOf="@id/seek_bar_ct"
         app:layout_constraintEnd_toEndOf="@+id/seek_bar_hue"
         app:layout_constraintStart_toStartOf="@+id/seek_bar_hue"
         app:layout_constraintTop_toBottomOf="@id/seek_bar_hue" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/curved_edge_margin"
+        android:layout_marginEnd="16dp"
+        android:text="@string/button_sliders_help_ct"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_ct"
+        app:layout_constraintEnd_toStartOf="@id/seek_bar_sat"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_ct"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/text_seek_bar_ct_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/curved_edge_margin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/setup_status_text_size"
+        tools:text="12"
+        app:layout_constraintBottom_toBottomOf="@+id/seek_bar_ct"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/seek_bar_ct"
+        app:layout_constraintTop_toTopOf="@+id/seek_bar_ct"
+        tools:ignore="SpUsage" />
+
+    <SeekBar
+        android:id="@+id/seek_bar_ct"
+        style="@android:style/Widget.Material.Light.SeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:max="40"
+        android:progress="5"
+        app:layout_constraintBottom_toTopOf="@id/switch_symbols"
+        app:layout_constraintEnd_toEndOf="@+id/seek_bar_hue"
+        app:layout_constraintStart_toStartOf="@+id/seek_bar_hue"
+        app:layout_constraintTop_toBottomOf="@id/seek_bar_sat" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switch_symbols"
@@ -168,7 +212,7 @@
         app:layout_constraintBottom_toTopOf="@id/switch_haptic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seek_bar_sat"
+        app:layout_constraintTop_toBottomOf="@id/seek_bar_ct"
         tools:ignore="SpUsage" />
 
     <androidx.appcompat.widget.SwitchCompat

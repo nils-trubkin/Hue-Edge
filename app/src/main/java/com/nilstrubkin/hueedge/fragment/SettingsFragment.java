@@ -29,11 +29,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     private final int briBarId = R.id.seek_bar_bri;
     private final int hueBarId = R.id.seek_bar_hue;
     private final int satBarId = R.id.seek_bar_sat;
+    private final int ctBarId = R.id.seek_bar_ct;
     private SwitchCompat symbolSwitch;
     private SwitchCompat hapticSwitch;
     private TextView briStatus;
     private TextView hueStatus;
     private TextView satStatus;
+    private TextView ctStatus;
 
     public static final int minProgress = 10;
 
@@ -59,18 +61,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         briStatus = view.findViewById(R.id.text_seek_bar_bri_status);
         hueStatus = view.findViewById(R.id.text_seek_bar_hue_status);
         satStatus = view.findViewById(R.id.text_seek_bar_sat_status);
+        ctStatus = view.findViewById(R.id.text_seek_bar_ct_status);
         SeekBar briBar = view.findViewById(briBarId);
         SeekBar hueBar = view.findViewById(hueBarId);
         SeekBar satBar = view.findViewById(satBarId);
+        SeekBar ctBar = view.findViewById(ctBarId);
         briBar.setOnSeekBarChangeListener(this);
         hueBar.setOnSeekBarChangeListener(this);
         satBar.setOnSeekBarChangeListener(this);
+        ctBar.setOnSeekBarChangeListener(this);
         briBar.setProgress(s.getInt(getString(R.string.preference_bri_levels) , 5));
         hueBar.setProgress(s.getInt(getString(R.string.preference_hue_levels), 15));
         satBar.setProgress(s.getInt(getString(R.string.preference_sat_levels), 5));
+        ctBar.setProgress(s.getInt(getString(R.string.preference_ct_levels), 5));
         briStatus.setText(String.valueOf(briBar.getProgress() + minProgress));
         hueStatus.setText(String.valueOf(hueBar.getProgress() + minProgress));
         satStatus.setText(String.valueOf(satBar.getProgress() + minProgress));
+        ctStatus.setText(String.valueOf(ctBar.getProgress() + minProgress));
     }
 
     @Override
@@ -112,6 +119,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
             case satBarId:
                 satStatus.setText(levelsString);
                 break;
+            case ctBarId:
+                ctStatus.setText(levelsString);
+                break;
         }
     }
 
@@ -140,6 +150,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
                 e.putInt(getResources().getString(R.string.preference_sat_levels), levels);
                 e.apply();
                 satStatus.setText(levelsString);
+                break;
+            case ctBarId:
+                e.putInt(getResources().getString(R.string.preference_ct_levels), levels);
+                e.apply();
+                ctStatus.setText(levelsString);
                 break;
         }
     }

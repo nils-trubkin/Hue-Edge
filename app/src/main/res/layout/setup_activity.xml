@@ -65,7 +65,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:visibility="gone"
-        tools:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/logoTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +77,8 @@
         app:stpi_labels="@array/step_labels"
         app:stpi_lineColor="@color/black"
         app:stpi_lineDoneColor="@color/white"
-        app:stpi_stepCount="5" />
+        app:stpi_stepCount="5"
+        tools:visibility="visible" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_setup"
@@ -110,7 +110,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpUsage" />
+        tools:ignore="SpUsage, KeyboardInaccessibleWidget" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_manual_help"

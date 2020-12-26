@@ -84,7 +84,7 @@
 
     <!-- SettingsFragment -->
     <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
-    <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15)</string>
+    <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15, 15)</string>
     <string name="fragment_settings_switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
     <string name="fragment_settings_switch_haptic">No haptic feedback (vibration)</string>
     <string name="fragment_settings_button_remove">Remove configuration</string>
