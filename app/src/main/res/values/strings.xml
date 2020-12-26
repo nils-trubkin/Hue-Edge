@@ -91,8 +91,9 @@
     <string name="fragment_settings_button_back">Back</string>
 
     <!-- HowTo -->
-    <string name="fragment_howto_text">Make sure that the Hue Edge panel is enabled in the edge panel settings\n\nSwipe from the side to open the edge panel</string>
+    <string name="fragment_howto_text">Make sure that the Hue Edge panel is enabled in the edge panel settings\n\nSwipe from the side to open the edge panel\n\nEdge panel is accessible even when phone is locked</string>
     <string name="fragment_howto_button_back">Back</string>
+    <string name="fragment_howto_gif_description">Animation illustrating use of edge panel by swiping from side of the phone</string>
 
     <!-- NotSupportedFragment -->
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>

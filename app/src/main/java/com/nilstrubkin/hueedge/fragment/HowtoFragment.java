@@ -25,7 +25,11 @@ public class HowtoFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.howto_fragment, container, false);
+        View view = inflater.inflate(R.layout.howto_fragment, container, false);
+        // gif image
+        ImageView imageView = view.findViewById(gifId);
+        Glide.with(this).load(R.drawable.edgeswipe).into(imageView);
+        return view;
     }
 
     @Override
@@ -33,10 +37,6 @@ public class HowtoFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
         view.findViewById(backButtonId).setOnClickListener(this);
-
-        // gif image
-        ImageView imageView = view.findViewById(gifId);
-        Glide.with(this).load(R.drawable.edgeswipe).into(imageView);
     }
 
     @Override
