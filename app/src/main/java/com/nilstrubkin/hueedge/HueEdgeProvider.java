@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -51,18 +52,21 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     //Array of references to buttons
     public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10};
-    //Array of references to category buttons
-    public static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
-            R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
-    //Array of references to category buttons underlines
-    public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
-            R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
+    //Array of references to buttons images
+    public static final int[] btnImgArr = {R.id.btn1img, R.id.btn2img, R.id.btn3img, R.id.btn4img, R.id.btn5img,
+            R.id.btn6img, R.id.btn7img, R.id.btn8img, R.id.btn9img, R.id.btn10img};
     //Array of references to button texts (text on the button itself)
     public static final int[] btnTopTextArr = {R.id.btn1topText, R.id.btn2topText, R.id.btn3topText, R.id.btn4topText, R.id.btn5topText,
             R.id.btn6topText, R.id.btn7topText, R.id.btn8topText, R.id.btn9topText, R.id.btn10topText};
     //Array of references to button texts (text under the button itself)
     public static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
+    //Array of references to category buttons
+    public static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
+            R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
+    //Array of references to category buttons underlines
+    public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
+            R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
     //Array of references to delete buttons in Edit activity
     public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
             R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
@@ -915,6 +919,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                                     resource.getBtnBackgroundResource());
                             //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
                             contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
+                            contentView.setImageViewResource(btnImgArr[i], R.drawable.ic_001_bedside_table);
+                            contentView.setInt(btnImgArr[i], "setColorFilter", Color.WHITE);
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");

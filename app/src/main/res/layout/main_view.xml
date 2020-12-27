@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:ignore="NestedWeights">
+    tools:ignore="NestedWeights, ContentDescription">
 
     <ImageView
         android:id="@+id/main_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/content_view_background"
-        tools:ignore="ContentDescription" />
+        android:background="@color/content_view_background" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,6 +63,12 @@
                             android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/btn6img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
 
                         <TextView
                             android:id="@+id/btn6topText"
@@ -122,6 +128,12 @@
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
+                        <ImageView
+                            android:id="@+id/btn7img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
+
                         <TextView
                             android:id="@+id/btn7topText"
                             android:layout_width="wrap_content"
@@ -179,6 +191,12 @@
                             android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/btn8img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
 
                         <TextView
                             android:id="@+id/btn8topText"
@@ -238,6 +256,12 @@
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
+                        <ImageView
+                            android:id="@+id/btn9img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
+
                         <TextView
                             android:id="@+id/btn9topText"
                             android:layout_width="wrap_content"
@@ -295,6 +319,12 @@
                             android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/btn10img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
 
                         <TextView
                             android:id="@+id/btn10topText"
@@ -365,6 +395,12 @@
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
+                        <ImageView
+                            android:id="@+id/btn1img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
+
                         <TextView
                             android:id="@+id/btn1topText"
                             android:layout_width="wrap_content"
@@ -422,6 +458,12 @@
                             android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/btn2img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
 
                         <TextView
                             android:id="@+id/btn2topText"
@@ -481,6 +523,12 @@
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
+                        <ImageView
+                            android:id="@+id/btn3img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
+
                         <TextView
                             android:id="@+id/btn3topText"
                             android:layout_width="wrap_content"
@@ -539,6 +587,12 @@
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
 
+                        <ImageView
+                            android:id="@+id/btn4img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
+
                         <TextView
                             android:id="@+id/btn4topText"
                             android:layout_width="wrap_content"
@@ -596,6 +650,12 @@
                             android:includeFontPadding="true"
                             android:padding="@dimen/resource_button_padding"
                             android:textAlignment="center" />
+
+                        <ImageView
+                            android:id="@+id/btn5img"
+                            android:layout_width="@dimen/resource_button_img_dimen"
+                            android:layout_height="@dimen/resource_button_img_dimen"
+                            android:layout_gravity="center" />
 
                         <TextView
                             android:id="@+id/btn5topText"
