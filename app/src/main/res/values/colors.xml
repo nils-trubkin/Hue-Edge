@@ -24,6 +24,9 @@
     <color name="delete_button_unfocused_color">@color/white</color>
     <color name="delete_button_press_color">#BABABA</color>
     <color name="delete_button_minus_color">#FF0000</color>
+    <color name="icon_button_unfocused_color">@color/white</color>
+    <color name="icon_button_press_color">#BABABA</color>
+    <color name="icon_button_symbol_color">@color/black</color>
     <color name="add_button_unfocused_color">#50252525</color>
     <color name="add_button_press_color">#65656565</color>
 

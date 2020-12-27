@@ -129,7 +129,7 @@ public class GroupResource extends BridgeResourceSliders {
             if(!isAll_off())
                 return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);
             else
-                return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.some_symbol);
+                return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.delete_symbol);
         else
             return noSymbols ? resources.getString(R.string.off_no_symbol) : resources.getString(R.string.off_symbol);
     }

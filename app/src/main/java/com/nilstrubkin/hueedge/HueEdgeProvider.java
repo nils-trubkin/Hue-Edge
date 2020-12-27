@@ -70,6 +70,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     //Array of references to delete buttons in Edit activity
     public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
             R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
+    //Array of references to icon buttons in Edit activity
+    public static final int[] btnIconArr = {R.id.btn1icon, R.id.btn2icon, R.id.btn3icon, R.id.btn4icon, R.id.btn5icon,
+            R.id.btn6icon, R.id.btn7icon, R.id.btn8icon, R.id.btn9icon, R.id.btn10icon};
     //Array of references to delete buttons top texts in Edit activity
     public static final int[] btnDeleteTopTextArr = {R.id.btn1deleteTopText, R.id.btn2deleteTopText, R.id.btn3deleteTopText, R.id.btn4deleteTopText, R.id.btn5deleteTopText,
             R.id.btn6deleteTopText, R.id.btn7deleteTopText, R.id.btn8deleteTopText, R.id.btn9deleteTopText, R.id.btn10deleteTopText};

@@ -104,6 +104,23 @@
         app:layout_constraintStart_toStartOf="@+id/btn1"
         app:layout_constraintTop_toTopOf="@+id/btn1" />
 
+    <ImageButton
+        android:id="@+id/btn1icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn1"
+        app:layout_constraintEnd_toEndOf="@+id/btn1"
+        app:layout_constraintStart_toStartOf="@+id/btn1"
+        app:layout_constraintTop_toTopOf="@+id/btn1" />
+
     <TextView
         android:id="@+id/btn1deleteTopText"
         android:layout_width="wrap_content"
@@ -113,7 +130,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -155,6 +172,23 @@
         app:layout_constraintStart_toEndOf="@+id/btn7"
         app:layout_constraintTop_toBottomOf="@+id/btn1text" />
 
+    <ImageButton
+        android:id="@+id/btn2icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn2"
+        app:layout_constraintEnd_toEndOf="@+id/btn2"
+        app:layout_constraintStart_toStartOf="@+id/btn2"
+        app:layout_constraintTop_toTopOf="@+id/btn2" />
+
     <TextView
         android:id="@+id/btn2topText"
         android:layout_width="wrap_content"
@@ -195,7 +229,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -237,6 +271,23 @@
         app:layout_constraintStart_toEndOf="@+id/btn8"
         app:layout_constraintTop_toBottomOf="@+id/btn2text" />
 
+    <ImageButton
+        android:id="@+id/btn3icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn3"
+        app:layout_constraintEnd_toEndOf="@+id/btn3"
+        app:layout_constraintStart_toStartOf="@+id/btn3"
+        app:layout_constraintTop_toTopOf="@+id/btn3" />
+
     <TextView
         android:id="@+id/btn3topText"
         android:layout_width="wrap_content"
@@ -277,7 +328,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -319,6 +370,23 @@
         app:layout_constraintStart_toEndOf="@+id/btn9"
         app:layout_constraintTop_toBottomOf="@+id/btn3text" />
 
+    <ImageButton
+        android:id="@+id/btn4icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn4"
+        app:layout_constraintEnd_toEndOf="@+id/btn4"
+        app:layout_constraintStart_toStartOf="@+id/btn4"
+        app:layout_constraintTop_toTopOf="@+id/btn4" />
+
     <TextView
         android:id="@+id/btn4topText"
         android:layout_width="wrap_content"
@@ -359,7 +427,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -401,6 +469,23 @@
         app:layout_constraintStart_toEndOf="@+id/btn10"
         app:layout_constraintTop_toBottomOf="@+id/btn4text" />
 
+    <ImageButton
+        android:id="@+id/btn5icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn5"
+        app:layout_constraintEnd_toEndOf="@+id/btn5"
+        app:layout_constraintStart_toStartOf="@+id/btn5"
+        app:layout_constraintTop_toTopOf="@+id/btn5" />
+
     <TextView
         android:id="@+id/btn5topText"
         android:layout_width="wrap_content"
@@ -441,7 +526,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -485,6 +570,23 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
+    <ImageButton
+        android:id="@+id/btn6icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn6"
+        app:layout_constraintEnd_toEndOf="@+id/btn6"
+        app:layout_constraintStart_toStartOf="@+id/btn6"
+        app:layout_constraintTop_toTopOf="@+id/btn6" />
+
     <TextView
         android:id="@+id/btn6topText"
         android:layout_width="wrap_content"
@@ -526,7 +628,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -569,6 +671,23 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/btn6text" />
 
+    <ImageButton
+        android:id="@+id/btn7icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn7"
+        app:layout_constraintEnd_toEndOf="@+id/btn7"
+        app:layout_constraintStart_toStartOf="@+id/btn7"
+        app:layout_constraintTop_toTopOf="@+id/btn7" />
+
     <TextView
         android:id="@+id/btn7topText"
         android:layout_width="wrap_content"
@@ -610,7 +729,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -651,6 +770,23 @@
         app:layout_constraintEnd_toStartOf="@+id/btn3"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/btn7text" />
+
+    <ImageButton
+        android:id="@+id/btn8icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn8"
+        app:layout_constraintEnd_toEndOf="@+id/btn8"
+        app:layout_constraintStart_toStartOf="@+id/btn8"
+        app:layout_constraintTop_toTopOf="@+id/btn8" />
 
     <TextView
         android:id="@+id/btn8topText"
@@ -693,7 +829,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -735,6 +871,23 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/btn8text" />
 
+    <ImageButton
+        android:id="@+id/btn9icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn9"
+        app:layout_constraintEnd_toEndOf="@+id/btn9"
+        app:layout_constraintStart_toStartOf="@+id/btn9"
+        app:layout_constraintTop_toTopOf="@+id/btn9" />
+
     <TextView
         android:id="@+id/btn9topText"
         android:layout_width="wrap_content"
@@ -775,7 +928,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"
@@ -817,6 +970,23 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toBottomOf="@+id/btn9text" />
 
+    <ImageButton
+        android:id="@+id/btn10icon"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="@dimen/resource_button_icon_dimen"
+        android:layout_height="@dimen/resource_button_icon_dimen"
+        android:layout_marginLeft="@dimen/resource_button_icon_margin_left_top"
+        android:layout_marginTop="@dimen/resource_button_icon_margin_left_top"
+        android:background="@drawable/icon_button_background"
+        android:padding="@dimen/resource_button_icon_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_settings"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btn10"
+        app:layout_constraintEnd_toEndOf="@+id/btn10"
+        app:layout_constraintStart_toStartOf="@+id/btn10"
+        app:layout_constraintTop_toTopOf="@+id/btn10" />
+
     <TextView
         android:id="@+id/btn10topText"
         android:layout_width="wrap_content"
@@ -857,7 +1027,7 @@
         android:hyphenationFrequency="none"
         android:maxWidth="@dimen/resource_button_dimen"
         android:padding="@dimen/resource_button_padding"
-        android:text="@string/some_symbol"
+        android:text="@string/delete_symbol"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/delete_button_minus_color"

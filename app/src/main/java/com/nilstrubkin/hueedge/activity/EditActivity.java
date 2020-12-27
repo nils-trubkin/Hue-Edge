@@ -13,6 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -209,6 +210,7 @@ public class EditActivity extends AppCompatActivity {
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[i]);
             final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
             final TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[i]);
+            final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[i]);
 
             if (slotIsFilled) {
                 final BridgeResource res;
@@ -225,6 +227,8 @@ public class EditActivity extends AppCompatActivity {
                 btn.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setVisibility(View.VISIBLE);
+                btnIcon.setOnClickListener(v -> showIconGallery(finalI));
+                btnIcon.setVisibility(View.VISIBLE);
                 btnDeleteTopText.setVisibility(View.VISIBLE);
                 btn.setOnDragListener(null);
                 btnText.setOnDragListener(null);
@@ -251,7 +255,7 @@ public class EditActivity extends AppCompatActivity {
                         );
                 });
             } else {
-                displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText);
+                displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText, btnIcon);
                 DragEventListener dragListen = new DragEventListener(ctx, i);
                 btn.setOnDragListener(dragListen);
                 btnText.setOnDragListener(dragListen);
@@ -277,8 +281,9 @@ public class EditActivity extends AppCompatActivity {
         TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
         TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
+        ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[position]);
         TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[position]);
-        displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText);
+        displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText, btnIcon);
         // Creates a new drag event listener
         DragEventListener dragListen = new DragEventListener(ctx, position);
         // Sets the drag event listener for the View
@@ -287,12 +292,13 @@ public class EditActivity extends AppCompatActivity {
         btn.setOnLongClickListener(null);
     }
 
-    public void displaySlotAsEmpty (Button btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText) {
+    public void displaySlotAsEmpty (Button btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText, ImageButton btnIcon) {
         btnTopText.setText("");
         btnText.setText("");
         btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
         btnDelete.setVisibility(View.GONE);
         btnDeleteTopText.setVisibility(View.GONE);
+        btnIcon.setVisibility(View.GONE);
     }
 
     public void displaySlotAsFull (int position, BridgeResource resource) {
@@ -305,5 +311,9 @@ public class EditActivity extends AppCompatActivity {
                 ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
         btnTopText.setTextColor(resource.getBtnTextColor(ctx));
         btn.setBackgroundResource(resource.getBtnBackgroundResource());
+    }
+
+    public void showIconGallery (int position){
+
     }
 }
