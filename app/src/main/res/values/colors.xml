@@ -28,9 +28,10 @@
     <color name="add_button_press_color">#65656565</color>
 
     <!-- Category panel -->
+    <color name="category_selected_blue_legacy">#2187F3</color>
+    <color name="category_top_line_gray_legacy">#33FAFAFA</color>
     <color name="category_unselected_gray">#99FAFAFA</color>
-    <color name="category_selected_blue">#2187F3</color>
-    <color name="category_top_line_gray">#33FAFAFA</color>
+    <color name="category_selected_white">#FFFFFFFF</color>
 
     <!-- Setup -->
     <color name="setup_button_unfocused_color">@color/white</color>

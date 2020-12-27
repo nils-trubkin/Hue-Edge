@@ -3,16 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingTop="@dimen/category_view_root_padding_top"
-    tools:ignore="ContentDescription, SpUsage, RtlSymmetry" >
-
-    <ImageView
-        android:layout_width="@dimen/category_view_top_line_width"
-        android:layout_height="@dimen/category_view_top_line_height"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/category_view_top_line_margin_bottom"
-        android:background="@color/category_top_line_gray" />
+    tools:ignore="ContentDescription, SpUsage, RtlSymmetry">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -23,7 +17,7 @@
             android:id="@+id/btnCategory1"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/category_btn_height"
+            android:layout_height="@dimen/category_btn_height_legacy"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
@@ -41,8 +35,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +48,7 @@
             android:id="@+id/btnCategory2"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/category_btn_height"
+            android:layout_height="@dimen/category_btn_height_legacy"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
@@ -72,8 +66,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -85,7 +79,7 @@
             android:id="@+id/btnCategory3"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/category_btn_height"
+            android:layout_height="@dimen/category_btn_height_legacy"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
@@ -103,8 +97,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -116,7 +110,7 @@
             android:id="@+id/btnCategory4"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/category_btn_height"
+            android:layout_height="@dimen/category_btn_height_legacy"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
@@ -134,8 +128,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -147,7 +141,7 @@
             android:id="@+id/btnCategory5"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/category_btn_height"
+            android:layout_height="@dimen/category_btn_height_legacy"
             android:layout_marginBottom="@dimen/category_btn_margin_bottom"
             android:minWidth="@dimen/zero"
             android:padding="@dimen/zero"
@@ -165,8 +159,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -353,8 +356,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @return RemoteViews
      */
     private RemoteViews createHelpView(Context ctx) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean legacyHelpView = settings.getBoolean(ctx.getResources().getString(R.string.preference_legacy_help_view), false);
         RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
-                R.layout.help_view);
+                !legacyHelpView ? R.layout.help_view : R.layout.help_view_legacy);
         for(int button : btnCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
@@ -366,7 +371,33 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             int selectedNumber = getBridge(ctx).getCurrentCategory(ctx).ordinal();
             int currentButton = btnCategoryArr[selectedNumber];
             int currentLine = btnCategoryLineArr[selectedNumber];
-            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
+            if(!legacyHelpView) {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_white));
+                // a bit of voodoo magic to make text bold
+                String text = null;
+                switch (selectedNumber){
+                    case 0:
+                        text = ctx.getString(R.string.button_help_1_text);
+                        break;
+                    case 1:
+                        text = ctx.getString(R.string.button_help_2_text);
+                        break;
+                    case 2:
+                        text = ctx.getString(R.string.button_help_3_text);
+                        break;
+                    case 3:
+                        text = ctx.getString(R.string.button_help_4_text);
+                        break;
+                    case 4:
+                        text = ctx.getString(R.string.button_help_5_text);
+                        break;
+                }
+                SpannableString mspInt = new SpannableString(text);
+                mspInt.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                helpView.setTextViewText(currentButton, mspInt);
+            } else {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue_legacy));
+            }
             helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;
@@ -439,7 +470,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @return RemoteViews
      */
     private RemoteViews createSlidersHelpView(Context ctx) {
-        RemoteViews helpView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_help_view);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean legacyHelpView = settings.getBoolean(ctx.getResources().getString(R.string.preference_legacy_help_view), false);
+        RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
+                !legacyHelpView ? R.layout.sliders_help_view : R.layout.sliders_help_view_legacy);
         helpView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
 
         for( int button : btnSlidersCategoryArr){
@@ -451,9 +485,33 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         }
         slidersCategory currentSlidersCategory = getBridge(ctx).getCurrentSlidersCategory(ctx);
         if(currentSlidersCategory != null){
-            int currentButton = btnSlidersCategoryArr[currentSlidersCategory.ordinal()];
-            int currentLine = btnSlidersCategoryLineArr[currentSlidersCategory.ordinal()];
-            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
+            int selectedNumber = getBridge(ctx).getCurrentSlidersCategory(ctx).ordinal();
+            int currentButton = btnSlidersCategoryArr[selectedNumber];
+            int currentLine = btnSlidersCategoryLineArr[selectedNumber];
+            if(!legacyHelpView) {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_white));
+                // a bit of voodoo magic to make text bold
+                String text = null;
+                switch (selectedNumber){
+                    case 0:
+                        text = ctx.getString(R.string.button_sliders_help_bri);
+                        break;
+                    case 1:
+                        text = ctx.getString(R.string.button_sliders_help_hue);
+                        break;
+                    case 2:
+                        text = ctx.getString(R.string.button_sliders_help_sat);
+                        break;
+                    case 3:
+                        text = ctx.getString(R.string.button_sliders_help_ct);
+                        break;
+                }
+                SpannableString mspInt = new SpannableString(text);
+                mspInt.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                helpView.setTextViewText(currentButton, mspInt);
+            } else {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue_legacy));
+            }
             helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;

@@ -22,7 +22,7 @@
     <string name="loading">Loading…</string>
 
     <!-- Categories line -->
-    <string name="dots">..................</string>
+    <string name="dots">..........................</string>
 
     <!-- Fragments and navigation -->
     <string name="setup_button_about">About &amp; Support</string>

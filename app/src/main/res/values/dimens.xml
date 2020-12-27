@@ -19,15 +19,19 @@
     <dimen name="no_bridge_text_padding">10dp</dimen>
 
     <!-- help view -->
-    <dimen name="category_view_root_padding_top">15dp</dimen>
+    <dimen name="category_view_root_padding_top_legacy">15dp</dimen>
+    <dimen name="category_view_root_padding_top">0dp</dimen>
     <!-- help view top line -->
     <dimen name="category_view_top_line_width">200dp</dimen>
     <dimen name="category_view_top_line_height">1dp</dimen>
     <dimen name="category_view_top_line_margin_bottom">5dp</dimen>
     <!-- help view category buttons -->
-    <dimen name="category_btn_text_size">@dimen/_12sdp</dimen>
-    <dimen name="category_btn_height">40dp</dimen>
-    <dimen name="category_btn_margin_bottom">-20dp</dimen>
+    <dimen name="category_btn_text_size_legacy">@dimen/_12sdp</dimen>
+    <dimen name="category_btn_text_size">@dimen/_13sdp</dimen>
+    <dimen name="category_btn_height_legacy">40dp</dimen>
+    <dimen name="category_btn_height">45dp</dimen>
+    <dimen name="category_btn_margin_bottom_legacy">-20dp</dimen>
+    <dimen name="category_btn_margin_bottom">-23dp</dimen>
     <dimen name="category_btn_padding_end">-10dp</dimen>
     <!-- help view category button lines -->
 
