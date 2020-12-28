@@ -18,9 +18,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public abstract class BridgeResource implements Serializable {
-
+    private static final long serialVersionUID = 6709319326596725753L;
     private String id;
     private String name;
+    private int iconRes;
 
     private static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
@@ -84,6 +85,14 @@ public abstract class BridgeResource implements Serializable {
             return "/" + "groups" + "/" + 0 + "/action";
         }
         return "/" + getCategory() + "/" + getId() + "/action";
+    }
+
+    public int getIconRes() {
+        return iconRes;
+    }
+
+    public void setIconRes(int icon_res) {
+        this.iconRes = icon_res;
     }
 
     void post(final Context ctx, final String url, final String json){

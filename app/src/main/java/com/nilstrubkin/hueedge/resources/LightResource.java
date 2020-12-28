@@ -18,6 +18,8 @@ import java.util.Objects;
 
 class LightResource extends BridgeResourceSliders {
 
+    private static final long serialVersionUID = -4487639315415671159L;
+
     static class State implements Serializable {
 
         boolean on;

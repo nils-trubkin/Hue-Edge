@@ -18,6 +18,8 @@ import java.util.Objects;
 
 public class GroupResource extends BridgeResourceSliders {
 
+    private static final long serialVersionUID = 2146386353821426733L;
+
     public GroupResource() {
     }
 

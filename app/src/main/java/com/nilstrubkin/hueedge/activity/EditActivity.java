@@ -19,17 +19,22 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nilstrubkin.hueedge.DragEventListener;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.ResourceReference;
+import com.nilstrubkin.hueedge.adapter.IconGalleryAdapter;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.R;
 import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,6 +46,7 @@ public class EditActivity extends AppCompatActivity {
     private HueBridge bridge;
     private HueEdgeProvider.menuCategory currentCategory;
     private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents;
+    private int currentIconBtn;
 
 
     private void setBridge(HueBridge bridge) {
@@ -89,7 +95,8 @@ public class EditActivity extends AppCompatActivity {
         window.setNavigationBarColor(ctx.getColor(R.color.navigation_bar_color_edit));
 
         //UI elements
-        GridView mListView = findViewById(R.id.gridView);
+        GridView gridViewResources = findViewById(R.id.gridView);
+        RecyclerView iconGallery = findViewById(R.id.recycler_icon_gallery);
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
 
@@ -171,7 +178,46 @@ public class EditActivity extends AppCompatActivity {
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
                 this, R.layout.edit_activity_adapter_view_layout, resources);
         adapter.sort(BridgeResource::compareTo);
-        mListView.setAdapter(adapter);
+        gridViewResources.setAdapter(adapter);
+
+        LinearLayoutManager layoutManager = new GridLayoutManager(ctx, 5);
+
+        List<Integer> icons_res = new ArrayList<>();
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.ic_001_bedside_table);
+        icons_res.add(R.drawable.ic_002_alarm_clock);
+
+        IconGalleryAdapter galleryAdapter = new IconGalleryAdapter(icons_res, this::setIcon);
+        iconGallery.setAdapter(galleryAdapter);
+        iconGallery.setHasFixedSize(true);
+        iconGallery.setLayoutManager(layoutManager);
 
         /*Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -184,6 +230,39 @@ public class EditActivity extends AppCompatActivity {
                         .setAction("Action", null).show(); //TODO some snackbar code
             }
         });*/
+    }
+
+    public void setIcon(View v){
+        Log.d(TAG, "setting icon");
+        HueEdgeProvider.vibrate(ctx);
+        final Map<Integer, ResourceReference> currentCategoryContents;
+        try {
+            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
+        }
+        catch (NullPointerException e){
+            Log.e(TAG, "Failed to get contents of current category");
+            e.printStackTrace();
+            return;
+        }
+        ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+        BridgeResource res;
+        try {
+            res = getBridge().getResource(Objects.requireNonNull(resRef));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return;
+        }
+        int icon_res = (int) v.findViewById(R.id.button_icon).getTag();
+        res.setIconRes(icon_res);
+        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
+        HueBridge.saveAllConfiguration(ctx);
+
+        final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
+        final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
+
+        btn.setImageResource(icon_res);
+        btn.setColorFilter(res.getBtnTextColor(ctx));
+        btnTopText.setVisibility(View.GONE);
     }
 
     public void panelUpdate() {
@@ -206,7 +285,7 @@ public class EditActivity extends AppCompatActivity {
             }
             boolean slotIsFilled = currentCategoryContents.containsKey(i);
             final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[i]);
-            final Button btn = findViewById(HueEdgeProvider.btnArr[i]);
+            final ImageButton btn = findViewById(HueEdgeProvider.btnArr[i]);
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[i]);
             final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
             final TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[i]);
@@ -227,7 +306,7 @@ public class EditActivity extends AppCompatActivity {
                 btn.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setVisibility(View.VISIBLE);
-                btnIcon.setOnClickListener(v -> showIconGallery(finalI));
+                btnIcon.setOnClickListener(v -> handleIconBtn(finalI));
                 btnIcon.setVisibility(View.VISIBLE);
                 btnDeleteTopText.setVisibility(View.VISIBLE);
                 btn.setOnDragListener(null);
@@ -277,7 +356,7 @@ public class EditActivity extends AppCompatActivity {
         }
         currentCategoryContents.remove(position);
         HueBridge.saveAllConfiguration(ctx);
-        Button btn = findViewById(HueEdgeProvider.btnArr[position]);
+        ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
         TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
         TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
@@ -292,7 +371,7 @@ public class EditActivity extends AppCompatActivity {
         btn.setOnLongClickListener(null);
     }
 
-    public void displaySlotAsEmpty (Button btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText, ImageButton btnIcon) {
+    public void displaySlotAsEmpty (ImageButton btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText, ImageButton btnIcon) {
         btnTopText.setText("");
         btnText.setText("");
         btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
@@ -304,16 +383,47 @@ public class EditActivity extends AppCompatActivity {
     public void displaySlotAsFull (int position, BridgeResource resource) {
         TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
         tw.setText(resource.getUnderBtnText());
-        final Button btn = findViewById(HueEdgeProvider.btnArr[position]);
+        final ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
         btnTopText.setText(resource.getBtnText(ctx));
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
         btnTopText.setTextColor(resource.getBtnTextColor(ctx));
         btn.setBackgroundResource(resource.getBtnBackgroundResource());
+        int icon_res = resource.getIconRes();
+        if (icon_res != 0) {
+            btn.setImageResource(icon_res);
+            btnTopText.setVisibility(View.GONE);
+        }
     }
 
-    public void showIconGallery (int position){
+    public void handleIconBtn(int position){
+        currentIconBtn = position;
+        final Map<Integer, ResourceReference> currentCategoryContents;
+        try {
+            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return;
+        }
+        ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+        BridgeResource res;
+        try {
+            res = getBridge().getResource(Objects.requireNonNull(resRef));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return;
+        }
+        int present_icon_res = res.getIconRes();
+        if(present_icon_res == 0) {
+            findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
+        } else {
+            final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
+            final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
+            res.setIconRes(0);
+            btn.setImageResource(0);
+            btnTopText.setVisibility(View.VISIBLE);
+        }
     }
 }

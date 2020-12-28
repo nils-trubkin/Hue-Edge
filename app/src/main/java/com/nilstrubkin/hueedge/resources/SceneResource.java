@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class SceneResource extends BridgeResource {
 
+    private static final long serialVersionUID = 8883055438554823607L;
     String type;
     String group;
     String groupName;

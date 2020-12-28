@@ -41,13 +41,15 @@
     <dimen name="resource_button_icon_dimen">24dp</dimen>
     <dimen name="resource_button_icon_padding">3dp</dimen>
     <dimen name="resource_button_delete_margin_left_bottom">40dp</dimen>
-    <dimen name="resource_button_icon_margin_left_top">40dp</dimen>
+    <dimen name="resource_button_icon_margin_right">40dp</dimen>
+    <dimen name="resource_button_icon_margin_top">30dp</dimen>
     <dimen name="views_margin_top_bottom">8dp</dimen>
     <dimen name="top_guideline_space">100dp</dimen>
     <dimen name="bottom_guideline_space">40dp</dimen>
     <dimen name="vertical_guideline_space">150dp</dimen>
     <dimen name="adapter_root_layout_height">100dp</dimen>
     <dimen name="hue_status_text_size">14dp</dimen>
+    <dimen name="icon_gallery_size">60dp</dimen>
 
     <!-- setup activity -->
     <dimen name="setup_status_text_size">18dp</dimen>

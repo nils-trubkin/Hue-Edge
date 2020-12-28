@@ -9,6 +9,7 @@ import java.util.Objects;
 
 public class BridgeCatalogue implements Serializable {
 
+    private static final long serialVersionUID = -7313934162135591982L;
     private Map<String, LightResource> lights = new HashMap<>();
     private Map<String, GroupResource> groups = new HashMap<>();
     private Map<String, SceneResource> scenes = new HashMap<>();

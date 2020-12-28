@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.wifi.WifiManager;
+import android.opengl.Visibility;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
@@ -922,8 +923,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                                     resource.getBtnBackgroundResource());
                             //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
                             contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
-                            contentView.setImageViewResource(btnImgArr[i], R.drawable.ic_001_bedside_table);
-                            contentView.setInt(btnImgArr[i], "setColorFilter", Color.WHITE);
+
+                            int icon_res = resource.getIconRes();
+                            contentView.setImageViewResource(btnImgArr[i], icon_res);
+                                if (icon_res != 0){
+                                    contentView.setInt(btnImgArr[i], "setColorFilter", resource.getBtnTextColor(ctx));
+                                    contentView.setViewVisibility(btnTopTextArr[i], View.GONE);
+                                }
+
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
@@ -933,6 +940,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
+                        contentView.setImageViewResource(btnImgArr[i], 0);
                     }
                 }
             }
