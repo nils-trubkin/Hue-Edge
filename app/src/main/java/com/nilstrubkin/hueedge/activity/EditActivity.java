@@ -253,7 +253,7 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
         int icon_res = (int) v.findViewById(R.id.button_icon).getTag();
-        res.setIconRes(icon_res);
+        resRef.setIconRes(icon_res);
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
         HueBridge.saveAllConfiguration(ctx);
 
@@ -293,15 +293,16 @@ public class EditActivity extends AppCompatActivity {
 
             if (slotIsFilled) {
                 final BridgeResource res;
+                final ResourceReference resRef;
                 try {
-                    ResourceReference resRef = Objects.requireNonNull(currentCategoryContents.get(i));
+                    resRef = Objects.requireNonNull(currentCategoryContents.get(i));
                     res = getBridge().getResource(resRef);
                 } catch (NullPointerException e) {
                     Log.e(TAG, "Failed to load filled slot");
                     e.printStackTrace();
                     return;
                 }
-                displaySlotAsFull(i, res);
+                displaySlotAsFull(i, resRef);
                 final int finalI = i;
                 btn.setOnClickListener(v -> clearSlot(finalI));
                 btnDelete.setOnClickListener(v -> clearSlot(finalI));
@@ -322,7 +323,7 @@ public class EditActivity extends AppCompatActivity {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
                         return v.startDragAndDrop(dragData,  // the data to be dragged
                                 myShadow,  // the drag shadow builder
-                                res,      // pass resource
+                                resRef,      // pass resource ref
                                 0          // flags (not currently used, set to 0)
                         );
                     else
@@ -380,17 +381,25 @@ public class EditActivity extends AppCompatActivity {
         btnIcon.setVisibility(View.GONE);
     }
 
-    public void displaySlotAsFull (int position, BridgeResource resource) {
+    public void displaySlotAsFull (int position, ResourceReference resRef) {
+        BridgeResource res;
+        try {
+            res = getBridge().getResource(resRef);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Failed to load filled slot");
+            e.printStackTrace();
+            return;
+        }
         TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
-        tw.setText(resource.getUnderBtnText());
+        tw.setText(res.getUnderBtnText());
         final ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
-        btnTopText.setText(resource.getBtnText(ctx));
+        btnTopText.setText(res.getBtnText(ctx));
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
-        btnTopText.setTextColor(resource.getBtnTextColor(ctx));
-        btn.setBackgroundResource(resource.getBtnBackgroundResource());
-        int icon_res = resource.getIconRes();
+                ctx.getResources().getDimensionPixelSize(res.getBtnTextSize(ctx)));
+        btnTopText.setTextColor(res.getBtnTextColor(ctx));
+        btn.setBackgroundResource(res.getBtnBackgroundResource());
+        int icon_res = resRef.getIconRes();
         if (icon_res != 0) {
             btn.setImageResource(icon_res);
             btnTopText.setVisibility(View.GONE);
@@ -414,14 +423,14 @@ public class EditActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
-        int present_icon_res = res.getIconRes();
+        int present_icon_res = resRef.getIconRes();
         if(present_icon_res == 0) {
             findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
         } else {
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
             final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
-            res.setIconRes(0);
+            resRef.setIconRes(0);
             btn.setImageResource(0);
             btnTopText.setVisibility(View.VISIBLE);
         }
