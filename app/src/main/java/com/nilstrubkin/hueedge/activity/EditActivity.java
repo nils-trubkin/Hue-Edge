@@ -133,23 +133,23 @@ public class EditActivity extends AppCompatActivity {
 
         panelUpdate();
 
-        ArrayList<BridgeResource> resources = new ArrayList<>();
+        ArrayList<ResourceReference> resources = new ArrayList<>();
         Map<String, ? extends BridgeResource> map = null;
         BridgeCatalogue bridgeState = getBridge().getBridgeState();
         switch (getCurrentCategory()) {
             case QUICK_ACCESS:
                 map = bridgeState.getLights();
                 for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-                    resources.add(entry.getValue());
+                    resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
                 }
                 map = bridgeState.getRooms();
                 for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-                    resources.add(entry.getValue());
+                    resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
                 }
                 map = bridgeState.getZones();
                 for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
                     if(!entry.getKey().equals("0"))
-                        resources.add(entry.getValue());
+                        resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
                 }
                 map = bridgeState.getScenes();
                 // The for loop that is supposed to be here can be found right after the switch cases
@@ -172,12 +172,12 @@ public class EditActivity extends AppCompatActivity {
         }
         // Add the defined map to the resources, QUICK_ACCESS case uses this too as it's last step
         for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
-            resources.add(entry.getValue());
+            resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
         }
 
         ResourceArrayAdapter adapter = new ResourceArrayAdapter(
                 this, R.layout.edit_activity_adapter_view_layout, resources);
-        adapter.sort(BridgeResource::compareTo);
+        adapter.sort((a, b) -> a.compareTo(ctx, b));
         gridViewResources.setAdapter(adapter);
 
         LinearLayoutManager layoutManager = new GridLayoutManager(ctx, 5);
@@ -261,9 +261,7 @@ public class EditActivity extends AppCompatActivity {
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
         final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
-        int p = Math.round(getResources().getDimension(R.dimen.resource_button_icon_enabled_padding));
         btn.setImageResource(icon_res);
-        btn.setPadding(p, p, p, p);
         btn.setColorFilter(res.getBtnTextColor(ctx));
         btnTopText.setVisibility(View.GONE);
     }
@@ -364,10 +362,8 @@ public class EditActivity extends AppCompatActivity {
         final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
         final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[position]);
 
-        int p = Math.round(getResources().getDimension(R.dimen.resource_button_padding));
         btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
         btn.setImageResource(0);
-        btn.setPadding(p, p, p, p);
         btnTopText.setText("");
         btnText.setText("");
         btnDelete.setVisibility(View.GONE);
@@ -401,9 +397,7 @@ public class EditActivity extends AppCompatActivity {
         btnTopText.setTextColor(br.getBtnTextColor(ctx));
         int icon_res = resRef.getIconRes();
         if (icon_res != 0) {
-            int p = Math.round(getResources().getDimension(R.dimen.resource_button_icon_enabled_padding));
             btn.setImageResource(icon_res);
-            btn.setPadding(p, p, p, p);
             btnTopText.setVisibility(View.GONE);
         } else {
             btnTopText.setVisibility(View.VISIBLE);
@@ -435,10 +429,8 @@ public class EditActivity extends AppCompatActivity {
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
             final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
-            int p = Math.round(getResources().getDimension(R.dimen.resource_button_padding));
             resRef.setIconRes(0);
             btn.setImageResource(0);
-            btn.setPadding(p, p, p, p);
             btnTopText.setVisibility(View.VISIBLE);
         }
     }

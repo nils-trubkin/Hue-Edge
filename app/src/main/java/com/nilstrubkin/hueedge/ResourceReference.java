@@ -1,5 +1,9 @@
 package com.nilstrubkin.hueedge;
 
+import android.content.Context;
+
+import com.nilstrubkin.hueedge.resources.BridgeResource;
+
 import java.io.Serializable;
 
 public class ResourceReference implements Serializable {
@@ -19,5 +23,22 @@ public class ResourceReference implements Serializable {
 
     public void setIconRes(int iconRes) {
         this.iconRes = iconRes;
+    }
+
+    public int compareTo(Context ctx, ResourceReference ref) {
+        int categoryDiff = category.compareTo(ref.category);
+        if (categoryDiff != 0)
+            return categoryDiff;
+        else {
+            BridgeResource thisBr = HueBridge.getInstance(ctx).getResource(this);
+            BridgeResource thatBr = HueBridge.getInstance(ctx).getResource(ref);
+            String thisName = thisBr.getName();
+            String thatName = thatBr.getName();
+            int nameDiff = thisName.compareTo(thatName);
+            if (nameDiff != 0)
+                return nameDiff;
+            else
+                return thisBr.getUnderBtnText().compareTo(thatBr.getUnderBtnText());
+        }
     }
 }
