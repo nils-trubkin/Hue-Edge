@@ -63,9 +63,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     //Array of references to buttons
     public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10};
-    //Array of references to buttons images
-    public static final int[] btnImgArr = {R.id.btn1img, R.id.btn2img, R.id.btn3img, R.id.btn4img, R.id.btn5img,
-            R.id.btn6img, R.id.btn7img, R.id.btn8img, R.id.btn9img, R.id.btn10img};
     //Array of references to button texts (text on the button itself)
     public static final int[] btnTopTextArr = {R.id.btn1topText, R.id.btn2topText, R.id.btn3topText, R.id.btn4topText, R.id.btn5topText,
             R.id.btn6topText, R.id.btn7topText, R.id.btn8topText, R.id.btn9topText, R.id.btn10topText};
@@ -932,7 +929,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                             contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
 
                             int icon_res = ref.getIconRes();
-                            contentView.setImageViewResource(btnImgArr[i], icon_res);
+                            contentView.setImageViewResource(btnArr[i], icon_res);
                             if (icon_res != 0){
                                 contentView.setViewVisibility(btnTopTextArr[i], View.GONE);
                             } else {
@@ -941,10 +938,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                             int customColor = ref.getIconColor();
                             if(customColor == 0) {
                                 int defaultColor = resource.getBtnTextColor(ctx);
-                                contentView.setInt(btnImgArr[i], "setColorFilter", defaultColor);
+                                contentView.setInt(btnArr[i], "setColorFilter", defaultColor);
                                 contentView.setTextColor(btnTopTextArr[i], defaultColor);
                             } else {
-                                contentView.setInt(btnImgArr[i], "setColorFilter", customColor);
+                                contentView.setInt(btnArr[i], "setColorFilter", customColor);
                                 contentView.setTextColor(btnTopTextArr[i], customColor);
                             }
                         }
@@ -956,8 +953,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
-                        contentView.setInt(btnImgArr[i], "setColorFilter", 0);
-                        contentView.setImageViewResource(btnImgArr[i], 0);
+                        contentView.setInt(btnArr[i], "setColorFilter", 0);
+                        contentView.setImageViewResource(btnArr[i], 0);
                     }
                 }
             }

@@ -70,8 +70,7 @@ public class DragEventListener implements View.OnDragListener {
                     e.printStackTrace();
                     return false;
                 }
-                BridgeResource br = bridge.getResource(resRef);
-                bridge.addToCurrentCategory(ctx, br, index);
+                bridge.addToCurrentCategory(ctx, resRef, index);
                 instance.panelUpdateIndex(index);
                 // Returns true. DragEvent.getResult() will return true.
                 return true;

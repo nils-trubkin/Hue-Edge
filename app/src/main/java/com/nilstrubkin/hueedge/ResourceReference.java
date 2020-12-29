@@ -8,14 +8,22 @@ import java.io.Serializable;
 
 public class ResourceReference implements Serializable {
     private static final long serialVersionUID = 6654859715107436411L;
-    public final String category;
-    public final String id;
-    public int iconRes;
-    public int iconColor;
+    private final String category;
+    private final String id;
+    private int iconRes;
+    private int iconColor;
 
     public ResourceReference(String category, String id) {
         this.category = category;
         this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public int getIconRes() {

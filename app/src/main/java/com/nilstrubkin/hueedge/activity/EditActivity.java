@@ -188,36 +188,26 @@ public class EditActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager iconsLayoutMgr = new GridLayoutManager(ctx, 5);
         List<Integer> icons_res = new ArrayList<>();
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
-        icons_res.add(R.drawable.ic_001_bedside_table);
-        icons_res.add(R.drawable.ic_002_alarm_clock);
+        icons_res.add(R.drawable.filled_circle);
+        icons_res.add(R.drawable.ic_001_musical_note_svg);
+        icons_res.add(R.drawable.ic_002_lamp_svg);
+        icons_res.add(R.drawable.ic_003_bed_svg);
+        icons_res.add(R.drawable.ic_004_desk_svg);
+        icons_res.add(R.drawable.ic_005_headphones_svg);
+        icons_res.add(R.drawable.ic_006_light_svg);
+        icons_res.add(R.drawable.ic_007_gamepad_svg);
+        icons_res.add(R.drawable.ic_008_bath_svg);
+        icons_res.add(R.drawable.ic_009_couch_svg);
+        icons_res.add(R.drawable.ic_010_divan_svg);
+        icons_res.add(R.drawable.ic_011_hanger_svg);
+        icons_res.add(R.drawable.ic_012_television_svg);
+        icons_res.add(R.drawable.ic_013_chair_svg);
+        icons_res.add(R.drawable.ic_014_ceiling_fan_svg);
+        icons_res.add(R.drawable.ic_015_floor_lamp_svg);
+        icons_res.add(R.drawable.ic_016_computer_svg);
+        icons_res.add(R.drawable.ic_017_shelving_svg);
+        icons_res.add(R.drawable.ic_018_studying_svg);
+        icons_res.add(R.drawable.ic_019_picture_svg);
 
         IconGalleryAdapter galleryAdapter = new IconGalleryAdapter(icons_res, this::setIcon);
         iconGallery.setAdapter(galleryAdapter);
@@ -258,16 +248,16 @@ public class EditActivity extends AppCompatActivity {
         HueEdgeProvider.vibrate(ctx);
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
 
-        ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
-        BridgeResource res;
+        ResourceReference resRef;
         try {
-            res = getBridge().getResource(Objects.requireNonNull(resRef));
+            resRef = Objects.requireNonNull(getCurrentCategoryContents().get(currentIconBtn));
         } catch (NullPointerException e) {
             e.printStackTrace();
             return;
         }
 
         int iconRes = (int) v.findViewById(R.id.button_icon).getTag();
+        if (iconRes == R.drawable.filled_circle) iconRes = 0;
         resRef.setIconRes(iconRes);
         HueBridge.saveAllConfiguration(ctx);
 
@@ -275,8 +265,7 @@ public class EditActivity extends AppCompatActivity {
         final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
         btn.setImageResource(iconRes);
-        btn.setColorFilter(res.getBtnTextColor(ctx) == 0xFAFAFA ? resRef.getIconColor() : res.getBtnTextColor(ctx));
-        btnTopText.setVisibility(View.GONE);
+        btnTopText.setVisibility(iconRes == 0 ? View.VISIBLE : View.GONE);
     }
 
     public void setColor(View v){
@@ -422,6 +411,7 @@ public class EditActivity extends AppCompatActivity {
                 ctx.getResources().getDimensionPixelSize(br.getBtnTextSize(ctx)));
 
         int iconRes = resRef.getIconRes();
+        Log.e(TAG, "Pos " + position + " icon " + iconRes);
         if (iconRes != 0) {
             btn.setImageResource(iconRes);
             btnTopText.setVisibility(View.GONE);
@@ -430,6 +420,7 @@ public class EditActivity extends AppCompatActivity {
         }
 
         int customColor = resRef.getIconColor();
+        Log.e(TAG, "Pos " + position + " col " + customColor);
         if(customColor == 0) {
             int defaultColor = br.getBtnTextColor(ctx);
             btn.setColorFilter(defaultColor);
@@ -442,26 +433,6 @@ public class EditActivity extends AppCompatActivity {
 
     public void handleIconBtn(int position){
         currentIconBtn = position;
-
-        ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
-
-        int presentIconRes = 0;
-        try{
-            presentIconRes = Objects.requireNonNull(resRef).getIconRes();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
         findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
-
-        /*if(presentIconRes == 0) {
-            findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
-        } else {
-            final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
-            final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
-
-            resRef.setIconRes(0);
-            btn.setImageResource(0);
-            btnTopText.setVisibility(View.VISIBLE);
-        }*/
     }
 }

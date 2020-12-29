@@ -56,19 +56,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn6img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn6topText"
@@ -120,19 +110,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn7img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn7topText"
@@ -184,19 +164,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn8img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn8topText"
@@ -248,19 +218,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn9img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn9topText"
@@ -312,19 +272,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn10img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn10topText"
@@ -387,19 +337,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn1img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn1topText"
@@ -451,19 +391,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn2img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn2topText"
@@ -515,19 +445,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn3img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn3topText"
@@ -579,19 +499,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn4img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn4topText"
@@ -643,19 +553,9 @@
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="@dimen/resource_button_dimen"
                             android:layout_height="@dimen/resource_button_dimen"
-                            android:layout_gravity="center"
                             android:background="@drawable/add_button_background"
-                            android:gravity="center"
-                            android:hyphenationFrequency="full"
-                            android:includeFontPadding="true"
-                            android:padding="@dimen/resource_button_padding"
-                            android:textAlignment="center" />
-
-                        <ImageView
-                            android:id="@+id/btn5img"
-                            android:layout_width="@dimen/resource_button_img_dimen"
-                            android:layout_height="@dimen/resource_button_img_dimen"
-                            android:layout_gravity="center" />
+                            android:padding="@dimen/resource_button_icon_enabled_padding"
+                            android:scaleType="centerCrop" />
 
                         <TextView
                             android:id="@+id/btn5topText"

@@ -131,8 +131,8 @@ public class HueBridge implements Serializable {
     }
 
     public BridgeResource getResource(ResourceReference ref){
-        String id = ref.id;
-        switch (ref.category){
+        String id = ref.getId();
+        switch (ref.getCategory()){
             case "lights":
                 return getBridgeState().getLights().get(id);
             case "groups":
@@ -225,7 +225,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public void addToCurrentCategory(Context ctx, BridgeResource br, int index){
+    public void addToCurrentCategory(Context ctx, ResourceReference resRef, int index){
         menuCategory category = getCurrentCategory(ctx);
         Log.d(TAG, "addToCurrentCategory()");
         if (getContents().containsKey(category)) {
@@ -238,11 +238,8 @@ public class HueBridge implements Serializable {
                 e.printStackTrace();
             }
             if (slotIsEmpty) {
-                String resCat = br.getCategory();
-                String resId = br.getId();
-                ResourceReference resRef = new ResourceReference(resCat, resId);
                 categoryContents.put(index, resRef);
-                Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + br.toString());
+                Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + resRef.toString());
             }
         }
     }
