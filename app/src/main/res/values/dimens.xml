@@ -40,7 +40,9 @@
     <dimen name="resource_button_delete_dimen">24dp</dimen>
     <dimen name="resource_button_icon_dimen">24dp</dimen>
     <dimen name="resource_button_icon_padding">3dp</dimen>
+    <dimen name="resource_button_icon_enabled_padding">10dp</dimen>
     <dimen name="resource_button_delete_margin_left_bottom">40dp</dimen>
+    <dimen name="resource_button_delete_text_size">15dp</dimen>
     <dimen name="resource_button_icon_margin_right">40dp</dimen>
     <dimen name="resource_button_icon_margin_top">30dp</dimen>
     <dimen name="views_margin_top_bottom">8dp</dimen>

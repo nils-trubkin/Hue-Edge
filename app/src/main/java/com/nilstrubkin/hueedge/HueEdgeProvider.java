@@ -5,7 +5,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
 import android.opengl.Visibility;
 import android.os.Vibrator;
@@ -20,6 +29,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
@@ -74,9 +84,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     //Array of references to icon buttons in Edit activity
     public static final int[] btnIconArr = {R.id.btn1icon, R.id.btn2icon, R.id.btn3icon, R.id.btn4icon, R.id.btn5icon,
             R.id.btn6icon, R.id.btn7icon, R.id.btn8icon, R.id.btn9icon, R.id.btn10icon};
-    //Array of references to delete buttons top texts in Edit activity
-    public static final int[] btnDeleteTopTextArr = {R.id.btn1deleteTopText, R.id.btn2deleteTopText, R.id.btn3deleteTopText, R.id.btn4deleteTopText, R.id.btn5deleteTopText,
-            R.id.btn6deleteTopText, R.id.btn7deleteTopText, R.id.btn8deleteTopText, R.id.btn9deleteTopText, R.id.btn10deleteTopText};
     //Array of references to category buttons
     public static final int[] btnSlidersCategoryArr = {R.id.btnSlidersCategory1, R.id.btnSlidersCategory2,
             R.id.btnSlidersCategory3, R.id.btnSlidersCategory4};

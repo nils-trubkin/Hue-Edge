@@ -3,6 +3,7 @@ package com.nilstrubkin.hueedge;
 import java.io.Serializable;
 
 public class ResourceReference implements Serializable {
+    private static final long serialVersionUID = 6654859715107436411L;
     public final String category;
     public final String id;
     public int iconRes;

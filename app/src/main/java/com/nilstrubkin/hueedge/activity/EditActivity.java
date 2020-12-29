@@ -233,8 +233,9 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void setIcon(View v){
-        Log.d(TAG, "setting icon");
         HueEdgeProvider.vibrate(ctx);
+        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
+
         final Map<Integer, ResourceReference> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
@@ -252,15 +253,17 @@ public class EditActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
+
         int icon_res = (int) v.findViewById(R.id.button_icon).getTag();
         resRef.setIconRes(icon_res);
-        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
         HueBridge.saveAllConfiguration(ctx);
 
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
         final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
+        int p = Math.round(getResources().getDimension(R.dimen.resource_button_icon_enabled_padding));
         btn.setImageResource(icon_res);
+        btn.setPadding(p, p, p, p);
         btn.setColorFilter(res.getBtnTextColor(ctx));
         btnTopText.setVisibility(View.GONE);
     }
@@ -286,9 +289,7 @@ public class EditActivity extends AppCompatActivity {
             boolean slotIsFilled = currentCategoryContents.containsKey(i);
             final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[i]);
             final ImageButton btn = findViewById(HueEdgeProvider.btnArr[i]);
-            final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[i]);
             final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-            final TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[i]);
             final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[i]);
 
             if (slotIsFilled) {
@@ -309,7 +310,6 @@ public class EditActivity extends AppCompatActivity {
                 btnDelete.setVisibility(View.VISIBLE);
                 btnIcon.setOnClickListener(v -> handleIconBtn(finalI));
                 btnIcon.setVisibility(View.VISIBLE);
-                btnDeleteTopText.setVisibility(View.VISIBLE);
                 btn.setOnDragListener(null);
                 btnText.setOnDragListener(null);
                 btn.setOnLongClickListener(v -> {
@@ -330,22 +330,20 @@ public class EditActivity extends AppCompatActivity {
                         //noinspection deprecation
                         return v.startDrag(dragData,  // the data to be dragged
                                 myShadow,  // the drag shadow builder
-                                res,      // pass resource
+                                resRef,      // pass resource ref
                                 0          // flags (not currently used, set to 0)
                         );
                 });
             } else {
-                displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText, btnIcon);
-                DragEventListener dragListen = new DragEventListener(ctx, i);
-                btn.setOnDragListener(dragListen);
-                btnText.setOnDragListener(dragListen);
-                btn.setOnLongClickListener(null);
+                displaySlotAsEmpty(i);
             }
         }
     }
 
     public void clearSlot (int position) {
         HueEdgeProvider.vibrate(ctx);
+        displaySlotAsEmpty(position);
+
         final Map<Integer, ResourceReference> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
@@ -357,57 +355,64 @@ public class EditActivity extends AppCompatActivity {
         }
         currentCategoryContents.remove(position);
         HueBridge.saveAllConfiguration(ctx);
-        ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
-        TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
-        TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
-        Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
-        ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[position]);
-        TextView btnDeleteTopText = findViewById(HueEdgeProvider.btnDeleteTopTextArr[position]);
-        displaySlotAsEmpty(btn, btnTopText, btnDelete, btnText, btnDeleteTopText, btnIcon);
-        // Creates a new drag event listener
-        DragEventListener dragListen = new DragEventListener(ctx, position);
-        // Sets the drag event listener for the View
-        btn.setOnDragListener(dragListen);
-        btnText.setOnDragListener(dragListen);
-        btn.setOnLongClickListener(null);
     }
 
-    public void displaySlotAsEmpty (ImageButton btn, TextView btnTopText, Button btnDelete, TextView btnText, TextView btnDeleteTopText, ImageButton btnIcon) {
+    public void displaySlotAsEmpty (int position) {
+        final ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
+        final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
+        final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
+        final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[position]);
+        final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[position]);
+
+        int p = Math.round(getResources().getDimension(R.dimen.resource_button_padding));
+        btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
+        btn.setImageResource(0);
+        btn.setPadding(p, p, p, p);
         btnTopText.setText("");
         btnText.setText("");
-        btn.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.edit_add_button_background, getTheme()));
         btnDelete.setVisibility(View.GONE);
-        btnDeleteTopText.setVisibility(View.GONE);
         btnIcon.setVisibility(View.GONE);
+
+        DragEventListener dragListen = new DragEventListener(ctx, position);
+        btn.setOnDragListener(dragListen);
+        btn.setOnLongClickListener(null);
+        btnText.setOnDragListener(dragListen);
     }
 
     public void displaySlotAsFull (int position, ResourceReference resRef) {
-        BridgeResource res;
+        BridgeResource br;
         try {
-            res = getBridge().getResource(resRef);
+            br = getBridge().getResource(resRef);
         } catch (NullPointerException e) {
             Log.e(TAG, "Failed to load filled slot");
             e.printStackTrace();
             return;
         }
-        TextView tw = findViewById(HueEdgeProvider.btnTextArr[position]);
-        tw.setText(res.getUnderBtnText());
+
         final ImageButton btn = findViewById(HueEdgeProvider.btnArr[position]);
+        final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[position]);
         final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[position]);
-        btnTopText.setText(res.getBtnText(ctx));
+
+        btn.setBackgroundResource(br.getBtnBackgroundResource());
+        btnTopText.setText(br.getBtnText(ctx));
+        btnText.setText(br.getUnderBtnText());
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                ctx.getResources().getDimensionPixelSize(res.getBtnTextSize(ctx)));
-        btnTopText.setTextColor(res.getBtnTextColor(ctx));
-        btn.setBackgroundResource(res.getBtnBackgroundResource());
+                ctx.getResources().getDimensionPixelSize(br.getBtnTextSize(ctx)));
+        btnTopText.setTextColor(br.getBtnTextColor(ctx));
         int icon_res = resRef.getIconRes();
         if (icon_res != 0) {
+            int p = Math.round(getResources().getDimension(R.dimen.resource_button_icon_enabled_padding));
             btn.setImageResource(icon_res);
+            btn.setPadding(p, p, p, p);
             btnTopText.setVisibility(View.GONE);
+        } else {
+            btnTopText.setVisibility(View.VISIBLE);
         }
     }
 
     public void handleIconBtn(int position){
         currentIconBtn = position;
+
         final Map<Integer, ResourceReference> currentCategoryContents;
         try {
             currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
@@ -415,23 +420,25 @@ public class EditActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
-        ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
-        BridgeResource res;
-        try {
-            res = getBridge().getResource(Objects.requireNonNull(resRef));
+         ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+
+        int presentIconRes = 0;
+        try{
+            presentIconRes = Objects.requireNonNull(resRef).getIconRes();
         } catch (NullPointerException e) {
             e.printStackTrace();
-            return;
         }
-        int present_icon_res = resRef.getIconRes();
-        if(present_icon_res == 0) {
+
+        if(presentIconRes == 0) {
             findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
         } else {
             final TextView btnTopText = findViewById(HueEdgeProvider.btnTopTextArr[currentIconBtn]);
             final ImageButton btn = findViewById(HueEdgeProvider.btnArr[currentIconBtn]);
 
+            int p = Math.round(getResources().getDimension(R.dimen.resource_button_padding));
             resRef.setIconRes(0);
             btn.setImageResource(0);
+            btn.setPadding(p, p, p, p);
             btnTopText.setVisibility(View.VISIBLE);
         }
     }
