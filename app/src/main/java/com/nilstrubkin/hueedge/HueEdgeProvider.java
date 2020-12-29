@@ -933,13 +933,20 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
                             int icon_res = ref.getIconRes();
                             contentView.setImageViewResource(btnImgArr[i], icon_res);
-                                if (icon_res != 0){
-                                    contentView.setInt(btnImgArr[i], "setColorFilter", resource.getBtnTextColor(ctx));
-                                    contentView.setViewVisibility(btnTopTextArr[i], View.GONE);
-                                } else {
-                                    contentView.setViewVisibility(btnTopTextArr[i], View.VISIBLE);
-                                }
-
+                            if (icon_res != 0){
+                                contentView.setViewVisibility(btnTopTextArr[i], View.GONE);
+                            } else {
+                                contentView.setViewVisibility(btnTopTextArr[i], View.VISIBLE);
+                            }
+                            int customColor = ref.getIconColor();
+                            if(customColor == 0) {
+                                int defaultColor = resource.getBtnTextColor(ctx);
+                                contentView.setInt(btnImgArr[i], "setColorFilter", defaultColor);
+                                contentView.setTextColor(btnTopTextArr[i], defaultColor);
+                            } else {
+                                contentView.setInt(btnImgArr[i], "setColorFilter", customColor);
+                                contentView.setTextColor(btnTopTextArr[i], customColor);
+                            }
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
@@ -949,6 +956,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
+                        contentView.setInt(btnImgArr[i], "setColorFilter", 0);
                         contentView.setImageViewResource(btnImgArr[i], 0);
                     }
                 }

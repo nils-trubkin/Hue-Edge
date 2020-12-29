@@ -48,7 +48,7 @@ public class EditActivity extends AppCompatActivity {
 
     private HueBridge bridge;
     private HueEdgeProvider.menuCategory currentCategory;
-    private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents;
+    private Map<Integer, ResourceReference> currentCategoryContents;
     private int currentIconBtn;
 
 
@@ -68,12 +68,12 @@ public class EditActivity extends AppCompatActivity {
         this.currentCategory = currentCategory;
     }
 
-    private Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> getContents() {
-        return contents;
+    private Map<Integer, ResourceReference> getCurrentCategoryContents() {
+        return currentCategoryContents;
     }
 
-    private void setContents(Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents) {
-        this.contents = contents;
+    private void setCurrentCategoryContents(Map<Integer, ResourceReference> currentCategoryContents) {
+        this.currentCategoryContents = currentCategoryContents;
     }
 
     @Override
@@ -107,28 +107,28 @@ public class EditActivity extends AppCompatActivity {
 
         HueBridge br = getBridge();
         setCurrentCategory(br.getCurrentCategory(ctx));
-        setContents(br.getContents());
+        try {
+            Map<Integer, ResourceReference> cc = Objects.requireNonNull(br.getContents().get(getCurrentCategory()));
+            setCurrentCategoryContents(cc);
+        }
+        catch (NullPointerException e){
+            Log.e(TAG, "Failed to get contents of current category");
+            e.printStackTrace();
+            return;
+        }
 
         btnSave.setOnClickListener(v -> {
-            if(HueBridge.getInstance(ctx) != null){
+            if(getBridge() != null){
                 HueBridge.saveAllConfiguration(ctx);
                 String toastString = ctx.getString(R.string.toast_saved);
                 Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
             }
             else
-                Log.e(TAG, "Saving the settings but the HueBridge.getInstance() == null");
+                Log.e(TAG, "Saving the settings but the getBridge() == null");
             finish();
         });
 
-        String ip;
-        try {
-            ip = Objects.requireNonNull(HueBridge.getInstance(ctx)).getIp();
-        }
-        catch (NullPointerException e){
-            Log.e(TAG, "Trying to enter edit activity but there is no instance of HueBridge");
-            e.printStackTrace();
-            return;
-        }
+        String ip = getBridge().getIp();
         hueStatus.setText(ctx.getString(R.string.hue_status, ip));
         hueStatus.setOnClickListener(v -> {
             Intent setupIntent = new Intent(ctx, SetupActivity.class);
@@ -258,16 +258,7 @@ public class EditActivity extends AppCompatActivity {
         HueEdgeProvider.vibrate(ctx);
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
 
-        final Map<Integer, ResourceReference> currentCategoryContents;
-        try {
-            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
-        }
-        catch (NullPointerException e){
-            Log.e(TAG, "Failed to get contents of current category");
-            e.printStackTrace();
-            return;
-        }
-        ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+        ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
         BridgeResource res;
         try {
             res = getBridge().getResource(Objects.requireNonNull(resRef));
@@ -292,16 +283,7 @@ public class EditActivity extends AppCompatActivity {
         HueEdgeProvider.vibrate(ctx);
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
 
-        final Map<Integer, ResourceReference> currentCategoryContents;
-        try {
-            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
-        }
-        catch (NullPointerException e){
-            Log.e(TAG, "Failed to get contents of current category");
-            e.printStackTrace();
-            return;
-        }
-        ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+        ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
         BridgeResource res;
         try {
             res = getBridge().getResource(Objects.requireNonNull(resRef));
@@ -336,68 +318,56 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void panelUpdateIndex (int i){
-        HueEdgeProvider.menuCategory cc = getCurrentCategory();
-        Map<HueEdgeProvider.menuCategory, Map<Integer, ResourceReference>> contents = getContents();
-        if (contents.containsKey(getCurrentCategory())) {
-            Map<Integer, ResourceReference> currentCategoryContents;
+        boolean slotIsFilled = getCurrentCategoryContents().containsKey(i);
+        final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[i]);
+        final ImageButton btn = findViewById(HueEdgeProvider.btnArr[i]);
+        final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
+        final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[i]);
+
+        if (slotIsFilled) {
+            final BridgeResource res;
+            final ResourceReference resRef;
             try {
-                currentCategoryContents = Objects.requireNonNull(contents.get(cc));
+                resRef = Objects.requireNonNull(currentCategoryContents.get(i));
+                res = getBridge().getResource(resRef);
             } catch (NullPointerException e) {
-                Log.e(TAG, "Trying to enter edit activity panel but failed to get current category contents");
+                Log.e(TAG, "Failed to load filled slot");
                 e.printStackTrace();
                 return;
             }
-            boolean slotIsFilled = currentCategoryContents.containsKey(i);
-            final TextView btnText = findViewById(HueEdgeProvider.btnTextArr[i]);
-            final ImageButton btn = findViewById(HueEdgeProvider.btnArr[i]);
-            final Button btnDelete = findViewById(HueEdgeProvider.btnDeleteArr[i]);
-            final ImageButton btnIcon = findViewById(HueEdgeProvider.btnIconArr[i]);
-
-            if (slotIsFilled) {
-                final BridgeResource res;
-                final ResourceReference resRef;
-                try {
-                    resRef = Objects.requireNonNull(currentCategoryContents.get(i));
-                    res = getBridge().getResource(resRef);
-                } catch (NullPointerException e) {
-                    Log.e(TAG, "Failed to load filled slot");
-                    e.printStackTrace();
-                    return;
-                }
-                displaySlotAsFull(i, resRef);
-                final int finalI = i;
-                btn.setOnClickListener(v -> clearSlot(finalI));
-                btnDelete.setOnClickListener(v -> clearSlot(finalI));
-                btnDelete.setVisibility(View.VISIBLE);
-                btnIcon.setOnClickListener(v -> handleIconBtn(finalI));
-                btnIcon.setVisibility(View.VISIBLE);
-                btn.setOnDragListener(null);
-                btnText.setOnDragListener(null);
-                btn.setOnLongClickListener(v -> {
-                    HueEdgeProvider.vibrate(ctx);
-                    ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
-                    ClipData dragData = new ClipData(
-                            res.getName(),
-                            new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
-                            item);
-                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        return v.startDragAndDrop(dragData,  // the data to be dragged
-                                myShadow,  // the drag shadow builder
-                                resRef,      // pass resource ref
-                                0          // flags (not currently used, set to 0)
-                        );
-                    else
-                        //noinspection deprecation
-                        return v.startDrag(dragData,  // the data to be dragged
-                                myShadow,  // the drag shadow builder
-                                resRef,      // pass resource ref
-                                0          // flags (not currently used, set to 0)
-                        );
-                });
-            } else {
-                displaySlotAsEmpty(i);
-            }
+            displaySlotAsFull(i, resRef);
+            final int finalI = i;
+            btn.setOnClickListener(v -> clearSlot(finalI));
+            btnDelete.setOnClickListener(v -> clearSlot(finalI));
+            btnDelete.setVisibility(View.VISIBLE);
+            btnIcon.setOnClickListener(v -> handleIconBtn(finalI));
+            btnIcon.setVisibility(View.VISIBLE);
+            btn.setOnDragListener(null);
+            btnText.setOnDragListener(null);
+            btn.setOnLongClickListener(v -> {
+                HueEdgeProvider.vibrate(ctx);
+                ClipData.Item item = new ClipData.Item(String.valueOf(finalI));
+                ClipData dragData = new ClipData(
+                        res.getName(),
+                        new String[] { ClipDescription.MIMETYPE_TEXT_PLAIN },
+                        item);
+                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(btn);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                    return v.startDragAndDrop(dragData,  // the data to be dragged
+                            myShadow,  // the drag shadow builder
+                            resRef,      // pass resource ref
+                            0          // flags (not currently used, set to 0)
+                    );
+                else
+                    //noinspection deprecation
+                    return v.startDrag(dragData,  // the data to be dragged
+                            myShadow,  // the drag shadow builder
+                            resRef,      // pass resource ref
+                            0          // flags (not currently used, set to 0)
+                    );
+            });
+        } else {
+            displaySlotAsEmpty(i);
         }
     }
 
@@ -405,16 +375,7 @@ public class EditActivity extends AppCompatActivity {
         HueEdgeProvider.vibrate(ctx);
         displaySlotAsEmpty(position);
 
-        final Map<Integer, ResourceReference> currentCategoryContents;
-        try {
-            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
-        }
-        catch (NullPointerException e){
-            Log.e(TAG, "Failed to get contents of current category");
-            e.printStackTrace();
-            return;
-        }
-        currentCategoryContents.remove(position);
+        getCurrentCategoryContents().remove(position);
         HueBridge.saveAllConfiguration(ctx);
     }
 
@@ -436,6 +397,8 @@ public class EditActivity extends AppCompatActivity {
         btn.setOnDragListener(dragListen);
         btn.setOnLongClickListener(null);
         btnText.setOnDragListener(dragListen);
+        btn.setColorFilter(ctx.getColor(R.color.black));
+        btnTopText.setTextColor(ctx.getColor(R.color.black));
     }
 
     public void displaySlotAsFull (int position, ResourceReference resRef) {
@@ -457,27 +420,30 @@ public class EditActivity extends AppCompatActivity {
         btnText.setText(br.getUnderBtnText());
         btnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 ctx.getResources().getDimensionPixelSize(br.getBtnTextSize(ctx)));
-        btnTopText.setTextColor(br.getBtnTextColor(ctx));
-        int icon_res = resRef.getIconRes();
-        if (icon_res != 0) {
-            btn.setImageResource(icon_res);
+
+        int iconRes = resRef.getIconRes();
+        if (iconRes != 0) {
+            btn.setImageResource(iconRes);
             btnTopText.setVisibility(View.GONE);
         } else {
             btnTopText.setVisibility(View.VISIBLE);
+        }
+
+        int customColor = resRef.getIconColor();
+        if(customColor == 0) {
+            int defaultColor = br.getBtnTextColor(ctx);
+            btn.setColorFilter(defaultColor);
+            btnTopText.setTextColor(defaultColor);
+        } else {
+            btn.setColorFilter(customColor);
+            btnTopText.setTextColor(customColor);
         }
     }
 
     public void handleIconBtn(int position){
         currentIconBtn = position;
 
-        final Map<Integer, ResourceReference> currentCategoryContents;
-        try {
-            currentCategoryContents = Objects.requireNonNull(getContents().get(getCurrentCategory()));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            return;
-        }
-         ResourceReference resRef = currentCategoryContents.get(currentIconBtn);
+        ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
 
         int presentIconRes = 0;
         try{
