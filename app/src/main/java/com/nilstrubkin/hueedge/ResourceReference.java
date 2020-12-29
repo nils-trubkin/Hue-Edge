@@ -11,6 +11,7 @@ public class ResourceReference implements Serializable {
     public final String category;
     public final String id;
     public int iconRes;
+    public int iconColor;
 
     public ResourceReference(String category, String id) {
         this.category = category;
@@ -23,6 +24,14 @@ public class ResourceReference implements Serializable {
 
     public void setIconRes(int iconRes) {
         this.iconRes = iconRes;
+    }
+
+    public int getIconColor() {
+        return iconColor;
+    }
+
+    public void setIconColor(int iconColor) {
+        this.iconColor = iconColor;
     }
 
     public int compareTo(Context ctx, ResourceReference ref) {

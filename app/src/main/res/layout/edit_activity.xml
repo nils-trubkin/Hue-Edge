@@ -943,11 +943,38 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_icon_gallery"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_icon_colors"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_icon_colors"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/color_gallery_size"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recycler_icon_gallery" />
+
+        <ImageButton
+            android:id="@+id/btn_gallery_close"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="@dimen/resource_button_icon_dimen"
+            android:layout_height="@dimen/resource_button_icon_dimen"
+            android:background="@drawable/icon_button_background"
+            android:padding="@dimen/resource_button_icon_padding"
+            android:scaleType="centerCrop"
+            android:src="@drawable/settings"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

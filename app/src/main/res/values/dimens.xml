@@ -52,6 +52,7 @@
     <dimen name="adapter_root_layout_height">100dp</dimen>
     <dimen name="hue_status_text_size">14dp</dimen>
     <dimen name="icon_gallery_size">60dp</dimen>
+    <dimen name="color_gallery_size">40dp</dimen>
 
     <!-- setup activity -->
     <dimen name="setup_status_text_size">18dp</dimen>

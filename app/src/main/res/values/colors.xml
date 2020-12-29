@@ -42,4 +42,14 @@
     <color name="discovery_list_color">#50FAFAFA</color>
     <color name="setup_tint">#50000000</color>
     <color name="scrollable_tint">#18FFFFFF</color>
+
+    <!-- Color gallery -->
+    <color name="red">#F44336</color>
+    <color name="orange">#FF9800</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="green">#4CAF50</color>
+    <color name="cyan">#00BCD4</color>
+    <color name="blue">#2196F3</color>
+    <color name="purple">#673AB7</color>
+
 </resources>
