@@ -49,7 +49,7 @@
     <dimen name="top_guideline_space">100dp</dimen>
     <dimen name="bottom_guideline_space">40dp</dimen>
     <dimen name="vertical_guideline_space">150dp</dimen>
-    <dimen name="catalogue_item_height">120dp</dimen>
+    <dimen name="catalogue_item_height">100dp</dimen>
     <dimen name="hue_status_text_size">14dp</dimen>
     <dimen name="icon_gallery_size">60dp</dimen>
     <dimen name="color_gallery_size">40dp</dimen>

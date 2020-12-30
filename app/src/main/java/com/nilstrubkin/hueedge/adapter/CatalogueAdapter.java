@@ -84,7 +84,7 @@ public class CatalogueAdapter extends RecyclerView.Adapter<CatalogueAdapter.Reso
         holder.gridBtn.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 ctx.getResources().getDimensionPixelSize(btnTextSizeRes));
         holder.gridBtn.setBackgroundResource(btnResource);
-        holder.gridBtnText.setText(ctx.getString(R.string.detailed_under_btn_text, underBtnText, category));
+        holder.gridBtnText.setText(ctx.getString(R.string.detailed_under_btn_text, underBtnText, category.substring(0, category.length() - 1)));
         holder.gridBtn.setOnLongClickListener(v -> {
             HueEdgeProvider.vibrate(ctx);
             ClipData.Item item = new ClipData.Item(String.valueOf(-1));
