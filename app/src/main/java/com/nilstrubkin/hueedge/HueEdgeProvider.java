@@ -5,18 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiManager;
-import android.opengl.Visibility;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
@@ -29,7 +18,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
@@ -121,8 +109,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private static OkHttpClient client;
 
     private static HueBridge getBridge(Context ctx) {
-        if (bridge == null)
-            bridge = HueBridge.getInstance(ctx);
+        if (isBridgeNull()) bridge = HueBridge.getInstance(ctx);
         return bridge;
     }
 

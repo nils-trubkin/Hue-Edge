@@ -8,7 +8,6 @@ import android.view.DragEvent;
 import android.view.View;
 
 import com.nilstrubkin.hueedge.activity.EditActivity;
-import com.nilstrubkin.hueedge.resources.BridgeResource;
 
 import java.util.Objects;
 

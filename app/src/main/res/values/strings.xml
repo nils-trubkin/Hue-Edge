@@ -103,6 +103,7 @@
     <!-- Edit activity -->
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
+    <string name="detailed_under_btn_text">%1$s\n(%2$s)</string>
 
     <!-- Config files -->
     <string name="preference_file_key">HueEdgeConfig</string>

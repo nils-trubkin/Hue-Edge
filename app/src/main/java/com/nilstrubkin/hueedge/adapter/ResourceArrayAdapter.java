@@ -62,6 +62,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<ResourceReference> {
 
         final String name = res.getName();
         final String underBtnText = res.getUnderBtnText();
+        final String category = res.getCategory();
         final String btnText = res.getBtnText(ctx);
         final int btnTextSizeRes = res.getBtnTextSize(ctx);
         final int btnColor = res.getBtnTextColor(ctx);
@@ -71,7 +72,7 @@ public class ResourceArrayAdapter extends ArrayAdapter<ResourceReference> {
         gridBtnTopText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 ctx.getResources().getDimensionPixelSize(btnTextSizeRes));
         gridBtn.setBackgroundResource(btnResource);
-        gridBtnText.setText(underBtnText);
+        gridBtnText.setText(ctx.getString(R.string.detailed_under_btn_text, underBtnText, category));
         gridBtn.setOnLongClickListener(v -> {
             HueEdgeProvider.vibrate(ctx);
             ClipData.Item item = new ClipData.Item(String.valueOf(-1));

@@ -43,6 +43,7 @@ import static com.nilstrubkin.hueedge.HueEdgeProvider.*;
 
 public class HueBridge implements Serializable {
     private transient static final String TAG = HueBridge.class.getSimpleName();
+    private static final long serialVersionUID = -9055637954299678802L;
 
     private static HueBridge instance;
     private BridgeCatalogue bridgeState;
@@ -58,6 +59,10 @@ public class HueBridge implements Serializable {
 
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
     private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
+
+    static {
+
+    }
 
     //Constructor
     private HueBridge(Context ctx, String ip, String userName) {
@@ -395,7 +400,7 @@ public class HueBridge implements Serializable {
      * Save and write the HueBridge instance to the memory
      * @param ctx Context
      */
-    public static void saveAllConfiguration(Context ctx) {
+    public static synchronized void saveAllConfiguration(Context ctx) {
         Log.d(TAG, "saveConfigurationToMemory()");
 
         HueBridge instanceToSave = getInstance(ctx);
