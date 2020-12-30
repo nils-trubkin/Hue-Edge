@@ -1,5 +1,6 @@
 package com.nilstrubkin.hueedge.fragment;
 
+import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,7 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.R;
+import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
+
+import java.util.Objects;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     private NavController navController;
@@ -157,26 +162,32 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         SharedPreferences.Editor e = s.edit();
         int levels = seekBar.getProgress();
         String levelsString = String.valueOf(levels + minProgress);
+        SlookCocktailManager cocktailManager = SlookCocktailManager.getInstance(requireContext());
+        int[] cocktailIds = cocktailManager.getCocktailIds(new ComponentName(requireContext(), HueEdgeProvider.class));
         switch (seekBar.getId()) {
             case briBarId:
                 e.putInt(getResources().getString(R.string.preference_bri_levels), levels);
                 e.apply();
                 briStatus.setText(levelsString);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_bri);
                 break;
             case hueBarId:
                 e.putInt(getResources().getString(R.string.preference_hue_levels), levels);
                 e.apply();
                 hueStatus.setText(levelsString);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_hue);
                 break;
             case satBarId:
                 e.putInt(getResources().getString(R.string.preference_sat_levels), levels);
                 e.apply();
                 satStatus.setText(levelsString);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_sat);
                 break;
             case ctBarId:
                 e.putInt(getResources().getString(R.string.preference_ct_levels), levels);
                 e.apply();
                 ctStatus.setText(levelsString);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_ct);
                 break;
         }
     }
