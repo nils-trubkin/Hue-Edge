@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -100,6 +101,7 @@ public class EditActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
         ImageButton galleryClose = findViewById(R.id.btn_gallery_close);
+        ConstraintLayout galleryTint = findViewById(R.id.layout_tint);
 
         HueBridge br = getBridge();
         setCurrentCategory(br.getCurrentCategory(ctx));
@@ -131,7 +133,8 @@ public class EditActivity extends AppCompatActivity {
             setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             ctx.startActivity(setupIntent);
         });
-        galleryClose.setOnClickListener(ignored -> findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE));
+        galleryClose.setOnClickListener(ignored -> closeGallery());
+        galleryTint.setOnClickListener(ignored -> closeGallery());
 
         panelUpdate();
 
@@ -247,7 +250,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void setIcon(View v){
         HueEdgeProvider.vibrate(ctx);
-        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
+        closeGallery();
 
         ResourceReference resRef;
         try {
@@ -271,7 +274,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void setColor(View v){
         HueEdgeProvider.vibrate(ctx);
-        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
+        closeGallery();
 
         ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
         BridgeResource res;
@@ -330,7 +333,7 @@ public class EditActivity extends AppCompatActivity {
             btn.setOnClickListener(v -> clearSlot(finalI));
             btnDelete.setOnClickListener(v -> clearSlot(finalI));
             btnDelete.setVisibility(View.VISIBLE);
-            btnIcon.setOnClickListener(v -> handleIconBtn(finalI));
+            btnIcon.setOnClickListener(v -> openGallery(finalI));
             btnIcon.setVisibility(View.VISIBLE);
             btn.setOnDragListener(null);
             btnText.setOnDragListener(null);
@@ -432,8 +435,14 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    public void handleIconBtn(int position){
+    public void openGallery(int position){
         currentIconBtn = position;
         findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_tint).setVisibility(View.VISIBLE);
+    }
+
+    public void closeGallery(){
+        findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
+        findViewById(R.id.layout_tint).setVisibility(View.GONE);
     }
 }

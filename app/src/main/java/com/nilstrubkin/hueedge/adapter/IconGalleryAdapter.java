@@ -1,19 +1,15 @@
 package com.nilstrubkin.hueedge.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.navigation.NavController;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.discovery.DiscoveryEntry;
 
 import org.jetbrains.annotations.NotNull;
 

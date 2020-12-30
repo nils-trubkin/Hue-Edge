@@ -4,13 +4,11 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -25,7 +23,6 @@ import com.nilstrubkin.hueedge.resources.BridgeResource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 
 public class CatalogueAdapter extends RecyclerView.Adapter<CatalogueAdapter.ResourceViewHolder> {
     private final List<ResourceReference> list;
