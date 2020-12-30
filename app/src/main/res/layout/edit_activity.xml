@@ -41,8 +41,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <GridView
-        android:id="@+id/gridView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_resources_catalogue"
         android:layout_width="@dimen/zero"
         android:layout_height="@dimen/zero"
         android:layout_marginTop="@dimen/views_margin_top_bottom"
@@ -938,23 +938,23 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_icon_gallery"
+            android:id="@+id/recycler_icons_gallery"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/recycler_icon_colors"
+            app:layout_constraintBottom_toTopOf="@+id/recycler_colors_gallery"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_icon_colors"
+            android:id="@+id/recycler_colors_gallery"
             android:layout_width="match_parent"
             android:layout_height="@dimen/color_gallery_size"
             android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recycler_icon_gallery" />
+            app:layout_constraintTop_toBottomOf="@+id/recycler_icons_gallery" />
 
         <ImageButton
             android:id="@+id/btn_gallery_close"

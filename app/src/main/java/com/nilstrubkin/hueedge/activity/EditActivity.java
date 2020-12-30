@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,12 +25,12 @@ import com.nilstrubkin.hueedge.DragEventListener;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.ResourceReference;
+import com.nilstrubkin.hueedge.adapter.CatalogueAdapter;
 import com.nilstrubkin.hueedge.adapter.ColorGalleryAdapter;
 import com.nilstrubkin.hueedge.adapter.IconGalleryAdapter;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeCatalogue;
 import com.nilstrubkin.hueedge.R;
-import com.nilstrubkin.hueedge.adapter.ResourceArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +94,9 @@ public class EditActivity extends AppCompatActivity {
         window.setNavigationBarColor(ctx.getColor(R.color.navigation_bar_color_edit));
 
         //UI elements
-        GridView gridViewResources = findViewById(R.id.gridView);
-        RecyclerView iconGallery = findViewById(R.id.recycler_icon_gallery);
-        RecyclerView colorsGallery = findViewById(R.id.recycler_icon_colors);
+        RecyclerView catalogueView = findViewById(R.id.recycler_resources_catalogue);
+        RecyclerView iconGallery = findViewById(R.id.recycler_icons_gallery);
+        RecyclerView colorsGallery = findViewById(R.id.recycler_colors_gallery);
         Button btnSave = findViewById(R.id.btnSave);
         TextView hueStatus = findViewById(R.id.hueStatus);
         ImageButton galleryClose = findViewById(R.id.btn_gallery_close);
@@ -178,10 +177,15 @@ public class EditActivity extends AppCompatActivity {
             resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
         }
 
-        ResourceArrayAdapter adapter = new ResourceArrayAdapter(
-                this, R.layout.edit_activity_adapter_view_layout, resources);
+        /*ResourceArrayAdapter adapter = new ResourceArrayAdapter(
+                this, R.layout.catalogue_item, resources);
         adapter.sort((a, b) -> a.compareTo(ctx, b));
-        gridViewResources.setAdapter(adapter);
+        gridViewResources.setAdapter(adapter);*/
+        RecyclerView.LayoutManager catalogueLayoutMgr = new GridLayoutManager(ctx, 2);
+        CatalogueAdapter catalogueAdapter = new CatalogueAdapter(resources);
+        catalogueView.setAdapter(catalogueAdapter);
+        catalogueView.setHasFixedSize(true);
+        catalogueView.setLayoutManager(catalogueLayoutMgr);
 
         RecyclerView.LayoutManager iconsLayoutMgr = new GridLayoutManager(ctx, 5);
         List<Integer> icons_res = new ArrayList<>();

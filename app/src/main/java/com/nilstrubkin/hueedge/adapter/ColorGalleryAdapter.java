@@ -15,18 +15,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapter.BridgeDiscoveryViewHolder> {
+public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapter.ColorViewHolder> {
     private final List<Integer> list;
     private final View.OnClickListener listener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class BridgeDiscoveryViewHolder extends RecyclerView.ViewHolder{
+    public static class ColorViewHolder extends RecyclerView.ViewHolder{
         public final Context ctx;
         public final ImageButton button;
 
-        public BridgeDiscoveryViewHolder(ConstraintLayout view){
+        public ColorViewHolder(ConstraintLayout view){
             super(view);
             ctx = view.getContext();
             button = view.findViewById(R.id.button_icon);
@@ -42,17 +42,17 @@ public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapte
     // Create new views (invoked by the layout manager)
     @NotNull
     @Override
-    public ColorGalleryAdapter.BridgeDiscoveryViewHolder onCreateViewHolder(ViewGroup parent,
+    public ColorGalleryAdapter.ColorViewHolder onCreateViewHolder(ViewGroup parent,
                                                                             int viewType) {
         // create a new view
         ConstraintLayout v = (ConstraintLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.color_item, parent, false);
-        return new BridgeDiscoveryViewHolder(v);
+        return new ColorViewHolder(v);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(@NotNull BridgeDiscoveryViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ColorViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         int color = list.get(position);
