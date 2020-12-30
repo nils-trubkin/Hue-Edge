@@ -56,7 +56,7 @@ public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapte
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         int color = list.get(position);
-        holder.button.setImageResource(R.drawable.filled_circle);
+        holder.button.setImageResource(R.drawable.ic_053_circle_svg);
         holder.button.setColorFilter(color);
         holder.button.setTag(color);
         holder.button.setOnClickListener(listener);
