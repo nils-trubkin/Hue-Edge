@@ -42,6 +42,7 @@
     <color name="discovery_list_color">#50FAFAFA</color>
     <color name="setup_tint">#50000000</color>
     <color name="scrollable_tint">#18FFFFFF</color>
+    <color name="gallery_selected_tint">#18000000</color>
 
     <!-- Color gallery -->
     <color name="red">#F44336</color>

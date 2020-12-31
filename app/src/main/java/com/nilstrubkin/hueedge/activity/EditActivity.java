@@ -48,6 +48,10 @@ public class EditActivity extends AppCompatActivity {
     private Map<Integer, ResourceReference> currentCategoryContents;
     private int currentIconBtn;
 
+    private IconGalleryAdapter iconAdapter;
+    private ColorGalleryAdapter colorAdapter;
+    private List<Integer> iconsRes;
+    private List<Integer> colorsRes;
 
     private void setBridge(HueBridge bridge) {
         this.bridge = bridge;
@@ -190,92 +194,90 @@ public class EditActivity extends AppCompatActivity {
         catalogueView.setHasFixedSize(true);
         catalogueView.setLayoutManager(catalogueLayoutMgr);
 
+        iconsRes = new ArrayList<>();
+        iconsRes.add(R.drawable.ic_000_empty);
+        iconsRes.add(R.drawable.ic_003_lamp_1_svg);
+        iconsRes.add(R.drawable.ic_004_lamp_svg);
+        iconsRes.add(R.drawable.ic_005_floor_lamp_svg);
+        iconsRes.add(R.drawable.ic_006_ceiling_fan_svg);
+        iconsRes.add(R.drawable.ic_007_weight_svg);
+        iconsRes.add(R.drawable.ic_008_sofa_svg);
+        iconsRes.add(R.drawable.ic_009_television_svg);
+        iconsRes.add(R.drawable.ic_010_computer_svg);
+        iconsRes.add(R.drawable.ic_011_ping_pong_svg);
+        iconsRes.add(R.drawable.ic_012_gamepad_svg);
+        iconsRes.add(R.drawable.ic_013_headphones_svg);
+        iconsRes.add(R.drawable.ic_014_open_book_svg);
+        iconsRes.add(R.drawable.ic_015_canvas_svg);
+        iconsRes.add(R.drawable.ic_016_couch_svg);
+        iconsRes.add(R.drawable.ic_017_pot_svg);
+        iconsRes.add(R.drawable.ic_018_cutlery_svg);
+        iconsRes.add(R.drawable.ic_019_bed_svg);
+        iconsRes.add(R.drawable.ic_020_teddy_bear_svg);
+        iconsRes.add(R.drawable.ic_021_bathtub_svg);
+        iconsRes.add(R.drawable.ic_022_rocking_horse_svg);
+        iconsRes.add(R.drawable.ic_023_desk_svg);
+        iconsRes.add(R.drawable.ic_024_chair_svg);
+        iconsRes.add(R.drawable.ic_025_wc_svg);
+        iconsRes.add(R.drawable.ic_026_stairs_svg);
+        iconsRes.add(R.drawable.ic_027_upstairs_svg);
+        iconsRes.add(R.drawable.ic_028_downstairs_svg);
+        iconsRes.add(R.drawable.ic_029_hanger_svg);
+        iconsRes.add(R.drawable.ic_030_washing_machine_svg);
+        iconsRes.add(R.drawable.ic_031_warehouse_svg);
+        iconsRes.add(R.drawable.ic_032_wardrobe_svg);
+        iconsRes.add(R.drawable.ic_033_home_svg);
+        iconsRes.add(R.drawable.ic_034_support_svg);
+        iconsRes.add(R.drawable.ic_035_door_svg);
+        iconsRes.add(R.drawable.ic_036_tree_svg);
+        iconsRes.add(R.drawable.ic_037_terrace_svg);
+        iconsRes.add(R.drawable.ic_038_balcony_svg);
+        iconsRes.add(R.drawable.ic_039_car_svg);
+        iconsRes.add(R.drawable.ic_040_garage_svg);
+        iconsRes.add(R.drawable.ic_041_door_1_svg);
+        iconsRes.add(R.drawable.ic_042_rocking_chair_svg);
+        iconsRes.add(R.drawable.ic_043_bench_svg);
+        iconsRes.add(R.drawable.ic_044_grill_svg);
+        iconsRes.add(R.drawable.ic_045_swimming_pool_svg);
+        iconsRes.add(R.drawable.ic_046_lightbulb_6_svg);
+        iconsRes.add(R.drawable.ic_047_lightbulb_2_svg);
+        iconsRes.add(R.drawable.ic_048_lightbulb_4_svg);
+        iconsRes.add(R.drawable.ic_049_lightbulb_3_svg);
+        iconsRes.add(R.drawable.ic_050_lightbulb_svg);
+        iconsRes.add(R.drawable.ic_051_lightbulb_1_svg);
+        iconsRes.add(R.drawable.ic_052_lightbulb_5_svg);
+        iconsRes.add(R.drawable.ic_053_circle_svg);
+        iconsRes.add(R.drawable.ic_054_square_svg);
+        iconsRes.add(R.drawable.ic_055_triangle_svg);
+        iconsRes.add(R.drawable.ic_056_up_arrow_svg);
+        iconsRes.add(R.drawable.ic_057_star_svg);
+        iconsRes.add(R.drawable.ic_058_heart_svg);
+        iconsRes.add(R.drawable.ic_059_moon_svg);
+        iconsRes.add(R.drawable.ic_060_bolt_svg);
+        iconsRes.add(R.drawable.ic_061_cube_svg);
+        iconsRes.add(R.drawable.ic_062_diamond_svg);
+        iconsRes.add(R.drawable.ic_063_sun_svg);
+        iconsRes.add(R.drawable.ic_064_fire_svg);
+
+        iconAdapter = new IconGalleryAdapter(iconsRes, this::setIcon);
         RecyclerView.LayoutManager iconsLayoutMgr = new GridLayoutManager(ctx, 5);
-        List<Integer> icons_res = new ArrayList<>();
-        icons_res.add(R.drawable.ic_000_empty);
-        icons_res.add(R.drawable.ic_003_lamp_1_svg);
-        icons_res.add(R.drawable.ic_004_lamp_svg);
-        icons_res.add(R.drawable.ic_005_floor_lamp_svg);
-        icons_res.add(R.drawable.ic_006_ceiling_fan_svg);
-        icons_res.add(R.drawable.ic_007_weight_svg);
-        icons_res.add(R.drawable.ic_008_sofa_svg);
-        icons_res.add(R.drawable.ic_009_television_svg);
-        icons_res.add(R.drawable.ic_010_computer_svg);
-        icons_res.add(R.drawable.ic_011_ping_pong_svg);
-        icons_res.add(R.drawable.ic_012_gamepad_svg);
-        icons_res.add(R.drawable.ic_013_headphones_svg);
-        icons_res.add(R.drawable.ic_014_open_book_svg);
-        icons_res.add(R.drawable.ic_015_canvas_svg);
-        icons_res.add(R.drawable.ic_016_couch_svg);
-        icons_res.add(R.drawable.ic_017_pot_svg);
-        icons_res.add(R.drawable.ic_018_cutlery_svg);
-        icons_res.add(R.drawable.ic_019_bed_svg);
-        icons_res.add(R.drawable.ic_020_teddy_bear_svg);
-        icons_res.add(R.drawable.ic_021_bathtub_svg);
-        icons_res.add(R.drawable.ic_022_rocking_horse_svg);
-        icons_res.add(R.drawable.ic_023_desk_svg);
-        icons_res.add(R.drawable.ic_024_chair_svg);
-        icons_res.add(R.drawable.ic_025_wc_svg);
-        icons_res.add(R.drawable.ic_026_stairs_svg);
-        icons_res.add(R.drawable.ic_027_upstairs_svg);
-        icons_res.add(R.drawable.ic_028_downstairs_svg);
-        icons_res.add(R.drawable.ic_029_hanger_svg);
-        icons_res.add(R.drawable.ic_030_washing_machine_svg);
-        icons_res.add(R.drawable.ic_031_warehouse_svg);
-        icons_res.add(R.drawable.ic_032_wardrobe_svg);
-        icons_res.add(R.drawable.ic_033_home_svg);
-        icons_res.add(R.drawable.ic_034_support_svg);
-        icons_res.add(R.drawable.ic_035_door_svg);
-        icons_res.add(R.drawable.ic_036_tree_svg);
-        icons_res.add(R.drawable.ic_037_terrace_svg);
-        icons_res.add(R.drawable.ic_038_balcony_svg);
-        icons_res.add(R.drawable.ic_039_car_svg);
-        icons_res.add(R.drawable.ic_040_garage_svg);
-        icons_res.add(R.drawable.ic_041_door_1_svg);
-        icons_res.add(R.drawable.ic_042_rocking_chair_svg);
-        icons_res.add(R.drawable.ic_043_bench_svg);
-        icons_res.add(R.drawable.ic_044_grill_svg);
-        icons_res.add(R.drawable.ic_045_swimming_pool_svg);
-        icons_res.add(R.drawable.ic_046_lightbulb_6_svg);
-        icons_res.add(R.drawable.ic_047_lightbulb_2_svg);
-        icons_res.add(R.drawable.ic_048_lightbulb_4_svg);
-        icons_res.add(R.drawable.ic_049_lightbulb_3_svg);
-        icons_res.add(R.drawable.ic_050_lightbulb_svg);
-        icons_res.add(R.drawable.ic_051_lightbulb_1_svg);
-        icons_res.add(R.drawable.ic_052_lightbulb_5_svg);
-        icons_res.add(R.drawable.ic_053_circle_svg);
-        icons_res.add(R.drawable.ic_054_square_svg);
-        icons_res.add(R.drawable.ic_055_triangle_svg);
-        icons_res.add(R.drawable.ic_056_up_arrow_svg);
-        icons_res.add(R.drawable.ic_057_star_svg);
-        icons_res.add(R.drawable.ic_058_heart_svg);
-        icons_res.add(R.drawable.ic_059_moon_svg);
-        icons_res.add(R.drawable.ic_060_bolt_svg);
-        icons_res.add(R.drawable.ic_061_cube_svg);
-        icons_res.add(R.drawable.ic_062_diamond_svg);
-        icons_res.add(R.drawable.ic_063_sun_svg);
-        icons_res.add(R.drawable.ic_064_fire_svg);
-
-
-
-        IconGalleryAdapter galleryAdapter = new IconGalleryAdapter(icons_res, this::setIcon);
-        iconGallery.setAdapter(galleryAdapter);
+        iconGallery.setAdapter(iconAdapter);
         iconGallery.setHasFixedSize(true);
         iconGallery.setLayoutManager(iconsLayoutMgr);
 
-        List<Integer> colors_res = new ArrayList<>();
-        colors_res.add(getColor(R.color.black));
-        colors_res.add(getColor(R.color.red));
-        colors_res.add(getColor(R.color.orange));
-        colors_res.add(getColor(R.color.yellow));
-        colors_res.add(getColor(R.color.green));
-        colors_res.add(getColor(R.color.cyan));
-        colors_res.add(getColor(R.color.blue));
-        colors_res.add(getColor(R.color.purple));
+        colorsRes = new ArrayList<>();
+        colorsRes.add(getColor(R.color.black));
+        colorsRes.add(getColor(R.color.red));
+        colorsRes.add(getColor(R.color.orange));
+        colorsRes.add(getColor(R.color.yellow));
+        colorsRes.add(getColor(R.color.green));
+        colorsRes.add(getColor(R.color.cyan));
+        colorsRes.add(getColor(R.color.blue));
+        colorsRes.add(getColor(R.color.purple));
 
-        ColorGalleryAdapter colorsAdapter = new ColorGalleryAdapter(colors_res, this::setColor);
-        RecyclerView.LayoutManager colorsLayoutMgr = new GridLayoutManager(ctx, colors_res.size());
-        colorsGallery.setAdapter(colorsAdapter);
+        colorAdapter = new ColorGalleryAdapter(colorsRes, this::setColor);
+        RecyclerView.LayoutManager colorsLayoutMgr = new GridLayoutManager(ctx, colorsRes.size());
+        colorsGallery.setAdapter(colorAdapter);
         colorsGallery.setHasFixedSize(true);
         colorsGallery.setLayoutManager(colorsLayoutMgr);
 
@@ -295,7 +297,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void setIcon(View v){
         HueEdgeProvider.vibrate(ctx);
-        closeGallery();
+        //closeGallery();
 
         ResourceReference resRef;
         try {
@@ -305,7 +307,7 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
 
-        int iconRes = (int) v.findViewById(R.id.button_icon).getTag();
+        int iconRes = (int) v.findViewById(R.id.icon).getTag();
         if (iconRes == R.drawable.ic_000_empty) iconRes = 0;
         resRef.setIconRes(iconRes);
         HueBridge.saveAllConfiguration(ctx);
@@ -319,7 +321,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void setColor(View v){
         HueEdgeProvider.vibrate(ctx);
-        closeGallery();
+        //closeGallery();
 
         ResourceReference resRef = getCurrentCategoryContents().get(currentIconBtn);
         BridgeResource res;
@@ -330,7 +332,7 @@ public class EditActivity extends AppCompatActivity {
             return;
         }
 
-        int iconColor = (int) v.findViewById(R.id.button_icon).getTag();
+        int iconColor = (int) v.findViewById(R.id.icon).getTag();
         if (iconColor == getColor(R.color.black)) resRef.setIconColor(0);
         else resRef.setIconColor(iconColor);
         HueBridge.saveAllConfiguration(ctx);
@@ -343,9 +345,13 @@ public class EditActivity extends AppCompatActivity {
             int defaultColor = res.getBtnTextColor(ctx);
             btn.setColorFilter(defaultColor);
             btnTopText.setTextColor(defaultColor);
+            iconAdapter.setSelectedColor(0x252525);
+            iconAdapter.notifyDataSetChanged();
         } else {
             btn.setColorFilter(customColor);
             btnTopText.setTextColor(customColor);
+            iconAdapter.setSelectedColor(customColor);
+            iconAdapter.notifyDataSetChanged();
         }
     }
 
@@ -378,7 +384,7 @@ public class EditActivity extends AppCompatActivity {
             btn.setOnClickListener(v -> clearSlot(finalI));
             btnDelete.setOnClickListener(v -> clearSlot(finalI));
             btnDelete.setVisibility(View.VISIBLE);
-            btnIcon.setOnClickListener(v -> openGallery(finalI));
+            btnIcon.setOnClickListener(v -> openGallery(finalI, resRef.getIconRes(), resRef.getIconColor()));
             btnIcon.setVisibility(View.VISIBLE);
             btn.setOnDragListener(null);
             btnText.setOnDragListener(null);
@@ -470,7 +476,7 @@ public class EditActivity extends AppCompatActivity {
 
         int customColor = resRef.getIconColor();
         Log.e(TAG, "Pos " + position + " col " + customColor);
-        if(customColor == 0) {
+        if (customColor == 0) {
             int defaultColor = br.getBtnTextColor(ctx);
             btn.setColorFilter(defaultColor);
             btnTopText.setTextColor(defaultColor);
@@ -480,14 +486,32 @@ public class EditActivity extends AppCompatActivity {
         }
     }
 
-    public void openGallery(int position){
+    public void openGallery(int position, int presentIconRes, int presentColor){
         currentIconBtn = position;
+        int presentIconIndex;
+        int presentColorIndex;
+        if (presentIconRes == 0) presentIconIndex = 0;
+        else presentIconIndex = iconsRes.indexOf(presentIconRes);
+        if (presentColor == 0) presentColorIndex = 0;
+        else presentColorIndex = colorsRes.indexOf(presentColor);
+        iconAdapter.setSelectedPos(presentIconIndex);
+        iconAdapter.setSelectedColor(colorsRes.get(presentColorIndex));
+        iconAdapter.notifyDataSetChanged();
+        colorAdapter.setSelectedPos(presentColorIndex);
+        colorAdapter.notifyItemChanged(presentColorIndex);
         findViewById(R.id.layout_icon_gallery).setVisibility(View.VISIBLE);
         findViewById(R.id.layout_tint).setVisibility(View.VISIBLE);
+        RecyclerView iconGallery = findViewById(R.id.recycler_icons_gallery);
+        iconGallery.smoothScrollToPosition(presentIconIndex);
     }
 
     public void closeGallery(){
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
         findViewById(R.id.layout_tint).setVisibility(View.GONE);
+        iconAdapter.notifyItemChanged(iconAdapter.getSelectedPos());
+        iconAdapter.setSelectedPos(RecyclerView.NO_POSITION);
+        iconAdapter.setSelectedColor(0x252525);
+        colorAdapter.notifyItemChanged(colorAdapter.getSelectedPos());
+        colorAdapter.setSelectedPos(RecyclerView.NO_POSITION);
     }
 }

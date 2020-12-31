@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,18 +19,34 @@ import java.util.List;
 public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapter.ColorViewHolder> {
     private final List<Integer> list;
     private final View.OnClickListener listener;
+    private int selectedPos = RecyclerView.NO_POSITION;
+
+    public int getSelectedPos() {
+        return selectedPos;
+    }
+
+    public void setSelectedPos(int selectedPos) {
+        this.selectedPos = selectedPos;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ColorViewHolder extends RecyclerView.ViewHolder{
-        public final Context ctx;
-        public final ImageButton button;
+    public class ColorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public final ImageView icon;
 
         public ColorViewHolder(ConstraintLayout view){
             super(view);
-            ctx = view.getContext();
-            button = view.findViewById(R.id.button_icon);
+            icon = view.findViewById(R.id.icon);
+            icon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            notifyItemChanged(selectedPos);
+            selectedPos = getLayoutPosition();
+            notifyItemChanged(selectedPos);
+            listener.onClick(v);
         }
     }
 
@@ -56,10 +73,10 @@ public class ColorGalleryAdapter extends RecyclerView.Adapter<ColorGalleryAdapte
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         int color = list.get(position);
-        holder.button.setImageResource(R.drawable.ic_053_circle_svg);
-        holder.button.setColorFilter(color);
-        holder.button.setTag(color);
-        holder.button.setOnClickListener(listener);
+        holder.icon.setImageResource(R.drawable.ic_053_circle_svg);
+        holder.icon.setColorFilter(color);
+        holder.icon.setTag(color);
+        holder.icon.setSelected(selectedPos == position);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

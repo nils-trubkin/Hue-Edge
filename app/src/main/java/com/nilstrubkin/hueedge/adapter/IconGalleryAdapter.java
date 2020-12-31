@@ -1,10 +1,12 @@
 package com.nilstrubkin.hueedge.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,18 +20,43 @@ import java.util.List;
 public class IconGalleryAdapter extends RecyclerView.Adapter<IconGalleryAdapter.IconViewHolder> {
     private final List<Integer> list;
     private final View.OnClickListener listener;
+    private int selectedPos = RecyclerView.NO_POSITION;
+    private int selectedColor = 0x252525;
+
+    public int getSelectedPos() {
+        return selectedPos;
+    }
+
+    public void setSelectedPos(int selectedPos) {
+        this.selectedPos = selectedPos;
+    }
+
+    public int getSelectedColor() {
+        return selectedColor;
+    }
+
+    public void setSelectedColor(int selectedColor) {
+        this.selectedColor = selectedColor;
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class IconViewHolder extends RecyclerView.ViewHolder{
-        public final Context ctx;
-        public final ImageButton button;
+    public class IconViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public final ImageView icon;
 
         public IconViewHolder(ConstraintLayout view){
             super(view);
-            ctx = view.getContext();
-            button = view.findViewById(R.id.button_icon);
+            icon = view.findViewById(R.id.icon);
+            icon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            notifyItemChanged(selectedPos);
+            selectedPos = getLayoutPosition();
+            notifyItemChanged(selectedPos);
+            listener.onClick(v);
         }
     }
 
@@ -56,9 +83,10 @@ public class IconGalleryAdapter extends RecyclerView.Adapter<IconGalleryAdapter.
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         int icon_res = list.get(position);
-        holder.button.setImageResource(icon_res);
-        holder.button.setTag(icon_res);
-        holder.button.setOnClickListener(listener);
+        holder.icon.setImageResource(icon_res);
+        holder.icon.setColorFilter(selectedColor);
+        holder.icon.setTag(icon_res);
+        holder.icon.setSelected(selectedPos == position);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -66,4 +94,6 @@ public class IconGalleryAdapter extends RecyclerView.Adapter<IconGalleryAdapter.
     public int getItemCount() {
         return list.size();
     }
+
+
 }

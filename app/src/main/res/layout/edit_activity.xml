@@ -937,7 +937,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpUsage, KeyboardInaccessibleWidget" />
+        tools:ignore="SpUsage, KeyboardInaccessibleWidget">
+
+        <ImageButton
+            android:id="@+id/btn_gallery_close"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="@dimen/button_close_gallery_size"
+            android:layout_height="@dimen/button_close_gallery_size"
+            android:background="@drawable/icon_button_background"
+            android:padding="@dimen/resource_button_icon_padding"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_001_cross_svg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.93" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_icon_gallery"
@@ -975,22 +991,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recycler_icons_gallery" />
-
-        <ImageButton
-            android:id="@+id/btn_gallery_close"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="@dimen/button_close_gallery_size"
-            android:layout_height="@dimen/button_close_gallery_size"
-            android:background="@drawable/icon_button_background"
-            android:padding="@dimen/resource_button_icon_padding"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_001_cross_svg"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
