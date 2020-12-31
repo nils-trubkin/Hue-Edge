@@ -935,6 +935,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
+                        contentView.setViewVisibility(btnTopTextArr[i], View.VISIBLE);
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
                         contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));

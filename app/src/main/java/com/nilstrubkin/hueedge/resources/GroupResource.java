@@ -24,6 +24,7 @@ public class GroupResource extends BridgeResourceSliders {
     }
 
     static class State implements Serializable {
+        private static final long serialVersionUID = -8916643324338040424L;
         boolean all_on;
         boolean any_on;
 
@@ -37,6 +38,7 @@ public class GroupResource extends BridgeResourceSliders {
     }
 
     static class Action implements Serializable{
+        private static final long serialVersionUID = 8830367785494306671L;
         //int bri;
         int hue;
         int sat;

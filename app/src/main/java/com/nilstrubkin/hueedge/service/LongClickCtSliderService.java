@@ -48,7 +48,7 @@ public class LongClickCtSliderService extends RemoteViewsService {
             //int itemId = (int) (id + (mIdOffset * MAX_CHILD));
             //itemView.setTextViewText(R.id.item_text1, getResources().getString(R.string.remote_list_item_title) + itemId);
             //int slidersResourceColor = HueEdgeProvider.getSlidersResHue();
-            float ct = (500f - 153f) * id / (float) MAX_CHILD + 153f;
+            float ct = (500f - 153f) * (1f - id / (float) MAX_CHILD) + 153f;
             float kelvin = 1_000_000f / ct;
             //float h = 1f;
             //float s = 1f;
