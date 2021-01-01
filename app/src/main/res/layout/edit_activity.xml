@@ -994,5 +994,91 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_review"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/about_background"
+        android:paddingBottom="16dp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="400dp"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_view_review_request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/curved_edge_margin"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/curved_edge_margin"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="@string/text_review_request"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/about_text_text_size"
+            app:layout_constraintBottom_toTopOf="@id/button_review_never"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpUsage" />
+
+        <Button
+            android:id="@+id/button_review_never"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/button_review_never"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/button_review_later"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_view_review_request"
+            tools:ignore="SpUsage" />
+
+        <Button
+            android:id="@+id/button_review_later"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/button_review_later"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/button_review_now"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_review_never"
+            tools:ignore="SpUsage" />
+
+        <Button
+            android:id="@+id/button_review_now"
+            android:layout_width="@dimen/setup_button_width"
+            android:layout_height="@dimen/setup_button_height"
+            android:background="@drawable/setup_button_background"
+            android:includeFontPadding="false"
+            android:text="@string/button_review_now"
+            android:textAllCaps="false"
+            android:textSize="@dimen/setup_button_text_size"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_review_later"
+            tools:ignore="SpUsage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

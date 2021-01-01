@@ -104,6 +104,10 @@
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
     <string name="detailed_under_btn_text">%1$s\n(%2$s)</string>
+    <string name="text_review_request">Excuse me for interrupting you\n\nYour opinion of Hue Edge is very important to me\n\nWould you like to leave a quick review letting me know what you like and what you would like to see improved?</string>
+    <string name="button_review_never">No, don\'t ask again</string>
+    <string name="button_review_later">Ask me later</string>
+    <string name="button_review_now">Rate it now</string>
 
     <!-- Config files -->
     <string name="preference_file_key">HueEdgeConfig</string>
@@ -124,6 +128,7 @@
     <string name="preference_current_category">currentCategory</string>
     <string name="preference_current_category_sliders">currentCategorySliders</string>
     <string name="preference_tips_shown">tipsShown</string>
+    <string name="review_user_saved_times">reviewUserSavedTimes</string>
 
     <!-- Image description -->
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue Bridge</string>

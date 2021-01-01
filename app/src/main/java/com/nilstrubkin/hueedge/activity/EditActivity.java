@@ -1,11 +1,18 @@
 package com.nilstrubkin.hueedge.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -52,6 +59,11 @@ public class EditActivity extends AppCompatActivity {
     private ColorGalleryAdapter colorAdapter;
     private List<Integer> iconsRes;
     private List<Integer> colorsRes;
+
+    // Samsung review api
+    private boolean hasAuthority;
+    private String deeplinkUri;
+    private int currentScore;
 
     private void setBridge(HueBridge bridge) {
         this.bridge = bridge;
@@ -106,6 +118,9 @@ public class EditActivity extends AppCompatActivity {
         TextView hueStatus = findViewById(R.id.hueStatus);
         ImageButton galleryClose = findViewById(R.id.btn_gallery_close);
         ConstraintLayout galleryTint = findViewById(R.id.layout_tint);
+        Button btnReviewNever = findViewById(R.id.button_review_never);
+        Button btnReviewLater = findViewById(R.id.button_review_later);
+        Button btnReviewNow = findViewById(R.id.button_review_now);
 
         HueBridge br = getBridge();
         setCurrentCategory(br.getCurrentCategory(ctx));
@@ -127,7 +142,23 @@ public class EditActivity extends AppCompatActivity {
             }
             else
                 Log.e(TAG, "Saving the settings but the getBridge() == null");
-            finish();
+            SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            int userSavedTimes = s.getInt(getString(R.string.review_user_saved_times), 0);
+            if (userSavedTimes >= 3) finish();
+            else {
+                SharedPreferences.Editor e = s.edit();
+                e.putInt(getString(R.string.review_user_saved_times), ++userSavedTimes);
+                e.apply();
+                if (userSavedTimes == 3 && hasAuthority){
+                    if (deeplinkUri == null) {
+                        reviewLater(); // review later if we didn't have time to get the link reply
+                        Toast.makeText(ctx, "reviewLater cuz null", Toast.LENGTH_SHORT).show(); //TODO remove
+                        finish();
+                    }
+                    else showReviewDialogue();
+                }
+                else finish();
+            }
         });
 
         String ip = getBridge().getIp();
@@ -139,6 +170,10 @@ public class EditActivity extends AppCompatActivity {
         });
         galleryClose.setOnClickListener(ignored -> closeGallery());
         galleryTint.setOnClickListener(ignored -> closeGallery());
+
+        btnReviewNever.setOnClickListener(ignored -> closeGallery());
+        btnReviewLater.setOnClickListener(ignored -> reviewLater());
+        btnReviewNow.setOnClickListener(ignored -> requestReview());
 
         panelUpdate();
 
@@ -184,10 +219,9 @@ public class EditActivity extends AppCompatActivity {
             resources.add(new ResourceReference(entry.getValue().getCategory(), entry.getValue().getId()));
         }
 
-        /*ResourceArrayAdapter adapter = new ResourceArrayAdapter(
-                this, R.layout.catalogue_item, resources);
-        adapter.sort((a, b) -> a.compareTo(ctx, b));
-        gridViewResources.setAdapter(adapter);*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.sort((a, b) -> a.compareTo(ctx, b));
+        }
         RecyclerView.LayoutManager catalogueLayoutMgr = new GridLayoutManager(ctx, 2);
         CatalogueAdapter catalogueAdapter = new CatalogueAdapter(resources);
         catalogueView.setAdapter(catalogueAdapter);
@@ -281,7 +315,7 @@ public class EditActivity extends AppCompatActivity {
         colorsGallery.setHasFixedSize(true);
         colorsGallery.setLayoutManager(colorsLayoutMgr);
 
-
+        if(galaxyStoreVerChk()) checkReviewAuth();
         /*Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -466,7 +500,6 @@ public class EditActivity extends AppCompatActivity {
                 ctx.getResources().getDimensionPixelSize(br.getBtnTextSize(ctx)));
 
         int iconRes = resRef.getIconRes();
-        Log.e(TAG, "Pos " + position + " icon " + iconRes);
         if (iconRes != 0) {
             btn.setImageResource(iconRes);
             btnTopText.setVisibility(View.GONE);
@@ -475,7 +508,6 @@ public class EditActivity extends AppCompatActivity {
         }
 
         int customColor = resRef.getIconColor();
-        Log.e(TAG, "Pos " + position + " col " + customColor);
         if (customColor == 0) {
             int defaultColor = br.getBtnTextColor(ctx);
             btn.setColorFilter(defaultColor);
@@ -508,10 +540,69 @@ public class EditActivity extends AppCompatActivity {
     public void closeGallery(){
         findViewById(R.id.layout_icon_gallery).setVisibility(View.GONE);
         findViewById(R.id.layout_tint).setVisibility(View.GONE);
+        findViewById(R.id.layout_review).setVisibility(View.GONE);
         iconAdapter.notifyItemChanged(iconAdapter.getSelectedPos());
         iconAdapter.setSelectedPos(RecyclerView.NO_POSITION);
         iconAdapter.setSelectedColor(0x252525);
         colorAdapter.notifyItemChanged(colorAdapter.getSelectedPos());
         colorAdapter.setSelectedPos(RecyclerView.NO_POSITION);
+    }
+
+    private boolean galaxyStoreVerChk(){
+        ApplicationInfo ai;
+        try {
+            ai = getPackageManager().getApplicationInfo(
+                    "com.sec.android.app.samsungapps", PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        int inappReviewVersion =
+                ai.metaData.getInt("com.sec.android.app.samsungapps.review.inappReview", 0);
+        return inappReviewVersion > 0;
+    }
+
+    private void checkReviewAuth(){
+        Intent intent = new Intent("com.sec.android.app.samsungapps.REQUEST_INAPP_REVIEW_AUTHORITY");
+        intent.setPackage("com.sec.android.app.samsungapps");
+        intent.putExtra("callerPackage", getPackageName());
+        sendBroadcast(intent);
+
+        // set up response fetch
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.sec.android.app.samsungapps.RESPONSE_INAPP_REVIEW_AUTHORITY");
+        BroadcastReceiver authorityReciever = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                hasAuthority = intent.getBooleanExtra("hasAuthority", false);
+                deeplinkUri = intent.getStringExtra("deeplinkUri");
+                currentScore = intent.getIntExtra("currentScore", -1);
+                if (currentScore == 10) hasAuthority = false;
+                hasAuthority = true; //TODO remove
+                Log.e(TAG, "Got reply " + deeplinkUri); //TODO remove
+            }
+        };
+        registerReceiver(authorityReciever, filter);
+    }
+
+    private void requestReview(){
+        closeGallery();
+        Intent reviewIntent = new Intent();
+        reviewIntent.setData(Uri.parse(deeplinkUri));
+        reviewIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        startActivity(reviewIntent);
+    }
+
+    private void showReviewDialogue(){
+        findViewById(R.id.layout_review).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_tint).setVisibility(View.VISIBLE);
+    }
+
+    private void reviewLater(){
+        closeGallery();
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor e = s.edit();
+        e.putInt(getString(R.string.review_user_saved_times), 0);
+        e.apply();
     }
 }

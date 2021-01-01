@@ -43,7 +43,7 @@ public class ResourceReference implements Serializable {
     }
 
     public int compareTo(Context ctx, ResourceReference ref) {
-        int categoryDiff = category.compareTo(ref.category);
+        int categoryDiff = this.getCategory().compareTo(ref.getCategory());
         if (categoryDiff != 0)
             return categoryDiff;
         else {
