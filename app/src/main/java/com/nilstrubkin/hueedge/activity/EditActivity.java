@@ -579,7 +579,6 @@ public class EditActivity extends AppCompatActivity {
                 currentScore = intent.getIntExtra("currentScore", -1);
                 if (currentScore == 10) hasAuthority = false;
                 hasAuthority = true; //TODO remove
-                Log.e(TAG, "Got reply " + deeplinkUri); //TODO remove
             }
         };
         registerReceiver(authorityReciever, filter);

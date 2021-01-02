@@ -16,11 +16,11 @@ android {
         release {
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
-            minifyEnabled false
+            minifyEnabled true
 
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources false
+            shrinkResources true
 
             // Includes the default ProGuard rules files that are packaged with
             // the Android Gradle plugin. To learn more, go to the section about
@@ -45,9 +45,9 @@ dependencies {
     //testImplementation 'junit:junit:4.13'
     //androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     //androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.intuit.sdp:sdp-android:1.0.5'
-    implementation 'com.squareup.moshi:moshi:1.9.3'
-    implementation 'com.squareup.okhttp3:okhttp:4.8.1'
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.squareup.moshi:moshi:1.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 
     implementation 'androidx.fragment:fragment:1.2.5'
     implementation 'androidx.navigation:navigation-fragment:2.3.2'
