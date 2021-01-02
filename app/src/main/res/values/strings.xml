@@ -73,7 +73,7 @@
     <string name="fragment_setup_button_custom">Leave empty</string>
 
     <!-- FinalFragment -->
-    <string name="fragment_final_label">The configuration is finished\nEdge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
+    <string name="fragment_final_label">The setup is complete\nThe Hue Edge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
     <string name="fragment_final_button_howto">How to use this?</string>
     <string name="fragment_final_button_settings">Preferences</string>
 

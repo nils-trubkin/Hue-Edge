@@ -152,7 +152,7 @@ public class EditActivity extends AppCompatActivity {
                 if (userSavedTimes == 3 && hasAuthority){
                     if (deeplinkUri == null) {
                         reviewLater(); // review later if we didn't have time to get the link reply
-                        Toast.makeText(ctx, "reviewLater cuz null", Toast.LENGTH_SHORT).show(); //TODO remove
+                        //Toast.makeText(ctx, "reviewLater cuz null", Toast.LENGTH_SHORT).show(); //TODO debugging only
                         finish();
                     }
                     else showReviewDialogue();
@@ -578,7 +578,7 @@ public class EditActivity extends AppCompatActivity {
                 deeplinkUri = intent.getStringExtra("deeplinkUri");
                 currentScore = intent.getIntExtra("currentScore", -1);
                 if (currentScore == 10) hasAuthority = false;
-                hasAuthority = true; //TODO remove
+                //hasAuthority = true; //TODO debugging only
             }
         };
         registerReceiver(authorityReciever, filter);
