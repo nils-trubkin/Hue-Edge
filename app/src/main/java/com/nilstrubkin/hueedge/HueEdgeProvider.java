@@ -39,6 +39,7 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
+    //private static long ts; // TODO remove timestamp
 
     private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
@@ -106,7 +107,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
     private static final List<Integer> currentlyClicked = new ArrayList<>();
 
-    private static OkHttpClient client;
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .build();
 
     private static HueBridge getBridge(Context ctx) {
         if (isBridgeNull()) bridge = HueBridge.getInstance(ctx);
@@ -118,12 +123,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     public static OkHttpClient getClient() {
-        if (client == null)
-            client = new OkHttpClient.Builder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .writeTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
-                    .build();
         return client;
     }
 
@@ -168,19 +167,18 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     @Override
     public void onReceive(final Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
-        Log.d(TAG, "onReceive()");
-
         String action = intent.getAction();
 
-        if(action == null)
-            return;
+        if(action == null) return;
         Log.d(TAG, "onReceive: " + action);
+        //long tn = System.currentTimeMillis(); //TODO remove
+        //Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
+        //ts = tn; //TODO remove
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
 
-        if (!bridgeConfigured)
-            bridge = null;
+        if (!bridgeConfigured) bridge = null;
         else if (isBridgeNull()) {
             panelUpdate(ctx);
             getBridge(ctx);
@@ -222,7 +220,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 performPullToRefresh(ctx);
-                currentlyClicked.clear();
+                if (!currentlyClicked.isEmpty()) currentlyClicked.remove(0);
                 panelUpdate(ctx);
                 HueBridge.saveAllConfiguration(ctx);
                 break;
@@ -856,20 +854,21 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         RemoteViews helpView;
 
         if (isBridgeNull()){
-            helpView = createHelpView(ctx);
-
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
             boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
-            if (bridgeConfigured)
-                contentView = new RemoteViews(ctx.getPackageName(),R.layout.main_view_loading);
-            else {
+            if (!bridgeConfigured) {
+//                 contentView = new RemoteViews(ctx.getPackageName(),R.layout.main_view_loading);
                 Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
                 contentView = new RemoteViews(ctx.getPackageName(),
                         R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
                 contentView.setOnClickPendingIntent(R.id.configureButton,
                         getClickIntent(ctx, R.id.configureButton, 1));
+                helpView = createHelpView(ctx);
+                cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+                return;
             }
-        } else if (isSlidersActive()){
+        }
+        if (isSlidersActive()){
             contentView = createSlidersContentView(ctx);
             helpView = createSlidersHelpView(ctx);
         } else {
