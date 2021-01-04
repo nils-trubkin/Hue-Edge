@@ -45,9 +45,9 @@
     <color name="gallery_selected_tint">#18000000</color>
 
     <!-- Color gallery -->
-    <color name="red">#F44336</color>
-    <color name="orange">#FF9800</color>
-    <color name="yellow">#FFEB3B</color>
+    <color name="red">#E91E63</color>
+    <color name="orange">#FF5722</color>
+    <color name="yellow">#FFC107</color>
     <color name="green">#4CAF50</color>
     <color name="cyan">#00BCD4</color>
     <color name="blue">#2196F3</color>
