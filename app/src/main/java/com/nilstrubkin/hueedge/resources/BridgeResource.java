@@ -62,23 +62,6 @@ public abstract class BridgeResource implements Serializable {
         return getName();
     }
 
-    public int compareTo(BridgeResource br) {
-        String thisClass = this.getClass().toString();
-        String thatClass = br.getClass().toString();
-        int categoryDiff = thisClass.compareTo(thatClass);
-        if (categoryDiff != 0)
-            return categoryDiff;
-        else {
-            String thisName = this.getName();
-            String thatName = br.getName();
-            int nameDiff = thisName.compareTo(thatName);
-            if (nameDiff != 0)
-                return nameDiff;
-            else
-                return this.getUnderBtnText().compareTo(br.getUnderBtnText());
-        }
-    }
-
     public String getActionUrl() {
         if (getClass().equals(SceneResource.class)) {
             return "/" + "groups" + "/" + 0 + "/action";

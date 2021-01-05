@@ -671,43 +671,28 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 }
                 break;
             case 1:
-                switch (id) {
-                    case R.id.btnCategory1:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.QUICK_ACCESS);
-                        break;
-                    case R.id.btnCategory2:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.LIGHTS);
-                        break;
-                    case R.id.btnCategory3:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.ROOMS);
-                        break;
-                    case R.id.btnCategory4:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.ZONES);
-                        break;
-                    case R.id.btnCategory5:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.SCENES);
-                        break;
-                    case R.id.btnSlidersCategory1:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.BRIGHTNESS);
-                        break;
-                    case R.id.btnSlidersCategory2:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.COLOR);
-                        break;
-                    case R.id.btnSlidersCategory3:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.SATURATION);
-                        break;
-                    case R.id.btnSlidersCategory4:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.TEMPERATURE);
-                        break;
-                    case R.id.btnBack:
-                        setSlidersActive(false);
-                        break;
-                    case R.id.btnEdit:
-                        //HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
-                        startEditActivity(ctx);
-                        break;
-                    default:
-                        break;
+                if (id == R.id.btnCategory1) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.QUICK_ACCESS);
+                } else if (id == R.id.btnCategory2) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.LIGHTS);
+                } else if (id == R.id.btnCategory3) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.ROOMS);
+                } else if (id == R.id.btnCategory4) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.ZONES);
+                } else if (id == R.id.btnCategory5) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.SCENES);
+                } else if (id == R.id.btnSlidersCategory1) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.BRIGHTNESS);
+                } else if (id == R.id.btnSlidersCategory2) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.COLOR);
+                } else if (id == R.id.btnSlidersCategory3) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.SATURATION);
+                } else if (id == R.id.btnSlidersCategory4) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.TEMPERATURE);
+                } else if (id == R.id.btnBack) {
+                    setSlidersActive(false);
+                } else if (id == R.id.btnEdit) {//HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
+                    startEditActivity(ctx);
                 }
                 //HueBridge.saveAllConfiguration(ctx);
                 if (!checkWifiNotEnabled(ctx))
@@ -727,26 +712,20 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 ResourceReference resRef = getSlidersResource();
                 BridgeResourceSliders res = (BridgeResourceSliders) getBridge(ctx).getResource(resRef);
                 int value;
-                switch (id) {
-                    case R.id.sliders_bri:
-                        value = intent.getIntExtra("bri", 0);
-                        new Thread(() -> res.setBri(ctx, value)).start();
-                        break;
-                    case R.id.sliders_hue:
-                        value = intent.getIntExtra("hue", 0);
-                        new Thread(() -> res.setHue(ctx, value)).start();
-                        break;
-                    case R.id.sliders_sat:
-                        value = intent.getIntExtra("sat", 0);
-                        new Thread(() -> res.setSat(ctx, value)).start();
-                        break;
-                    case R.id.sliders_ct:
-                        value = intent.getIntExtra("ct", 0);
-                        new Thread(() -> res.setCt(ctx, value)).start();
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown category!");
-                        break;
+                if (id == R.id.sliders_bri) {
+                    value = intent.getIntExtra("bri", 0);
+                    new Thread(() -> res.setBri(ctx, value)).start();
+                } else if (id == R.id.sliders_hue) {
+                    value = intent.getIntExtra("hue", 0);
+                    new Thread(() -> res.setHue(ctx, value)).start();
+                } else if (id == R.id.sliders_sat) {
+                    value = intent.getIntExtra("sat", 0);
+                    new Thread(() -> res.setSat(ctx, value)).start();
+                } else if (id == R.id.sliders_ct) {
+                    value = intent.getIntExtra("ct", 0);
+                    new Thread(() -> res.setCt(ctx, value)).start();
+                } else {
+                    Log.e(TAG, "Unknown category!");
                 }
                 //String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
                 //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show(); // Debug toast for presses on the sliders buttons.

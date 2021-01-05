@@ -1,11 +1,8 @@
 package com.nilstrubkin.hueedge.adapter;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -84,9 +81,9 @@ public class IconGalleryAdapter extends RecyclerView.Adapter<IconGalleryAdapter.
         // - replace the contents of the view with that element
         int icon_res = list.get(position);
         holder.icon.setImageResource(icon_res);
-        holder.icon.setColorFilter(selectedColor);
+        holder.icon.setColorFilter(getSelectedColor());
         holder.icon.setTag(icon_res);
-        holder.icon.setSelected(selectedPos == position);
+        holder.icon.setSelected(getSelectedPos() == position);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

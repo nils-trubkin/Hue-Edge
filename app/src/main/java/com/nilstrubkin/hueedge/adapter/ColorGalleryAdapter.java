@@ -1,10 +1,8 @@
 package com.nilstrubkin.hueedge.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;

@@ -380,13 +380,12 @@ public class EditActivity extends AppCompatActivity {
             btn.setColorFilter(defaultColor);
             btnTopText.setTextColor(defaultColor);
             iconAdapter.setSelectedColor(0x252525);
-            iconAdapter.notifyDataSetChanged();
         } else {
             btn.setColorFilter(customColor);
             btnTopText.setTextColor(customColor);
             iconAdapter.setSelectedColor(customColor);
-            iconAdapter.notifyDataSetChanged();
         }
+        iconAdapter.notifyDataSetChanged();
     }
 
     public void panelUpdate() {

@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import com.nilstrubkin.hueedge.R;
 
 public abstract class BridgeResourceSliders extends BridgeResource {
+    private static final long serialVersionUID = 1372126609639954673L;
+
     //public abstract int getBri();
     public abstract int getHue();
     public abstract int getSat();

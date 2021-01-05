@@ -60,10 +60,6 @@ public class HueBridge implements Serializable {
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
     private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
 
-    static {
-
-    }
-
     //Constructor
     private HueBridge(Context ctx, String ip, String userName) {
         this.ip = ip;
@@ -106,7 +102,7 @@ public class HueBridge implements Serializable {
         setBridge(instance);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), bridge != null);
         e.apply();
     }
 
@@ -535,6 +531,10 @@ public class HueBridge implements Serializable {
             Log.e(TAG, "deleteAllConfig could not find configuration");
             return false;
         }
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.remove(ctx.getString(R.string.preference_bridge_configured));
+        e.apply();
         return file.delete();
     }
 }
