@@ -26,7 +26,6 @@
     <color name="delete_button_minus_color">#FF0000</color>
     <color name="icon_button_unfocused_color">@color/white</color>
     <color name="icon_button_press_color">#BABABA</color>
-    <color name="icon_button_symbol_color">@color/black</color>
     <color name="add_button_unfocused_color">#50252525</color>
     <color name="add_button_press_color">#65656565</color>
 
@@ -45,12 +44,15 @@
     <color name="gallery_selected_tint">#18000000</color>
 
     <!-- Color gallery -->
-    <color name="red">#E91E63</color>
+    <color name="grey">#607D8B</color>
+    <color name="brown">#795548</color>
     <color name="orange">#FF5722</color>
     <color name="yellow">#FFC107</color>
     <color name="green">#4CAF50</color>
     <color name="cyan">#00BCD4</color>
     <color name="blue">#2196F3</color>
     <color name="purple">#673AB7</color>
+    <color name="pink">#E91E63</color>
+    <color name="red">#F44336</color>
 
 </resources>

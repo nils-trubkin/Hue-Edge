@@ -20,13 +20,13 @@ public class HowtoFragment extends Fragment implements View.OnClickListener {
 
     //UI elements
     private final int backButtonId = R.id.button_howto_back;
-    private final int gifId = R.id.gif_edgeswipe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.howto_fragment, container, false);
         // gif image
+        final int gifId = R.id.gif_edgeswipe;
         ImageView imageView = view.findViewById(gifId);
         Glide.with(this).load(R.drawable.edgeswipe).into(imageView);
         return view;

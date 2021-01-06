@@ -301,13 +301,16 @@ public class EditActivity extends AppCompatActivity {
 
         colorsRes = new ArrayList<>();
         colorsRes.add(getColor(R.color.black));
-        colorsRes.add(getColor(R.color.red));
+        colorsRes.add(getColor(R.color.grey));
+        colorsRes.add(getColor(R.color.brown));
         colorsRes.add(getColor(R.color.orange));
         colorsRes.add(getColor(R.color.yellow));
         colorsRes.add(getColor(R.color.green));
         colorsRes.add(getColor(R.color.cyan));
         colorsRes.add(getColor(R.color.blue));
         colorsRes.add(getColor(R.color.purple));
+        colorsRes.add(getColor(R.color.pink));
+        colorsRes.add(getColor(R.color.red));
 
         colorAdapter = new ColorGalleryAdapter(colorsRes, this::setColor);
         RecyclerView.LayoutManager colorsLayoutMgr = new GridLayoutManager(ctx, colorsRes.size());
@@ -316,17 +319,6 @@ public class EditActivity extends AppCompatActivity {
         colorsGallery.setLayoutManager(colorsLayoutMgr);
 
         if(galaxyStoreVerChk()) checkReviewAuth();
-        /*Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show(); //TODO some snackbar code
-            }
-        });*/
     }
 
     public void setIcon(View v){

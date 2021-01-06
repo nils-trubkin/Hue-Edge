@@ -6,6 +6,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
     private final int helpButtonId = R.id.button_manual_help;
     private final int closeButtonId = R.id.button_help_close;
     private ConstraintLayout helpLayout;
+    private Button aboutButton;
     private ConstraintLayout tint;
     private EditText ipField;
 
@@ -45,6 +47,7 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         view.findViewById(helpButtonId).setOnClickListener(this);
         requireActivity().findViewById(closeButtonId).setOnClickListener(this);
         helpLayout = requireActivity().findViewById(R.id.layout_manual_help);
+        aboutButton = requireActivity().findViewById(R.id.button_about);
         tint = requireActivity().findViewById(R.id.layout_tint);
         ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
 
@@ -73,10 +76,12 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
                 break;
             case helpButtonId:
                 helpLayout.setVisibility(View.VISIBLE);
+                aboutButton.setVisibility(View.GONE);
                 tint.setVisibility(View.VISIBLE);
                 break;
             case closeButtonId:
                 helpLayout.setVisibility(View.GONE);
+                aboutButton.setVisibility(View.VISIBLE);
                 tint.setVisibility(View.GONE);
                 break;
         }

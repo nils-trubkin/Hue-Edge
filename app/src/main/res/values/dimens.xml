@@ -4,7 +4,6 @@
 
     <!-- content view -->
     <dimen name="resource_button_dimen">@dimen/_40sdp</dimen>
-    <dimen name="resource_button_img_dimen">@dimen/_25sdp</dimen>
     <dimen name="resource_button_margin_top">20dp</dimen>
     <dimen name="resource_button_padding">3dp</dimen>
     <dimen name="resource_btn_text_size_symbol">14dp</dimen>
@@ -64,7 +63,7 @@
     <dimen name="setup_discovery_results_margin_left_right">16dp</dimen>
     <dimen name="setup_discovery_results_ip_size">24dp</dimen>
     <dimen name="setup_discovery_results_id_size">18dp</dimen>
-    <dimen name="setup_pushlink_image_dimen">200dp</dimen>
+    <dimen name="setup_pushlink_image_dimen">150dp</dimen>
     <dimen name="discovery_item_texts_padding_top_bottom">8dp</dimen>
     <dimen name="about_padding_left_right">20dp</dimen>
     <dimen name="about_text_text_size">18dp</dimen>

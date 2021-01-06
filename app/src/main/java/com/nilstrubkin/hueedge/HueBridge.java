@@ -534,6 +534,8 @@ public class HueBridge implements Serializable {
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
         e.remove(ctx.getString(R.string.preference_bridge_configured));
+        e.remove(ctx.getString(R.string.preference_ip));
+        e.remove(ctx.getString(R.string.preference_username));
         e.apply();
         return file.delete();
     }

@@ -19,7 +19,6 @@
 
     <!-- Other panels -->
     <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
-    <string name="loading">Loading…</string>
 
     <!-- Categories line -->
     <string name="dots">..........................</string>
@@ -136,7 +135,6 @@
 
     <!-- Button symbols -->
     <string name="delete_symbol">—</string>
-    <string name="icon_symbol">☼</string>
     <string name="plus_symbol">+</string>
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>
