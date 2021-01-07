@@ -49,7 +49,7 @@ public class SetupFragment extends Fragment implements View.OnClickListener {
             case quickButton:
                 try {
                     HueBridge br = Objects.requireNonNull(HueBridge.getInstance(requireContext()));
-                    if (br.getBridgeState().getLights().isEmpty()){
+                    if (br.getBridgeState() == null || br.getBridgeState().getLights().isEmpty()){
                         Toast.makeText(requireContext(), getString(R.string.toast_no_lights), Toast.LENGTH_SHORT).show();
                         return;
                     }
