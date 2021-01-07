@@ -3,7 +3,7 @@ package com.nilstrubkin.hueedge;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -58,7 +59,7 @@ public class HueBridge implements Serializable {
 //    private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
-    private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
+    private Map<menuCategory, Map<Integer, ResourceReference>> contents = new ConcurrentHashMap<>();
 
     //Constructor
     private HueBridge(Context ctx, String ip, String userName) {
@@ -202,11 +203,11 @@ public class HueBridge implements Serializable {
         editor.apply();
     }
 
-    public BridgeCatalogue getBridgeState(){
+    public synchronized BridgeCatalogue getBridgeState(){
         return bridgeState;
     }
 
-    public void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
+    public synchronized void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
         try {
             getStateIntent(ctx).send();

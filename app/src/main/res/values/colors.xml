@@ -6,7 +6,7 @@
     <color name="colorAccent">#FAFAFA</color>
     <color name="white">#FAFAFA</color>
     <color name="black">#252525</color>
-    <color name="content_view_background">#664C4C4C</color>
+    <color name="content_view_background">#CC222222</color> <!-- Used to be #CC4C4C4C -->
 
     <!-- Bottom nav bar -->
     <color name="navigation_bar_color_setup">#2a292c</color>

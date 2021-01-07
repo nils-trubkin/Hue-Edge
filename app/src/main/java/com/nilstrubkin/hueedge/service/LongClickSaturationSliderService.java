@@ -2,7 +2,7 @@ package com.nilstrubkin.hueedge.service;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;

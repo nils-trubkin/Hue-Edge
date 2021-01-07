@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -220,7 +220,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 break;
             case ACTION_RECEIVE_HUE_STATE:
                 performPullToRefresh(ctx);
-                if (!currentlyClicked.isEmpty()) currentlyClicked.remove(0);
+                currentlyClicked.clear();
                 panelUpdate(ctx);
                 HueBridge.saveAllConfiguration(ctx);
                 break;
