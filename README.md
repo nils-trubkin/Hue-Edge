@@ -3,7 +3,7 @@ Android (24-30) Slook SDK application for control of Philips Hue Lights via Edge
 
 <img src="./app/src/main/res/drawable/hue_edge_logo.png" alt="Hue Edge logo" width="200"/>
 
-Hue edge - control your Philips Hue system via the edge panel
+Hue Edge - control your Philips Hue system via the edge panel
 
 Features:
 
