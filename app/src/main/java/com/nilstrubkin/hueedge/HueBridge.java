@@ -3,7 +3,7 @@ package com.nilstrubkin.hueedge;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,6 +31,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,6 +44,7 @@ import static com.nilstrubkin.hueedge.HueEdgeProvider.*;
 
 public class HueBridge implements Serializable {
     private transient static final String TAG = HueBridge.class.getSimpleName();
+    private static final long serialVersionUID = -9055637954299678802L;
 
     private static HueBridge instance;
     private BridgeCatalogue bridgeState;
@@ -57,7 +59,7 @@ public class HueBridge implements Serializable {
 //    private HueEdgeProvider.slidersCategory currentSlidersCategory = HueEdgeProvider.slidersCategory.BRIGHTNESS;
 
     //Mapping of <category to <button id to resource reference>> used to keep all mappings
-    private Map<menuCategory, Map<Integer, ResourceReference>> contents = new HashMap<>();
+    private Map<menuCategory, Map<Integer, ResourceReference>> contents = new ConcurrentHashMap<>();
 
     //Constructor
     private HueBridge(Context ctx, String ip, String userName) {
@@ -71,7 +73,7 @@ public class HueBridge implements Serializable {
         e.apply();
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
         for (menuCategory m : menuCategory.values()){
-            getContents().put(m, new HashMap<>());
+            getContents().put(m, new ConcurrentHashMap<>());
         }
     }
 
@@ -101,7 +103,7 @@ public class HueBridge implements Serializable {
         setBridge(instance);
         SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor e = s.edit();
-        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), true);
+        e.putBoolean(ctx.getString(R.string.preference_bridge_configured), bridge != null);
         e.apply();
     }
 
@@ -131,8 +133,8 @@ public class HueBridge implements Serializable {
     }
 
     public BridgeResource getResource(ResourceReference ref){
-        String id = ref.id;
-        switch (ref.category){
+        String id = ref.getId();
+        switch (ref.getCategory()){
             case "lights":
                 return getBridgeState().getLights().get(id);
             case "groups":
@@ -166,11 +168,11 @@ public class HueBridge implements Serializable {
             }
     }
 
-    public Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
+    public synchronized Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
         return contents;
     }
 
-    public void setContents(Map<menuCategory, Map<Integer, ResourceReference>> contents) {
+    public synchronized void setContents(Map<menuCategory, Map<Integer, ResourceReference>> contents) {
         this.contents = contents;
     }
 
@@ -201,11 +203,11 @@ public class HueBridge implements Serializable {
         editor.apply();
     }
 
-    public BridgeCatalogue getBridgeState(){
+    public synchronized BridgeCatalogue getBridgeState(){
         return bridgeState;
     }
 
-    public void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
+    public synchronized void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
         try {
             getStateIntent(ctx).send();
@@ -225,7 +227,7 @@ public class HueBridge implements Serializable {
         }
     }
 
-    public void addToCurrentCategory(Context ctx, BridgeResource br, int index){
+    public void addToCurrentCategory(Context ctx, ResourceReference resRef, int index){
         menuCategory category = getCurrentCategory(ctx);
         Log.d(TAG, "addToCurrentCategory()");
         if (getContents().containsKey(category)) {
@@ -238,11 +240,8 @@ public class HueBridge implements Serializable {
                 e.printStackTrace();
             }
             if (slotIsEmpty) {
-                String resCat = br.getCategory();
-                String resId = br.getId();
-                ResourceReference resRef = new ResourceReference(resCat, resId);
                 categoryContents.put(index, resRef);
-                Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + br.toString());
+                Log.d(TAG, "addToCurrentCategory put at: " + index + " values is " + resRef.toString());
             }
         }
     }
@@ -321,12 +320,15 @@ public class HueBridge implements Serializable {
             return;
         }
 
-        ResourceReference allResRef = BridgeCatalogue.getGroup0Ref();
+        // new objects to avoid coupling bugs that change icons on multiple items that are essentially same item in java
+        ResourceReference allResRefQ = BridgeCatalogue.getGroup0Ref();
+        ResourceReference allResRefR = BridgeCatalogue.getGroup0Ref();
+        ResourceReference allResRefZ = BridgeCatalogue.getGroup0Ref();
 
         int buttonIndex = 0;
         int qaButtonIndex = 0;
 
-        quickAccessContents.put(qaButtonIndex++, allResRef);
+        quickAccessContents.put(qaButtonIndex++, allResRefQ);
         map = getBridgeState().getLights();
         Log.d(TAG, "quickSetup getLights() size: " + map.size());
         for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
@@ -337,12 +339,13 @@ public class HueBridge implements Serializable {
             ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
             lightsContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 3) {
-                quickAccessContents.put(qaButtonIndex++, resRef);
+                ResourceReference resRefQ = new ResourceReference(res.getCategory(), res.getId());
+                quickAccessContents.put(qaButtonIndex++, resRefQ);
             }
         }
 
         buttonIndex = 0;
-        roomsContents.put(buttonIndex++, allResRef);
+        roomsContents.put(buttonIndex++, allResRefR);
         map = getBridgeState().getRooms();
         Log.d(TAG, "quickSetup getRooms() size: " + map.size());
         for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
@@ -354,13 +357,14 @@ public class HueBridge implements Serializable {
                 ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
                 roomsContents.put(buttonIndex++, resRef);
                 if (qaButtonIndex < 5) {
-                    quickAccessContents.put(qaButtonIndex++, resRef);
+                    ResourceReference resRefQ = new ResourceReference(res.getCategory(), res.getId());
+                    quickAccessContents.put(qaButtonIndex++, resRefQ);
                 }
             }
         }
 
         buttonIndex = 0;
-        zonesContents.put(buttonIndex++, allResRef);
+        zonesContents.put(buttonIndex++, allResRefZ);
         map = getBridgeState().getZones();
         Log.d(TAG, "quickSetup getZones() size: " + map.size());
         for (Map.Entry<String, ? extends BridgeResource> entry : map.entrySet()) {
@@ -372,7 +376,8 @@ public class HueBridge implements Serializable {
                 ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
                 zonesContents.put(buttonIndex++, resRef);
                 if (qaButtonIndex < 7) {
-                    quickAccessContents.put(qaButtonIndex++, resRef);
+                    ResourceReference resRefQ = new ResourceReference(res.getCategory(), res.getId());
+                    quickAccessContents.put(qaButtonIndex++, resRefQ);
                 }
             }
         }
@@ -388,7 +393,8 @@ public class HueBridge implements Serializable {
             ResourceReference resRef = new ResourceReference(res.getCategory(), res.getId());
             scenesContents.put(buttonIndex++, resRef);
             if(qaButtonIndex < 9) {
-                quickAccessContents.put(qaButtonIndex++, resRef);
+                ResourceReference resRefQ = new ResourceReference(res.getCategory(), res.getId());
+                quickAccessContents.put(qaButtonIndex++, resRefQ);
             }
         }
         saveAllConfiguration(ctx);
@@ -398,7 +404,7 @@ public class HueBridge implements Serializable {
      * Save and write the HueBridge instance to the memory
      * @param ctx Context
      */
-    public static void saveAllConfiguration(Context ctx) {
+    public static synchronized void saveAllConfiguration(Context ctx) {
         Log.d(TAG, "saveConfigurationToMemory()");
 
         HueBridge instanceToSave = getInstance(ctx);
@@ -526,6 +532,12 @@ public class HueBridge implements Serializable {
             Log.e(TAG, "deleteAllConfig could not find configuration");
             return false;
         }
+        SharedPreferences s = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor e = s.edit();
+        e.remove(ctx.getString(R.string.preference_bridge_configured));
+        e.remove(ctx.getString(R.string.preference_ip));
+        e.remove(ctx.getString(R.string.preference_username));
+        e.apply();
         return file.delete();
     }
 }

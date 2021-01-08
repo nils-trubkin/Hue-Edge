@@ -19,27 +19,40 @@
     <dimen name="no_bridge_text_padding">10dp</dimen>
 
     <!-- help view -->
-    <dimen name="category_view_root_padding_top">15dp</dimen>
+    <dimen name="category_view_root_padding_top_legacy">15dp</dimen>
+    <dimen name="category_view_root_padding_top">0dp</dimen>
     <!-- help view top line -->
     <dimen name="category_view_top_line_width">200dp</dimen>
     <dimen name="category_view_top_line_height">1dp</dimen>
     <dimen name="category_view_top_line_margin_bottom">5dp</dimen>
     <!-- help view category buttons -->
-    <dimen name="category_btn_text_size">@dimen/_12sdp</dimen>
-    <dimen name="category_btn_height">40dp</dimen>
-    <dimen name="category_btn_margin_bottom">-20dp</dimen>
+    <dimen name="category_btn_text_size_legacy">@dimen/_12sdp</dimen>
+    <dimen name="category_btn_text_size">@dimen/_13sdp</dimen>
+    <dimen name="category_btn_height_legacy">40dp</dimen>
+    <dimen name="category_btn_height">45dp</dimen>
+    <dimen name="category_btn_margin_bottom_legacy">-20dp</dimen>
+    <dimen name="category_btn_margin_bottom">-23dp</dimen>
     <dimen name="category_btn_padding_end">-10dp</dimen>
     <!-- help view category button lines -->
 
     <!-- edit activity -->
     <dimen name="resource_button_delete_dimen">24dp</dimen>
+    <dimen name="resource_button_icon_dimen">24dp</dimen>
+    <dimen name="resource_button_icon_padding">3dp</dimen>
+    <dimen name="resource_button_icon_enabled_padding">10dp</dimen>
     <dimen name="resource_button_delete_margin_left_bottom">40dp</dimen>
+    <dimen name="resource_button_delete_text_size">15dp</dimen>
+    <dimen name="resource_button_icon_margin_right">40dp</dimen>
+    <dimen name="resource_button_icon_margin_top">30dp</dimen>
     <dimen name="views_margin_top_bottom">8dp</dimen>
     <dimen name="top_guideline_space">100dp</dimen>
     <dimen name="bottom_guideline_space">40dp</dimen>
     <dimen name="vertical_guideline_space">150dp</dimen>
-    <dimen name="adapter_root_layout_height">100dp</dimen>
+    <dimen name="catalogue_item_height">100dp</dimen>
     <dimen name="hue_status_text_size">14dp</dimen>
+    <dimen name="icon_gallery_size">60dp</dimen>
+    <dimen name="color_gallery_size">40dp</dimen>
+    <dimen name="button_close_gallery_size">40dp</dimen>
 
     <!-- setup activity -->
     <dimen name="setup_status_text_size">18dp</dimen>
@@ -50,10 +63,11 @@
     <dimen name="setup_discovery_results_margin_left_right">16dp</dimen>
     <dimen name="setup_discovery_results_ip_size">24dp</dimen>
     <dimen name="setup_discovery_results_id_size">18dp</dimen>
-    <dimen name="setup_pushlink_image_dimen">200dp</dimen>
+    <dimen name="setup_pushlink_image_dimen">150dp</dimen>
     <dimen name="discovery_item_texts_padding_top_bottom">8dp</dimen>
     <dimen name="about_padding_left_right">20dp</dimen>
     <dimen name="about_text_text_size">18dp</dimen>
+    <dimen name="howto_gif_height">200dp</dimen>
 
     <!-- bridge discovery -->
     <dimen name="setup_big_logo_text_size">56dp</dimen>

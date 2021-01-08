@@ -18,7 +18,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public abstract class BridgeResource implements Serializable {
-
+    private static final long serialVersionUID = 6709319326596725753L;
     private String id;
     private String name;
 
@@ -60,23 +60,6 @@ public abstract class BridgeResource implements Serializable {
 
     public String getUnderBtnText() {
         return getName();
-    }
-
-    public int compareTo(BridgeResource br) {
-        String thisClass = this.getClass().toString();
-        String thatClass = br.getClass().toString();
-        int categoryDiff = thisClass.compareTo(thatClass);
-        if (categoryDiff != 0)
-            return categoryDiff;
-        else {
-            String thisName = this.getName();
-            String thatName = br.getName();
-            int nameDiff = thisName.compareTo(thatName);
-            if (nameDiff != 0)
-                return nameDiff;
-            else
-                return this.getUnderBtnText().compareTo(br.getUnderBtnText());
-        }
     }
 
     public String getActionUrl() {

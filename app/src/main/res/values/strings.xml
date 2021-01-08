@@ -14,20 +14,20 @@
     <string name="button_sliders_help_bri">Brightness</string>
     <string name="button_sliders_help_hue">Color</string>
     <string name="button_sliders_help_sat">Saturation</string>
+    <string name="button_sliders_help_ct">Temperature</string>
     <string name="button_back_text">Back</string>
 
     <!-- Other panels -->
     <string name="no_config">No bridge\nconfigured\n\nPress here\nto setup</string>
-    <string name="loading">Loading…</string>
 
     <!-- Categories line -->
-    <string name="dots">..................</string>
+    <string name="dots">..........................</string>
 
     <!-- Fragments and navigation -->
     <string name="setup_button_about">About &amp; Support</string>
     <string name="setup_button_close_about">Close about</string>
     <string name="setup_button_close_help">Close help</string>
-    <string name="setup_about_text">Hue Edge v 1.1\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
+    <string name="setup_about_text">Hue Edge v 1.2\nby Nils Trubkin\n\nThank you for purchase\n\nIn case you have any issues or suggestions regarding my app, please don\'t hesitate to contact me at hueedgepanel@gmail.com\n\nI am an independent developer, you are welcome to support my work via PayPal</string>
     <string name="setup_button_license">License</string>
     <string name="setup_button_contact">Contact me</string>
     <string name="setup_button_support">Support via PayPal</string>
@@ -72,21 +72,29 @@
     <string name="fragment_setup_button_custom">Leave empty</string>
 
     <!-- FinalFragment -->
-    <string name="fragment_final_label">The configuration is finished\nEdge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
+    <string name="fragment_final_label">The setup is complete\nThe Hue Edge panel is ready for use\n\nTap to toggle\n\nHold to adjust\n\nPull-down along the buttons to refresh</string>
+    <string name="fragment_final_button_howto">How to use this?</string>
     <string name="fragment_final_button_settings">Preferences</string>
 
     <!-- ConfirmationFragment -->
-    <string name="fragment_confirmation_label">Removing a bridge removes button order\n\nAre you sure?</string>
+    <string name="fragment_confirmation_label">Removing Hue Edge configuration will clear the saved button order. This does not affect your bridge\'s configuration.\n\nAre you sure?</string>
     <string name="fragment_confirmation_button_yes">Yes</string>
     <string name="fragment_confirmation_button_no">No</string>
 
     <!-- SettingsFragment -->
     <string name="fragment_settings_label">Connection successful!\n\nQuick setup some of your lights or leave the button order empty to configure manually?\n\nYou can always edit the buttons later</string>
-    <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15)</string>
+    <string name="fragment_settings_seek_bar">Levels of adjustment for sliders\n(Default: 15, 25, 15, 15)</string>
     <string name="fragment_settings_switch_symbols">No symbols (\'◯\' becomes \'Off\')</string>
     <string name="fragment_settings_switch_haptic">No haptic feedback (vibration)</string>
-    <string name="fragment_settings_button_remove">Remove configuration</string>
+    <string name="fragment_settings_switch_wifi_err_msg">No wifi error messages</string>
+    <string name="fragment_settings_switch_legacy_help_view">Legacy menu (left) panel</string>
+    <string name="fragment_settings_button_remove">Forget bridge</string>
     <string name="fragment_settings_button_back">Back</string>
+
+    <!-- HowTo -->
+    <string name="fragment_howto_text">Swipe from the side to open the edge panel\n\nMake sure that the Hue Edge panel is enabled in the edge panel settings\n\nThe edge panel is accessible even when the phone is locked</string>
+    <string name="fragment_howto_button_back">Back</string>
+    <string name="fragment_howto_gif_description">Animation illustrating use of edge panel by swiping from side of the phone</string>
 
     <!-- NotSupportedFragment -->
     <string name="fragment_not_supported_label">We\'re sorry, but it seems that your device does not support the edge panel</string>
@@ -94,6 +102,11 @@
     <!-- Edit activity -->
     <string name="button_save_text">Save</string>
     <string name="hue_status">Hue Bridge configured\nIP: %1$s\nPress here to change</string>
+    <string name="detailed_under_btn_text">%1$s\n(%2$s)</string>
+    <string name="text_review_request">Excuse me for interrupting you\n\nYour opinion of Hue Edge is very important to me\n\nWould you like to leave a quick review letting me know what you like and what you would like to see improved?</string>
+    <string name="button_review_never">No, don\'t ask again</string>
+    <string name="button_review_later">Ask me later</string>
+    <string name="button_review_now">Rate it now</string>
 
     <!-- Config files -->
     <string name="preference_file_key">HueEdgeConfig</string>
@@ -102,22 +115,26 @@
     <!-- SharedPreferences -->
     <string name="preference_no_symbols">noSymbols</string>
     <string name="preference_no_haptic">noHaptic</string>
+    <string name="preference_no_wifi_err_msg">noWifiErrMsg</string>
+    <string name="preference_legacy_help_view">legacyHelpView</string>
     <string name="preference_bridge_configured">bridgeConfigured</string>
     <string name="preference_bri_levels">briLevels</string>
     <string name="preference_hue_levels">hueLevels</string>
     <string name="preference_sat_levels">satLevels</string>
+    <string name="preference_ct_levels">ctLevels</string>
     <string name="preference_ip">savedIp</string>
     <string name="preference_username">savedUsername</string>
     <string name="preference_current_category">currentCategory</string>
     <string name="preference_current_category_sliders">currentCategorySliders</string>
     <string name="preference_tips_shown">tipsShown</string>
+    <string name="review_user_saved_times">reviewUserSavedTimes</string>
 
     <!-- Image description -->
     <string name="pushlink_image_description">A finger pressing on the link button on top of the Philips Hue Bridge</string>
     <string name="ip_help_description">A screenshot displaying the ip and other details of the bridge inside the official Philips Hue app</string>
 
     <!-- Button symbols -->
-    <string name="some_symbol">—</string>
+    <string name="delete_symbol">—</string>
     <string name="plus_symbol">+</string>
     <string name="on_symbol">|</string>
     <string name="off_symbol">◯</string>

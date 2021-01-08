@@ -37,7 +37,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/progress_bar_setup_search"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintHorizontal_bias="0.55"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_setup_status"
         app:srcCompat="@drawable/pushlink_image" />

@@ -8,7 +8,6 @@ import android.view.DragEvent;
 import android.view.View;
 
 import com.nilstrubkin.hueedge.activity.EditActivity;
-import com.nilstrubkin.hueedge.resources.BridgeResource;
 
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ public class DragEventListener implements View.OnDragListener {
         // Defines a variable to store the action type for the incoming event
         final int action = event.getAction();
         EditActivity instance = (EditActivity) ctx;
-        BridgeResource br;
+        ResourceReference resRef;
         // Handles each of the expected events
         switch(action) {
             case DragEvent.ACTION_DRAG_STARTED:
@@ -41,8 +40,8 @@ public class DragEventListener implements View.OnDragListener {
                 // not receive events again until ACTION_DRAG_ENDED is sent.
 
             case DragEvent.ACTION_DRAG_ENTERED:
-                br = (BridgeResource) event.getLocalState();
-                instance.displaySlotAsFull(index, br);
+                resRef = (ResourceReference) event.getLocalState();
+                instance.displaySlotAsFull(index, resRef);
                 return true;
 
             case DragEvent.ACTION_DRAG_LOCATION:
@@ -61,7 +60,7 @@ public class DragEventListener implements View.OnDragListener {
                 if (dragData >= 0){
                     instance.clearSlot(dragData);
                 }
-                br = (BridgeResource) event.getLocalState();
+                resRef = (ResourceReference) event.getLocalState();
                 HueBridge bridge;
                 try {
                     bridge = Objects.requireNonNull(HueBridge.getInstance(ctx));
@@ -70,7 +69,7 @@ public class DragEventListener implements View.OnDragListener {
                     e.printStackTrace();
                     return false;
                 }
-                bridge.addToCurrentCategory(ctx, br, index);
+                bridge.addToCurrentCategory(ctx, resRef, index);
                 instance.panelUpdateIndex(index);
                 // Returns true. DragEvent.getResult() will return true.
                 return true;

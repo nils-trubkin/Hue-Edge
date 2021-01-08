@@ -3,7 +3,7 @@ package com.nilstrubkin.hueedge.resources;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.core.content.ContextCompat;
 
@@ -17,9 +17,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 class LightResource extends BridgeResourceSliders {
+    private static final long serialVersionUID = -4487639315415671159L;
 
     static class State implements Serializable {
-
+        private static final long serialVersionUID = -8111864201961818989L;
         boolean on;
         //int bri;
         int hue;

@@ -29,6 +29,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private final int licenseButtonId = R.id.button_license;
     private final int contactMeButtonId = R.id.button_contact_me;
     private final int paypalButtonId = R.id.button_paypal;
+    private final int layoutTint = R.id.layout_tint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         findViewById(licenseButtonId).setOnClickListener(this);
         findViewById(contactMeButtonId).setOnClickListener(this);
         findViewById(paypalButtonId).setOnClickListener(this);
+        findViewById(layoutTint).setOnClickListener(this);
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -85,20 +87,28 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             case paypalButtonId:
                 openPaypal();
                 break;
+            case layoutTint:
+                closeManualHelp();
+                closeAbout();
+                break;
         }
     }
 
     private void closeManualHelp(){
         findViewById(R.id.layout_manual_help).setVisibility(View.GONE);
+        findViewById(R.id.layout_tint).setVisibility(View.GONE);
+        findViewById(R.id.button_about).setVisibility(View.VISIBLE);
     }
 
     private void showAbout(){
         findViewById(R.id.layout_about).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_tint).setVisibility(View.VISIBLE);
         findViewById(R.id.button_about).setVisibility(View.GONE);
     }
 
     private void closeAbout(){
         findViewById(R.id.layout_about).setVisibility(View.GONE);
+        findViewById(R.id.layout_tint).setVisibility(View.GONE);
         findViewById(R.id.button_about).setVisibility(View.VISIBLE);
     }
 

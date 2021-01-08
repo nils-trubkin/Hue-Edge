@@ -6,12 +6,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BridgeCatalogue implements Serializable {
+    private static final long serialVersionUID = -7313934162135591982L;
 
-    private Map<String, LightResource> lights = new HashMap<>();
-    private Map<String, GroupResource> groups = new HashMap<>();
-    private Map<String, SceneResource> scenes = new HashMap<>();
+    private Map<String, LightResource> lights = new ConcurrentHashMap<>();
+    private Map<String, GroupResource> groups = new ConcurrentHashMap<>();
+    private Map<String, SceneResource> scenes = new ConcurrentHashMap<>();
 
     public Map<String, LightResource> getLights() {
         return lights;

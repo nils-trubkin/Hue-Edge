@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:context=".fragment.HowtoFragment">
+
+    <ScrollView
+        android:id="@+id/scroll_view_howto"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/scrollable_background"
+        android:fadeScrollbars="false"
+        android:scrollbarThumbVertical="@color/white"
+        android:scrollbarTrackVertical="@color/category_unselected_gray"
+        app:layout_constraintBottom_toTopOf="@+id/button_howto_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:context=".fragment.HowtoFragment">
+
+            <TextView
+                android:id="@+id/text_setup_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/curved_edge_margin"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="@dimen/curved_edge_margin"
+                android:layout_marginBottom="16dp"
+                android:text="@string/fragment_howto_text"
+                android:textAlignment="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:textSize="@dimen/setup_status_text_size"
+                app:layout_constraintBottom_toTopOf="@id/gif_edgeswipe"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpUsage" />
+
+            <ImageView
+                android:id="@+id/gif_edgeswipe"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/howto_gif_height"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="@string/fragment_howto_gif_description"
+                android:src="@drawable/edgeswipe"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_setup_status" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/button_howto_back"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_howto_button_back"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scroll_view_howto"
+        tools:ignore="SpUsage" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,10 +20,26 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
         android:textSize="@dimen/setup_status_text_size"
-        app:layout_constraintBottom_toTopOf="@id/button_final_settings"
+        app:layout_constraintBottom_toTopOf="@id/button_final_howto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage" />
+
+    <Button
+        android:id="@+id/button_final_howto"
+        android:layout_width="@dimen/setup_button_width"
+        android:layout_height="@dimen/setup_button_height"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/setup_button_background"
+        android:includeFontPadding="false"
+        android:text="@string/fragment_final_button_howto"
+        android:textAllCaps="false"
+        android:textSize="@dimen/setup_button_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/button_final_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_setup_status"
         tools:ignore="SpUsage" />
 
     <Button
@@ -40,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_setup_status"
+        app:layout_constraintTop_toBottomOf="@id/button_final_howto"
         tools:ignore="SpUsage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

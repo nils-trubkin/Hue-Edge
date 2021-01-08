@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:color="@android:color/transparent"
+        android:width="10dp"/>
+    <solid android:color="@color/gallery_selected_tint" />
+</shape>

@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -20,9 +23,7 @@ import com.nilstrubkin.hueedge.activity.SetupActivity;
 import com.nilstrubkin.hueedge.resources.BridgeResource;
 import com.nilstrubkin.hueedge.resources.BridgeResourceSliders;
 import com.nilstrubkin.hueedge.resources.SceneResource;
-import com.nilstrubkin.hueedge.service.LongClickBrightnessSliderService;
-import com.nilstrubkin.hueedge.service.LongClickColorSliderService;
-import com.nilstrubkin.hueedge.service.LongClickSaturationSliderService;
+import com.nilstrubkin.hueedge.service.*;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailManager;
 import com.samsung.android.sdk.look.cocktailbar.SlookCocktailProvider;
 
@@ -38,6 +39,7 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
+    //private static long ts; // TODO remove timestamp
 
     private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
@@ -50,30 +52,30 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     //Array of references to buttons
     public static final int[] btnArr = {R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5,
             R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn10};
-    //Array of references to category buttons
-    public static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
-            R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
-    //Array of references to category buttons underlines
-    public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
-            R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
     //Array of references to button texts (text on the button itself)
     public static final int[] btnTopTextArr = {R.id.btn1topText, R.id.btn2topText, R.id.btn3topText, R.id.btn4topText, R.id.btn5topText,
             R.id.btn6topText, R.id.btn7topText, R.id.btn8topText, R.id.btn9topText, R.id.btn10topText};
     //Array of references to button texts (text under the button itself)
     public static final int[] btnTextArr = {R.id.btn1text, R.id.btn2text, R.id.btn3text, R.id.btn4text, R.id.btn5text,
             R.id.btn6text, R.id.btn7text, R.id.btn8text, R.id.btn9text, R.id.btn10text};
+    //Array of references to category buttons
+    public static final int[] btnCategoryArr = {R.id.btnCategory1, R.id.btnCategory2,
+            R.id.btnCategory3, R.id.btnCategory4, R.id.btnCategory5};
+    //Array of references to category buttons underlines
+    public static final int[] btnCategoryLineArr = {R.id.btnCategoryLine1, R.id.btnCategoryLine2,
+            R.id.btnCategoryLine3, R.id.btnCategoryLine4, R.id.btnCategoryLine5};
     //Array of references to delete buttons in Edit activity
     public static final int[] btnDeleteArr = {R.id.btn1delete, R.id.btn2delete, R.id.btn3delete, R.id.btn4delete, R.id.btn5delete,
             R.id.btn6delete, R.id.btn7delete, R.id.btn8delete, R.id.btn9delete, R.id.btn10delete};
-    //Array of references to delete buttons top texts in Edit activity
-    public static final int[] btnDeleteTopTextArr = {R.id.btn1deleteTopText, R.id.btn2deleteTopText, R.id.btn3deleteTopText, R.id.btn4deleteTopText, R.id.btn5deleteTopText,
-            R.id.btn6deleteTopText, R.id.btn7deleteTopText, R.id.btn8deleteTopText, R.id.btn9deleteTopText, R.id.btn10deleteTopText};
+    //Array of references to icon buttons in Edit activity
+    public static final int[] btnIconArr = {R.id.btn1icon, R.id.btn2icon, R.id.btn3icon, R.id.btn4icon, R.id.btn5icon,
+            R.id.btn6icon, R.id.btn7icon, R.id.btn8icon, R.id.btn9icon, R.id.btn10icon};
     //Array of references to category buttons
     public static final int[] btnSlidersCategoryArr = {R.id.btnSlidersCategory1, R.id.btnSlidersCategory2,
-            R.id.btnSlidersCategory3};
+            R.id.btnSlidersCategory3, R.id.btnSlidersCategory4};
     //Array of references to category buttons underlines
     public static final int[] btnSlidersCategoryLineArr = {R.id.btnSlidersCategoryLine1, R.id.btnSlidersCategoryLine2,
-            R.id.btnSlidersCategoryLine3};
+            R.id.btnSlidersCategoryLine3, R.id.btnSlidersCategoryLine4};
     //Array of references to progress bars
     public static final int[] progressBarArr = {R.id.progress_bar1, R.id.progress_bar2, R.id.progress_bar3, R.id.progress_bar4,
             R.id.progress_bar5, R.id.progress_bar6, R.id.progress_bar7, R.id.progress_bar8, R.id.progress_bar9, R.id.progress_bar10};
@@ -91,7 +93,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     public enum slidersCategory {
         BRIGHTNESS,
         COLOR,
-        SATURATION
+        SATURATION,
+        TEMPERATURE
     }
 
     private static boolean slidersActive = false;
@@ -104,11 +107,14 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
     private static final List<Integer> currentlyClicked = new ArrayList<>();
 
-    private static OkHttpClient client;
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.SECONDS)
+            .build();
 
     private static HueBridge getBridge(Context ctx) {
-        if (bridge == null)
-            bridge = HueBridge.getInstance(ctx);
+        if (isBridgeNull()) bridge = HueBridge.getInstance(ctx);
         return bridge;
     }
 
@@ -117,12 +123,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     public static OkHttpClient getClient() {
-        if (client == null)
-            client = new OkHttpClient.Builder()
-                    .connectTimeout(3, TimeUnit.SECONDS)
-                    .writeTimeout(3, TimeUnit.SECONDS)
-                    .readTimeout(3, TimeUnit.SECONDS)
-                    .build();
         return client;
     }
 
@@ -167,19 +167,18 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     @Override
     public void onReceive(final Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
-        Log.d(TAG, "onReceive()");
-
         String action = intent.getAction();
 
-        if(action == null)
-            return;
+        if(action == null) return;
         Log.d(TAG, "onReceive: " + action);
+        //long tn = System.currentTimeMillis(); //TODO remove
+        //Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
+        //ts = tn; //TODO remove
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
 
-        if (!bridgeConfigured)
-            bridge = null;
+        if (!bridgeConfigured) bridge = null;
         else if (isBridgeNull()) {
             panelUpdate(ctx);
             getBridge(ctx);
@@ -201,7 +200,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 currentlyClicked.clear();
                 panelUpdate(ctx);
                 if (checkWifiNotEnabled(ctx)){
-                    Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                    boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                    if(!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     performPullToRefresh(ctx);
                 }
                 else HueBridge.requestHueState(ctx);
@@ -210,7 +210,8 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 HueBridge.requestHueState(ctx);
                 break;
             case ACTION_TIMEOUT_HUE_REPLY:
-                Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
+                boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
                 currentlyClicked.clear();
                 panelUpdate(ctx);
                 break;
@@ -236,7 +237,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     @Override
     public void onEnabled(Context ctx) {
         super.onEnabled(ctx);
-        startSetupActivity(ctx);
     }
 
 
@@ -283,8 +283,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             currentlyClicked.clear();
             panelUpdate(ctx);
             displayTips(ctx);
-            if (checkWifiNotEnabled(ctx))
-                Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            if (checkWifiNotEnabled(ctx)) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            }
             else HueBridge.requestHueState(ctx);
         }
     }
@@ -350,8 +353,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @return RemoteViews
      */
     private RemoteViews createHelpView(Context ctx) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean legacyHelpView = settings.getBoolean(ctx.getResources().getString(R.string.preference_legacy_help_view), false);
         RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
-                R.layout.help_view);
+                !legacyHelpView ? R.layout.help_view : R.layout.help_view_legacy);
         for(int button : btnCategoryArr){
             helpView.setOnClickPendingIntent(button, getClickIntent(ctx, button, 1));
             helpView.setTextColor(button, ctx.getColor(R.color.category_unselected_gray));
@@ -363,7 +368,33 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             int selectedNumber = getBridge(ctx).getCurrentCategory(ctx).ordinal();
             int currentButton = btnCategoryArr[selectedNumber];
             int currentLine = btnCategoryLineArr[selectedNumber];
-            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
+            if(!legacyHelpView) {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_white));
+                // a bit of voodoo magic to make text bold
+                String text = null;
+                switch (selectedNumber){
+                    case 0:
+                        text = ctx.getString(R.string.button_help_1_text);
+                        break;
+                    case 1:
+                        text = ctx.getString(R.string.button_help_2_text);
+                        break;
+                    case 2:
+                        text = ctx.getString(R.string.button_help_3_text);
+                        break;
+                    case 3:
+                        text = ctx.getString(R.string.button_help_4_text);
+                        break;
+                    case 4:
+                        text = ctx.getString(R.string.button_help_5_text);
+                        break;
+                }
+                SpannableString mspInt = new SpannableString(text);
+                mspInt.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                helpView.setTextViewText(currentButton, mspInt);
+            } else {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue_legacy));
+            }
             helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;
@@ -389,6 +420,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         remoteListView.setViewVisibility(R.id.sliders_bri, View.GONE);
         remoteListView.setViewVisibility(R.id.sliders_hue, View.GONE);
         remoteListView.setViewVisibility(R.id.sliders_sat, View.GONE);
+        remoteListView.setViewVisibility(R.id.sliders_ct, View.GONE);
 
         switch (getBridge(ctx).getCurrentSlidersCategory(ctx)) {
             case BRIGHTNESS:
@@ -409,6 +441,12 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_sat);
                 remoteListView.setViewVisibility(R.id.sliders_sat, View.VISIBLE);
                 break;
+            case TEMPERATURE:
+                Intent temperatureIntent = new Intent(ctx, LongClickCtSliderService.class);
+                remoteListView.setRemoteAdapter(R.id.sliders_ct, temperatureIntent);
+                cocktailManager.notifyCocktailViewDataChanged(cocktailIds[0], R.id.sliders_ct);
+                remoteListView.setViewVisibility(R.id.sliders_ct, View.VISIBLE);
+                break;
             default:
                 Log.e(TAG,"Unknown category!");
                 break;
@@ -419,6 +457,7 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         remoteListView.setPendingIntentTemplate(R.id.sliders_bri, getClickIntent(ctx, R.id.sliders_bri, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_hue, getClickIntent(ctx, R.id.sliders_hue, 2));
         remoteListView.setPendingIntentTemplate(R.id.sliders_sat, getClickIntent(ctx, R.id.sliders_sat, 2));
+        remoteListView.setPendingIntentTemplate(R.id.sliders_ct, getClickIntent(ctx, R.id.sliders_ct, 2));
         return remoteListView;
     }
 
@@ -428,7 +467,10 @@ public class HueEdgeProvider extends SlookCocktailProvider {
      * @return RemoteViews
      */
     private RemoteViews createSlidersHelpView(Context ctx) {
-        RemoteViews helpView = new RemoteViews(ctx.getPackageName(), R.layout.sliders_help_view);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean legacyHelpView = settings.getBoolean(ctx.getResources().getString(R.string.preference_legacy_help_view), false);
+        RemoteViews helpView = new RemoteViews(ctx.getPackageName(),
+                !legacyHelpView ? R.layout.sliders_help_view : R.layout.sliders_help_view_legacy);
         helpView.setOnClickPendingIntent(R.id.btnBack, getClickIntent(ctx, R.id.btnBack, 1));
 
         for( int button : btnSlidersCategoryArr){
@@ -440,9 +482,33 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         }
         slidersCategory currentSlidersCategory = getBridge(ctx).getCurrentSlidersCategory(ctx);
         if(currentSlidersCategory != null){
-            int currentButton = btnSlidersCategoryArr[currentSlidersCategory.ordinal()];
-            int currentLine = btnSlidersCategoryLineArr[currentSlidersCategory.ordinal()];
-            helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue));
+            int selectedNumber = getBridge(ctx).getCurrentSlidersCategory(ctx).ordinal();
+            int currentButton = btnSlidersCategoryArr[selectedNumber];
+            int currentLine = btnSlidersCategoryLineArr[selectedNumber];
+            if(!legacyHelpView) {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_white));
+                // a bit of voodoo magic to make text bold
+                String text = null;
+                switch (selectedNumber){
+                    case 0:
+                        text = ctx.getString(R.string.button_sliders_help_bri);
+                        break;
+                    case 1:
+                        text = ctx.getString(R.string.button_sliders_help_hue);
+                        break;
+                    case 2:
+                        text = ctx.getString(R.string.button_sliders_help_sat);
+                        break;
+                    case 3:
+                        text = ctx.getString(R.string.button_sliders_help_ct);
+                        break;
+                }
+                SpannableString mspInt = new SpannableString(text);
+                mspInt.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                helpView.setTextViewText(currentButton, mspInt);
+            } else {
+                helpView.setTextColor(currentButton, ctx.getColor(R.color.category_selected_blue_legacy));
+            }
             helpView.setViewVisibility(currentLine, View.VISIBLE);
         }
         return helpView;
@@ -584,7 +650,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                         vibrate(ctx);
 
                         if (checkWifiNotEnabled(ctx)) {
-                            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                            if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -603,40 +671,28 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 }
                 break;
             case 1:
-                switch (id) {
-                    case R.id.btnCategory1:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.QUICK_ACCESS);
-                        break;
-                    case R.id.btnCategory2:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.LIGHTS);
-                        break;
-                    case R.id.btnCategory3:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.ROOMS);
-                        break;
-                    case R.id.btnCategory4:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.ZONES);
-                        break;
-                    case R.id.btnCategory5:
-                        getBridge(ctx).setCurrentCategory(ctx, menuCategory.SCENES);
-                        break;
-                    case R.id.btnSlidersCategory1:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.BRIGHTNESS);
-                        break;
-                    case R.id.btnSlidersCategory2:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.COLOR);
-                        break;
-                    case R.id.btnSlidersCategory3:
-                        getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.SATURATION);
-                        break;
-                    case R.id.btnBack:
-                        setSlidersActive(false);
-                        break;
-                    case R.id.btnEdit:
-                        //HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
-                        startEditActivity(ctx);
-                        break;
-                    default:
-                        break;
+                if (id == R.id.btnCategory1) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.QUICK_ACCESS);
+                } else if (id == R.id.btnCategory2) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.LIGHTS);
+                } else if (id == R.id.btnCategory3) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.ROOMS);
+                } else if (id == R.id.btnCategory4) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.ZONES);
+                } else if (id == R.id.btnCategory5) {
+                    getBridge(ctx).setCurrentCategory(ctx, menuCategory.SCENES);
+                } else if (id == R.id.btnSlidersCategory1) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.BRIGHTNESS);
+                } else if (id == R.id.btnSlidersCategory2) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.COLOR);
+                } else if (id == R.id.btnSlidersCategory3) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.SATURATION);
+                } else if (id == R.id.btnSlidersCategory4) {
+                    getBridge(ctx).setCurrentSlidersCategory(ctx, slidersCategory.TEMPERATURE);
+                } else if (id == R.id.btnBack) {
+                    setSlidersActive(false);
+                } else if (id == R.id.btnEdit) {//HueBridge.loadAllConfiguration(ctx); // rebind for quick way to debug loadAllConfiguration()
+                    startEditActivity(ctx);
                 }
                 //HueBridge.saveAllConfiguration(ctx);
                 if (!checkWifiNotEnabled(ctx))
@@ -647,29 +703,29 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 vibrate(ctx);
 
                 if (checkWifiNotEnabled(ctx)) {
-                    Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                    boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                    if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 ResourceReference resRef = getSlidersResource();
                 BridgeResourceSliders res = (BridgeResourceSliders) getBridge(ctx).getResource(resRef);
                 int value;
-                switch (id) {
-                    case R.id.sliders_bri:
-                        value = intent.getIntExtra("bri", 0);
-                        new Thread(() -> res.setBri(ctx, value)).start();
-                        break;
-                    case R.id.sliders_hue:
-                        value = intent.getIntExtra("hue", 0);
-                        new Thread(() -> res.setHue(ctx, value)).start();
-                        break;
-                    case R.id.sliders_sat:
-                        value = intent.getIntExtra("sat", 0);
-                        new Thread(() -> res.setSat(ctx, value)).start();
-                        break;
-                    default:
-                        Log.e(TAG, "Unknown category!");
-                        break;
+                if (id == R.id.sliders_bri) {
+                    value = intent.getIntExtra("bri", 0);
+                    new Thread(() -> res.setBri(ctx, value)).start();
+                } else if (id == R.id.sliders_hue) {
+                    value = intent.getIntExtra("hue", 0);
+                    new Thread(() -> res.setHue(ctx, value)).start();
+                } else if (id == R.id.sliders_sat) {
+                    value = intent.getIntExtra("sat", 0);
+                    new Thread(() -> res.setSat(ctx, value)).start();
+                } else if (id == R.id.sliders_ct) {
+                    value = intent.getIntExtra("ct", 0);
+                    new Thread(() -> res.setCt(ctx, value)).start();
+                } else {
+                    Log.e(TAG, "Unknown category!");
                 }
                 //String toastString = String.format(ctx.getResources().getString(R.string.remote_list_item_clicked), itemId);
                 //Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show(); // Debug toast for presses on the sliders buttons.
@@ -722,8 +778,11 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     res = getBridge(ctx).getResource(resRef);
                     // If a scene, get resRef for the attached group and activate scene
                     if (res.getCategory().equals("scenes")) {
-                        if(checkWifiNotEnabled(ctx))
-                            Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        if(checkWifiNotEnabled(ctx)) {
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+                            boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
+                            if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+                        }
                         else
                             new Thread(() -> res.activateResource(ctx)).start();
                         resRef = new ResourceReference("groups", ((SceneResource) res).getGroup());
@@ -774,20 +833,21 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         RemoteViews helpView;
 
         if (isBridgeNull()){
-            helpView = createHelpView(ctx);
-
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
             boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
-            if (bridgeConfigured)
-                contentView = new RemoteViews(ctx.getPackageName(),R.layout.main_view_loading);
-            else {
+            if (!bridgeConfigured) {
+//                 contentView = new RemoteViews(ctx.getPackageName(),R.layout.main_view_loading);
                 Log.d(TAG, "Creating content view, no bridge found, will display main_view_no_bridge");
                 contentView = new RemoteViews(ctx.getPackageName(),
                         R.layout.main_view_no_bridge); // R.layout.main_view_demo); TODO demo
                 contentView.setOnClickPendingIntent(R.id.configureButton,
                         getClickIntent(ctx, R.id.configureButton, 1));
+                helpView = createHelpView(ctx);
+                cocktailManager.updateCocktail(cocktailIds[0], contentView, helpView);
+                return;
             }
-        } else if (isSlidersActive()){
+        }
+        if (isSlidersActive()){
             contentView = createSlidersContentView(ctx);
             helpView = createSlidersHelpView(ctx);
         } else {
@@ -832,15 +892,35 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                                     resource.getBtnBackgroundResource());
                             //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
                             contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimensionPixelSize(resource.getBtnTextSize(ctx)));
+
+                            int icon_res = ref.getIconRes();
+                            contentView.setImageViewResource(btnArr[i], icon_res);
+                            if (icon_res != 0){
+                                contentView.setViewVisibility(btnTopTextArr[i], View.GONE);
+                            } else {
+                                contentView.setViewVisibility(btnTopTextArr[i], View.VISIBLE);
+                            }
+                            int customColor = ref.getIconColor();
+                            if(customColor == 0) {
+                                int defaultColor = resource.getBtnTextColor(ctx);
+                                contentView.setInt(btnArr[i], "setColorFilter", defaultColor);
+                                contentView.setTextColor(btnTopTextArr[i], defaultColor);
+                            } else {
+                                contentView.setInt(btnArr[i], "setColorFilter", customColor);
+                                contentView.setTextColor(btnTopTextArr[i], customColor);
+                            }
                         }
                     } else {
                         contentView.setTextViewText(btnTextArr[i], "");
                         contentView.setTextViewText(btnTopTextArr[i], ctx.getResources().getString(R.string.plus_symbol));
+                        contentView.setViewVisibility(btnTopTextArr[i], View.VISIBLE);
                         //contentView.setFloat(btnTopTextArr[i], "setTextSize", 8);
                         contentView.setTextViewTextSize(btnTopTextArr[i], TypedValue.COMPLEX_UNIT_PX, ctx.getResources().getDimension(R.dimen.resource_btn_text_size_symbol));
                         contentView.setTextColor(btnTopTextArr[i], (ContextCompat.getColor(ctx, R.color.white)));
                         contentView.setInt(btnArr[i], "setBackgroundResource",
                                 R.drawable.add_button_background);
+                        contentView.setInt(btnArr[i], "setColorFilter", 0);
+                        contentView.setImageViewResource(btnArr[i], 0);
                     }
                 }
             }

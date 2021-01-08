@@ -5,6 +5,7 @@ import com.squareup.moshi.FromJson;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BridgeCatalogueAdapter {
     @FromJson
@@ -13,9 +14,9 @@ public class BridgeCatalogueAdapter {
         Map<String, GroupResource> groups = state.getGroups();
         Map<String, SceneResource> scenes = state.getScenes();
 
-        HashMap<String, LightResource> filteredLights = new HashMap<>();
-        HashMap<String, GroupResource> filteredGroups = new HashMap<>();
-        HashMap<String, SceneResource> filteredScenes = new HashMap<>();
+        Map<String, LightResource> filteredLights = new ConcurrentHashMap<>();
+        Map<String, GroupResource> filteredGroups = new ConcurrentHashMap<>();
+        Map<String, SceneResource> filteredScenes = new ConcurrentHashMap<>();
 
         // Add all the lights
         for(String key : lights.keySet()){

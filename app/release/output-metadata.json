@@ -1,19 +1,17 @@
 {
-  "version": 1,
+  "version": 2,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "com.nilstrubkin.hueedge",
-  "variantName": "release",
+  "variantName": "processReleaseResources",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "properties": [],
-      "versionCode": 2,
-      "versionName": "1.1",
-      "enabled": true,
+      "versionCode": 3,
+      "versionName": "1.2",
       "outputFile": "app-release.apk"
     }
   ]

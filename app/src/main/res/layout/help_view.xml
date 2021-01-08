@@ -3,16 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingTop="@dimen/category_view_root_padding_top"
-    tools:ignore="ContentDescription, SpUsage, RtlSymmetry" >
-
-    <ImageView
-        android:layout_width="@dimen/category_view_top_line_width"
-        android:layout_height="@dimen/category_view_top_line_height"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/category_view_top_line_margin_bottom"
-        android:background="@color/category_top_line_gray" />
+    tools:ignore="ContentDescription, SpUsage, RtlSymmetry">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -41,8 +35,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -72,8 +66,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -103,8 +97,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -134,8 +128,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -165,8 +159,8 @@
             android:includeFontPadding="false"
             android:paddingEnd="@dimen/category_btn_padding_end"
             android:text="@string/dots"
-            android:textColor="@color/category_selected_blue"
-            android:textSize="18dp" />
+            android:textColor="@color/category_selected_white"
+            android:textSize="19dp" />
     </LinearLayout>
 
 </LinearLayout>

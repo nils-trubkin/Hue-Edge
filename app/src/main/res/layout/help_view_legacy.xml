@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/category_view_root_padding_top_legacy"
+    tools:ignore="ContentDescription, SpUsage, RtlSymmetry" >
+
+    <ImageView
+        android:layout_width="@dimen/category_view_top_line_width"
+        android:layout_height="@dimen/category_view_top_line_height"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/category_view_top_line_margin_bottom"
+        android:background="@color/category_top_line_gray_legacy" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height_legacy"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCategory1"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height_legacy"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom_legacy"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_help_1_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size_legacy" />
+
+        <TextView
+            android:id="@+id/btnCategoryLine1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue_legacy"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height_legacy"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCategory2"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height_legacy"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom_legacy"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_help_2_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size_legacy" />
+
+        <TextView
+            android:id="@+id/btnCategoryLine2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue_legacy"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height_legacy"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCategory3"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height_legacy"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom_legacy"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_help_3_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size_legacy" />
+
+        <TextView
+            android:id="@+id/btnCategoryLine3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue_legacy"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height_legacy"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCategory4"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height_legacy"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom_legacy"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_help_4_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size_legacy" />
+
+        <TextView
+            android:id="@+id/btnCategoryLine4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue_legacy"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/category_btn_height_legacy"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCategory5"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/category_btn_height_legacy"
+            android:layout_marginBottom="@dimen/category_btn_margin_bottom_legacy"
+            android:minWidth="@dimen/zero"
+            android:padding="@dimen/zero"
+            android:text="@string/button_help_5_text"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textColor="@color/category_unselected_gray"
+            android:textSize="@dimen/category_btn_text_size_legacy" />
+
+        <TextView
+            android:id="@+id/btnCategoryLine5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:paddingEnd="@dimen/category_btn_padding_end"
+            android:text="@string/dots"
+            android:textColor="@color/category_selected_blue_legacy"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+</LinearLayout>

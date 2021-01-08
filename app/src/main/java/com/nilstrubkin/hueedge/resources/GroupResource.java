@@ -3,7 +3,7 @@ package com.nilstrubkin.hueedge.resources;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.core.content.ContextCompat;
 
@@ -18,10 +18,13 @@ import java.util.Objects;
 
 public class GroupResource extends BridgeResourceSliders {
 
+    private static final long serialVersionUID = 2146386353821426733L;
+
     public GroupResource() {
     }
 
     static class State implements Serializable {
+        private static final long serialVersionUID = -8916643324338040424L;
         boolean all_on;
         boolean any_on;
 
@@ -35,6 +38,7 @@ public class GroupResource extends BridgeResourceSliders {
     }
 
     static class Action implements Serializable{
+        private static final long serialVersionUID = 8830367785494306671L;
         //int bri;
         int hue;
         int sat;
@@ -129,7 +133,7 @@ public class GroupResource extends BridgeResourceSliders {
             if(!isAll_off())
                 return noSymbols ? resources.getString(R.string.on_no_symbol) : resources.getString(R.string.on_symbol);
             else
-                return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.some_symbol);
+                return noSymbols ? resources.getString(R.string.some_no_symbol) : resources.getString(R.string.delete_symbol);
         else
             return noSymbols ? resources.getString(R.string.off_no_symbol) : resources.getString(R.string.off_symbol);
     }
