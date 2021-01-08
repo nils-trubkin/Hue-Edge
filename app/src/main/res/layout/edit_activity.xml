@@ -971,12 +971,19 @@
         app:layout_constraintHeight_max="400dp"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_icons_gallery"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginRight="2dp"
+            android:fadeScrollbars="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbarThumbVertical="@color/black"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@+id/recycler_colors_gallery"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

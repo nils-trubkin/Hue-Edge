@@ -73,7 +73,7 @@ public class HueBridge implements Serializable {
         e.apply();
         //Mappings of integers (representing R.id reference) to an instance of bridgeResource subclass
         for (menuCategory m : menuCategory.values()){
-            getContents().put(m, new HashMap<>());
+            getContents().put(m, new ConcurrentHashMap<>());
         }
     }
 
@@ -168,11 +168,11 @@ public class HueBridge implements Serializable {
             }
     }
 
-    public Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
+    public synchronized Map<menuCategory, Map<Integer, ResourceReference>> getContents() {
         return contents;
     }
 
-    public void setContents(Map<menuCategory, Map<Integer, ResourceReference>> contents) {
+    public synchronized void setContents(Map<menuCategory, Map<Integer, ResourceReference>> contents) {
         this.contents = contents;
     }
 
