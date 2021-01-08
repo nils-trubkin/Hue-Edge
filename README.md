@@ -14,7 +14,7 @@ Features:
 * Add and remove buttons to your liking
 * Currently limited to control of the Philips Hue Bridge on the same local network
 
-<img src="./All_screens.png" alt="Hue Edge screenshots" width="800"/>
+<img src="Screenshots/All_screens.png" alt="Hue Edge screenshots" width="800"/>
 
 Developed by
 ========================
