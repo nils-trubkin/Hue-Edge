@@ -39,7 +39,7 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
-    //private static long ts; // TODO remove timestamp
+    private static long ts; // TODO remove timestamp
 
     private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
@@ -171,9 +171,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
         if(action == null) return;
         Log.d(TAG, "onReceive: " + action);
-        //long tn = System.currentTimeMillis(); //TODO remove
-        //Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
-        //ts = tn; //TODO remove
+        long tn = System.currentTimeMillis(); //TODO remove
+        Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
+        ts = tn; //TODO remove
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
@@ -205,9 +205,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                     performPullToRefresh(ctx);
                 }
                 else HueBridge.requestHueState(ctx);
-                break;
-            case ACTION_RECEIVE_HUE_REPLY:
-                HueBridge.requestHueState(ctx);
                 break;
             case ACTION_TIMEOUT_HUE_REPLY:
                 boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
@@ -566,18 +563,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
         Intent stateIntent = new Intent(ctx, HueEdgeProvider.class);
         stateIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_STATE);
         return PendingIntent.getBroadcast(ctx, 1, stateIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    /**
-     * Get the intent for incoming reply JsonArray
-     * @param ctx Context
-     * @return Intent
-     */
-    public static PendingIntent getReplyIntent(Context ctx) {
-        Intent replyIntent = new Intent(ctx, HueEdgeProvider.class);
-        replyIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_REPLY);
-        return PendingIntent.getBroadcast(ctx, 1, replyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

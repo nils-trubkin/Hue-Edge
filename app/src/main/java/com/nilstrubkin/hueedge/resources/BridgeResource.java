@@ -3,6 +3,7 @@ package com.nilstrubkin.hueedge.resources;
 import android.app.PendingIntent;
 import android.content.Context;
 
+import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -78,12 +79,8 @@ public abstract class BridgeResource implements Serializable {
         HueEdgeProvider.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) {
-                try {
-                    HueEdgeProvider.getReplyIntent(ctx).send();
-                    response.close();
-                } catch (PendingIntent.CanceledException e) {
-                    e.printStackTrace();
-                }
+                HueBridge.requestHueState(ctx);
+                response.close();
             }
 
             @Override
