@@ -209,6 +209,7 @@ public class HueBridge implements Serializable {
 
     public synchronized void setBridgeState(Context ctx, BridgeCatalogue bridgeState){
         this.bridgeState = bridgeState;
+        saveAllConfiguration(ctx);
         try {
             getStateIntent(ctx).send();
         } catch (PendingIntent.CanceledException e) {

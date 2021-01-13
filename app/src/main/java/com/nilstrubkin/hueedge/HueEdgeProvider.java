@@ -45,7 +45,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
     private static final String ACTION_PULL_TO_REFRESH = "com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH";
     protected static final String ACTION_RECEIVE_HUE_STATE = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE";
-    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY";
     protected static final String ACTION_TIMEOUT_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_TIMEOUT_HUE_REPLY";
     private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
@@ -206,9 +205,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 }
                 else HueBridge.requestHueState(ctx);
                 break;
-            case ACTION_RECEIVE_HUE_REPLY:
-                HueBridge.requestHueState(ctx);
-                break;
             case ACTION_TIMEOUT_HUE_REPLY:
                 boolean noWifiErrMsg = settings.getBoolean(ctx.getResources().getString(R.string.preference_no_wifi_err_msg), false);
                 if (!noWifiErrMsg) Toast.makeText(ctx, ctx.getString(R.string.toast_timeout_reply), Toast.LENGTH_LONG).show();
@@ -222,7 +218,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 performPullToRefresh(ctx);
                 currentlyClicked.clear();
                 panelUpdate(ctx);
-                HueBridge.saveAllConfiguration(ctx);
                 break;
             default:
                 break;
@@ -570,18 +565,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
     }
 
     /**
-     * Get the intent for incoming reply JsonArray
-     * @param ctx Context
-     * @return Intent
-     */
-    public static PendingIntent getReplyIntent(Context ctx) {
-        Intent replyIntent = new Intent(ctx, HueEdgeProvider.class);
-        replyIntent.setAction(HueEdgeProvider.ACTION_RECEIVE_HUE_REPLY);
-        return PendingIntent.getBroadcast(ctx, 1, replyIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    /**
      * Get the intent for timeout reply
      * @param ctx Context
      * @return Intent
@@ -859,12 +842,21 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             PendingIntent pendingIntent = getRefreshIntent(ctx);
             SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
-            menuCategory currentCategory = getBridge(ctx).getCurrentCategory(ctx);
+            menuCategory currentCategory;
+            Map<menuCategory, Map<Integer, ResourceReference>> contents;
+            try {
+                currentCategory = Objects.requireNonNull(getBridge(ctx).getCurrentCategory(ctx));
+                contents = Objects.requireNonNull(getBridge(ctx).getContents());
+            } catch (NullPointerException e){
+                Log.e(TAG, "Trying to update panel but failed to get current category contents");
+                e.printStackTrace();
+                return;
+            }
             for (int i = 0; i < 10; i++) {
-                if (getBridge(ctx).getContents().containsKey(currentCategory)) {
+                if (contents.containsKey(currentCategory)) {
                     Map<Integer, ResourceReference> currentCategoryContents;
                     try {
-                        currentCategoryContents = Objects.requireNonNull(getBridge(ctx).getContents().get(currentCategory));
+                        currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
                     } catch (NullPointerException e){
                         Log.e(TAG, "Trying to update panel but failed to get current category contents");
                         e.printStackTrace();

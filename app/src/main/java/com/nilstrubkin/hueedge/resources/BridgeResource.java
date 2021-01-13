@@ -3,6 +3,7 @@ package com.nilstrubkin.hueedge.resources;
 import android.app.PendingIntent;
 import android.content.Context;
 
+import com.nilstrubkin.hueedge.HueBridge;
 import com.nilstrubkin.hueedge.HueEdgeProvider;
 
 import org.jetbrains.annotations.NotNull;
@@ -79,11 +80,14 @@ public abstract class BridgeResource implements Serializable {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) {
                 try {
-                    HueEdgeProvider.getReplyIntent(ctx).send();
-                    response.close();
-                } catch (PendingIntent.CanceledException e) {
+                    // Without this, the bridge will sometimes reply with old data,
+                    // as if the light is still in process of changing state despite success response
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                HueBridge.requestHueState(ctx);
+                response.close();
             }
 
             @Override

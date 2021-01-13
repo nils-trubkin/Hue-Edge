@@ -2,7 +2,6 @@ package com.nilstrubkin.hueedge.resources;
 
 import com.squareup.moshi.FromJson;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
