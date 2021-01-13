@@ -79,6 +79,13 @@ public abstract class BridgeResource implements Serializable {
         HueEdgeProvider.getClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) {
+                try {
+                    // Without this, the bridge will sometimes reply with old data,
+                    // as if the light is still in process of changing state despite success response
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 HueBridge.requestHueState(ctx);
                 response.close();
             }

@@ -39,13 +39,12 @@ import static android.content.Context.VIBRATOR_SERVICE;
 
 public class HueEdgeProvider extends SlookCocktailProvider {
     private static final String TAG = HueEdgeProvider.class.getSimpleName();
-    private static long ts; // TODO remove timestamp
+    //private static long ts; // TODO remove timestamp
 
     private static final String ACTION_REMOTE_LONG_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_LONG_CLICK";
     private static final String ACTION_REMOTE_CLICK = "com.nilstrubkin.hueedge.ACTION_REMOTE_CLICK";
     private static final String ACTION_PULL_TO_REFRESH = "com.nilstrubkin.hueedge.ACTION_PULL_TO_REFRESH";
     protected static final String ACTION_RECEIVE_HUE_STATE = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_STATE";
-    protected static final String ACTION_RECEIVE_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_RECEIVE_HUE_REPLY";
     protected static final String ACTION_TIMEOUT_HUE_REPLY = "com.nilstrubkin.hueedge.ACTION_TIMEOUT_HUE_REPLY";
     private static final String COCKTAIL_VISIBILITY_CHANGED = "com.samsung.android.cocktail.action.COCKTAIL_VISIBILITY_CHANGED";
 
@@ -171,9 +170,9 @@ public class HueEdgeProvider extends SlookCocktailProvider {
 
         if(action == null) return;
         Log.d(TAG, "onReceive: " + action);
-        long tn = System.currentTimeMillis(); //TODO remove
-        Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
-        ts = tn; //TODO remove
+        //long tn = System.currentTimeMillis(); //TODO remove
+        //Toast.makeText(ctx, action.substring(24) + ":" + (tn - ts), Toast.LENGTH_SHORT).show(); //TODO remove
+        //ts = tn; //TODO remove
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ctx);
         boolean bridgeConfigured = settings.getBoolean(ctx.getResources().getString(R.string.preference_bridge_configured), false);
@@ -219,7 +218,6 @@ public class HueEdgeProvider extends SlookCocktailProvider {
                 performPullToRefresh(ctx);
                 currentlyClicked.clear();
                 panelUpdate(ctx);
-                HueBridge.saveAllConfiguration(ctx);
                 break;
             default:
                 break;
@@ -844,12 +842,21 @@ public class HueEdgeProvider extends SlookCocktailProvider {
             PendingIntent pendingIntent = getRefreshIntent(ctx);
             SlookCocktailManager.getInstance(ctx).setOnPullPendingIntent(cocktailIds[0], R.id.refreshArea, pendingIntent);
 
-            menuCategory currentCategory = getBridge(ctx).getCurrentCategory(ctx);
+            menuCategory currentCategory;
+            Map<menuCategory, Map<Integer, ResourceReference>> contents;
+            try {
+                currentCategory = Objects.requireNonNull(getBridge(ctx).getCurrentCategory(ctx));
+                contents = Objects.requireNonNull(getBridge(ctx).getContents());
+            } catch (NullPointerException e){
+                Log.e(TAG, "Trying to update panel but failed to get current category contents");
+                e.printStackTrace();
+                return;
+            }
             for (int i = 0; i < 10; i++) {
-                if (getBridge(ctx).getContents().containsKey(currentCategory)) {
+                if (contents.containsKey(currentCategory)) {
                     Map<Integer, ResourceReference> currentCategoryContents;
                     try {
-                        currentCategoryContents = Objects.requireNonNull(getBridge(ctx).getContents().get(currentCategory));
+                        currentCategoryContents = Objects.requireNonNull(contents.get(currentCategory));
                     } catch (NullPointerException e){
                         Log.e(TAG, "Trying to update panel but failed to get current category contents");
                         e.printStackTrace();
