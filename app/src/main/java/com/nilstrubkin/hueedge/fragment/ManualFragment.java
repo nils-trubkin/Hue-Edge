@@ -2,7 +2,9 @@ package com.nilstrubkin.hueedge.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,27 +54,23 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
         ipField = requireActivity().findViewById(R.id.text_manual_input_ip_field);
 
         ((StepperIndicator) requireActivity().findViewById(R.id.steps_wizard)).setCurrentStep(1);
+
+        ipField.setOnKeyListener((v, keyCode, event) -> {
+            Log.e("tag", "" + keyCode);
+            if ((event.getAction() == KeyEvent.ACTION_DOWN)
+                    && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                checkIfValidIp();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case confirmButtonId:
-                if(HueEdgeProvider.checkWifiNotEnabled(requireContext())) {
-                    Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String ip = ipField.getText().toString();
-                if (Patterns.IP_ADDRESS.matcher(ip).matches()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("ip", ip);
-                    navController.navigate(R.id.action_manualFragment_to_linkFragment, bundle);
-                }
-                else {
-                    Context ctx = requireContext();
-                    String toastString = ctx.getString(R.string.toast_ip_mistake);
-                    Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
-                }
+                checkIfValidIp();
                 break;
             case helpButtonId:
                 helpLayout.setVisibility(View.VISIBLE);
@@ -84,6 +82,24 @@ public class ManualFragment extends Fragment implements View.OnClickListener {
                 aboutButton.setVisibility(View.VISIBLE);
                 tint.setVisibility(View.GONE);
                 break;
+        }
+    }
+
+    private void checkIfValidIp(){
+        if(HueEdgeProvider.checkWifiNotEnabled(requireContext())) {
+            Toast.makeText(getContext(), requireContext().getString(R.string.toast_no_wifi), Toast.LENGTH_LONG).show();
+            return;
+        }
+        String ip = ipField.getText().toString();
+        if (Patterns.IP_ADDRESS.matcher(ip).matches()) {
+            Bundle bundle = new Bundle();
+            bundle.putString("ip", ip);
+            navController.navigate(R.id.action_manualFragment_to_linkFragment, bundle);
+        }
+        else {
+            Context ctx = requireContext();
+            String toastString = ctx.getString(R.string.toast_ip_mistake);
+            Toast.makeText(ctx, toastString, Toast.LENGTH_LONG).show();
         }
     }
 }
